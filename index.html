@@ -1,128 +1,84 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gabinete 906 — Assistente de Julgamento</title>
-
-  <!-- Dependências -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
-
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --azul: #042C53;
-      --azul2: #185FA5;
-      --azul-light: #E6F1FB;
-      --verde-light: #EAF3DE;
-      --verde: #3B6D11;
-      --border: #e2e6ea;
-      --bg: #f7f8fa;
-      --bg2: #ffffff;
-      --text: #1a1d23;
-      --text2: #6b7280;
-      --radius: 10px;
-      --radius-sm: 6px;
-    }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-    .app { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
-
-    /* Header */
-    .header { display: flex; align-items: center; gap: 14px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
-    .logo { width: 44px; height: 44px; border-radius: var(--radius-sm); background: var(--azul); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; flex-shrink: 0; }
-    .header h1 { font-size: 17px; font-weight: 600; }
-    .header p { font-size: 12px; color: var(--text2); margin-top: 2px; }
-
-    /* Status bar */
-    .status-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #E24B4A; flex-shrink: 0; }
-    .dot.on { background: #639922; }
-    .status-text { font-size: 12px; color: var(--text2); }
-    .btn-sm { font-size: 12px; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg2); color: var(--text); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: background .15s; }
-    .btn-sm:hover { background: var(--bg); }
-
-    /* Stats */
-    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
-    .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
-    .stat-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
-    .stat-val { font-size: 22px; font-weight: 600; }
-    .stat-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
-
-    /* Tabs */
-    .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem; gap: 0; }
-    .tab { padding: 9px 18px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--text2); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 400; transition: color .15s; }
-    .tab.active { color: var(--azul2); border-bottom-color: var(--azul2); font-weight: 500; }
-
-    /* Tipo selector */
-    .tipo-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
-    .tipo-btn { flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg2); color: var(--text); font-size: 13px; cursor: pointer; transition: all .15s; }
-    .tipo-btn.active { border-color: var(--azul2); border-width: 2px; background: var(--azul-light); color: #0C447C; font-weight: 500; }
-
-    /* Info banner */
-    .banner { border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; margin-bottom: 1.25rem; display: flex; gap: 8px; align-items: flex-start; }
-    .banner.blue { background: var(--azul-light); color: #0C447C; }
-    .banner.green { background: var(--verde-light); color: var(--verde); }
-    .banner.orange { background: #FFF3E0; color: #E65100; }
-
-    /* Upload */
-    .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 2.5rem; text-align: center; cursor: pointer; background: var(--bg); margin-bottom: 1.25rem; transition: border-color .15s, background .15s; }
-    .upload-zone:hover { border-color: var(--azul2); background: var(--azul-light); }
-    .upload-zone i { font-size: 40px; color: var(--text2); margin-bottom: 10px; display: block; }
-    .upload-zone .up-title { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-    .upload-zone .up-sub { font-size: 12px; color: var(--text2); }
-
-    /* Progress */
-    .progress-wrap { margin-bottom: 1.25rem; }
-    .progress-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .progress-track { background: #e9ecef; border-radius: 99px; height: 7px; overflow: hidden; }
-    .progress-fill { height: 7px; border-radius: 99px; background: var(--azul2); transition: width .4s ease; }
-    .progress-pct { font-size: 11px; color: var(--text2); margin-top: 4px; }
-
-    /* Cards resultado */
-    .result-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
-    .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-    .result-title { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-    .badge { font-size: 11px; padding: 2px 9px; border-radius: 99px; }
-    .badge.ia { background: var(--azul-light); color: #0C447C; }
-    .badge.green { background: var(--verde-light); color: var(--verde); }
-    .badge.orange { background: #FFF3E0; color: #E65100; }
-    .action-row { display: flex; gap: 8px; }
-    .btn { padding: 6px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: transparent; color: var(--text); font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: background .15s; }
-    .btn:hover { background: var(--bg); }
-    .btn.primary { background: var(--azul); color: #fff; border-color: var(--azul); }
-    .btn.primary:hover { background: #0C447C; }
-    .minuta-text { font-family: 'Times New Roman', serif; font-size: 13px; line-height: 1.85; background: var(--bg); border-radius: var(--radius-sm); padding: 1rem 1.25rem; max-height: 300px; overflow-y: auto; white-space: pre-wrap; border: 1px solid var(--border); }
-
-    /* Referências */
-    .ref-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .ref-item:last-child { border-bottom: none; }
-    .sim-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--azul-light); color: #0C447C; }
-
-    /* Bottom actions */
-    .bottom-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-
-    /* Auth modal */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; align-items: center; justify-content: center; }
-    .modal-overlay.show { display: flex; }
-    .modal { background: var(--bg2); border-radius: var(--radius); padding: 1.75rem; max-width: 420px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,.15); }
-    .modal h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-    .modal p { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
-    .modal input { width: 100%; font-size: 13px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg); color: var(--text); }
-    .modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
-
-    @media (max-width: 600px) {
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .tipo-row { flex-direction: column; }
-      .tabs { overflow-x: auto; }
-    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--az:#042C53;--az2:#185FA5;--azl:#E6F1FB;--gl:#EAF3DE;--gd:#3B6D11;--bd:#e2e6ea;--bg:#f7f8fa;--bg2:#fff;--tx:#1a1d23;--tx2:#6b7280;--r:10px;--rs:6px}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+    .app{max-width:920px;margin:0 auto;padding:1.5rem}
+    .header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--bd)}
+    .logo{width:44px;height:44px;border-radius:var(--rs);background:var(--az);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex-shrink:0}
+    .header h1{font-size:17px;font-weight:600}
+    .header p{font-size:12px;color:var(--tx2);margin-top:2px}
+    .sbar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+    .dot{width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0}
+    .dot.on{background:#639922}
+    .stxt{font-size:12px;color:var(--tx2)}
+    .bsm{font-size:12px;padding:4px 12px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg2);color:var(--tx);cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+    .bsm:hover{background:var(--bg)}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+    .sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px}
+    .sl{font-size:11px;color:var(--tx2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+    .sv{font-size:22px;font-weight:600}
+    .ss{font-size:11px;color:var(--tx2);margin-top:2px}
+    .tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:1.25rem;overflow-x:auto}
+    .tab{padding:9px 16px;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--tx2);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .15s}
+    .tab.active{color:var(--az2);border-bottom-color:var(--az2);font-weight:500}
+    .trow{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+    .tbtn{flex:1;min-width:120px;padding:8px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--bg2);color:var(--tx);font-size:13px;cursor:pointer;transition:all .15s}
+    .tbtn.active{border-color:var(--az2);border-width:2px;background:var(--azl);color:#0C447C;font-weight:500}
+    .banner{border-radius:var(--rs);padding:10px 14px;font-size:13px;margin-bottom:1.25rem;display:flex;gap:8px;align-items:flex-start}
+    .banner.blue{background:var(--azl);color:#0C447C}
+    .banner.green{background:var(--gl);color:var(--gd)}
+    .banner.orange{background:#FFF3E0;color:#E65100}
+    .uzone{border:2px dashed var(--bd);border-radius:var(--r);padding:2.5rem;text-align:center;cursor:pointer;background:var(--bg);margin-bottom:1.25rem;transition:border-color .15s,background .15s}
+    .uzone:hover{border-color:var(--az2);background:var(--azl)}
+    .uzone i{font-size:40px;color:var(--tx2);margin-bottom:10px;display:block}
+    .uzone .ut{font-size:15px;font-weight:500;margin-bottom:4px}
+    .uzone .us{font-size:12px;color:var(--tx2)}
+    .pw{margin-bottom:1.25rem}
+    .pl{font-size:13px;color:var(--tx2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .pt{background:#e9ecef;border-radius:99px;height:7px;overflow:hidden}
+    .pf{height:7px;border-radius:99px;background:var(--az2);transition:width .4s ease}
+    .pp{font-size:11px;color:var(--tx2);margin-top:4px}
+    .rc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+    .rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+    .rt{font-size:15px;font-weight:500;display:flex;align-items:center;gap:8px}
+    .badge{font-size:11px;padding:2px 9px;border-radius:99px}
+    .badge.ia{background:var(--azl);color:#0C447C}
+    .badge.gr{background:var(--gl);color:var(--gd)}
+    .badge.or{background:#FFF3E0;color:#E65100}
+    .arow{display:flex;gap:8px}
+    .btn{padding:6px 14px;border:1px solid var(--bd);border-radius:var(--rs);background:transparent;color:var(--tx);font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:background .15s}
+    .btn:hover{background:var(--bg)}
+    .btn.pr{background:var(--az);color:#fff;border-color:var(--az)}
+    .btn.pr:hover{background:#0C447C}
+    .mt{font-family:'Times New Roman',serif;font-size:13px;line-height:1.9;background:var(--bg);border-radius:var(--rs);padding:1rem 1.25rem;max-height:300px;overflow-y:auto;white-space:pre-wrap;border:1px solid var(--bd)}
+    .ri{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd);font-size:13px}
+    .ri:last-child{border-bottom:none}
+    .sb{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--azl);color:#0C447C}
+    .bact{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+    .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+    .mo.show{display:flex}
+    .mb{background:var(--bg2);border-radius:var(--r);padding:1.75rem;max-width:460px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+    .mb h2{font-size:17px;font-weight:600;margin-bottom:6px}
+    .mb p{font-size:13px;color:var(--tx2);margin-bottom:12px;line-height:1.6}
+    .mb input{width:100%;font-size:13px;padding:8px 12px;border:1px solid var(--bd);border-radius:var(--rs);margin-bottom:8px;background:var(--bg);color:var(--tx)}
+    .mb label{font-size:12px;color:var(--tx2);display:block;margin-bottom:3px;margin-top:6px}
+    .mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .fold-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+    .fold-grid input{margin-bottom:0}
+    @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.trow{flex-direction:column}.tabs{overflow-x:auto}.fold-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- Header -->
   <div class="header">
     <div class="logo"><i class="ti ti-gavel"></i></div>
     <div>
@@ -131,520 +87,444 @@
     </div>
   </div>
 
-  <!-- Status -->
-  <div class="status-bar">
-    <span class="dot" id="dot-drive"></span>
-    <span class="status-text" id="lbl-drive">Google Drive não conectado</span>
-    <button class="btn-sm" id="btn-conectar" onclick="abrirModal()">
-      <i class="ti ti-brand-google-drive"></i> Conectar Drive
-    </button>
+  <div class="sbar">
+    <span class="dot" id="dd"></span>
+    <span class="stxt" id="ld">Google Drive não conectado</span>
+    <button class="bsm" id="bcn" onclick="abrirModal()"><i class="ti ti-settings"></i> Configurar</button>
   </div>
 
-  <!-- Stats (visível após conexão) -->
-  <div class="stats" id="stats-area" style="display:none">
-    <div class="stat-card">
-      <div class="stat-label">Acórdãos</div>
-      <div class="stat-val" id="st-acordao">—</div>
-      <div class="stat-sub">na base</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Despachos</div>
-      <div class="stat-val" id="st-despacho">—</div>
-      <div class="stat-sub">na base</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Dec. Monocráticas</div>
-      <div class="stat-val" id="st-mono">—</div>
-      <div class="stat-sub">na base</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Suspensão Repetitivo</div>
-      <div class="stat-val" id="st-rep">—</div>
-      <div class="stat-sub">na base</div>
-    </div>
+  <div class="stats" id="sa" style="display:none">
+    <div class="sc"><div class="sl">Acórdãos/Apelações</div><div class="sv" id="s0">0</div><div class="ss">na base</div></div>
+    <div class="sc"><div class="sl">Agravos/Despachos</div><div class="sv" id="s1">0</div><div class="ss">na base</div></div>
+    <div class="sc"><div class="sl">Monocráticas/Embargos</div><div class="sv" id="s2">0</div><div class="ss">na base</div></div>
+    <div class="sc"><div class="sl">Suspensão Repetitivo</div><div class="sv" id="s3">0</div><div class="ss">na base</div></div>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" onclick="setTab('acordao',this)"><i class="ti ti-file-text"></i> Minuta de acórdão</button>
-    <button class="tab" onclick="setTab('despacho',this)"><i class="ti ti-bolt"></i> Efeito suspensivo/ativo</button>
-    <button class="tab" onclick="setTab('monocratica',this)"><i class="ti ti-file-minus"></i> Decisão monocrática</button>
+    <button class="tab active" onclick="setTab('apelacao',this)"><i class="ti ti-file-text"></i> Apelação</button>
+    <button class="tab" onclick="setTab('agravo',this)"><i class="ti ti-bolt"></i> Agravo de Instrumento</button>
+    <button class="tab" onclick="setTab('monocratica',this)"><i class="ti ti-file-minus"></i> Dec. Monocrática</button>
+    <button class="tab" onclick="setTab('embargos',this)"><i class="ti ti-refresh"></i> Embargos de Declaração</button>
+    <button class="tab" onclick="setTab('agravoint',this)"><i class="ti ti-arrow-up"></i> Agravo Interno</button>
+    <button class="tab" onclick="setTab('suspensao',this)"><i class="ti ti-ban"></i> Suspensão Repetitivo</button>
   </div>
 
-  <!-- Tipo (acórdão) -->
-  <div class="tipo-row" id="tipo-row">
-    <button class="tipo-btn active" onclick="setTipo(this,'apelacao')">Apelação</button>
-    <button class="tipo-btn" onclick="setTipo(this,'agravo')">Agravo de instrumento</button>
-    <button class="tipo-btn" onclick="setTipo(this,'outro')">Outro recurso</button>
-  </div>
-
-  <!-- Banners -->
-  <div class="banner blue" id="banner-despacho" style="display:none">
+  <div class="banner blue" id="bn-info">
     <i class="ti ti-info-circle"></i>
-    <span>A IA analisa os requisitos do efeito suspensivo/ativo, busca despachos similares no Drive (mais recentes primeiro) e gera o despacho + intimação da parte agravada em Word.</span>
-  </div>
-  <div class="banner green" id="banner-mono" style="display:none">
-    <i class="ti ti-info-circle"></i>
-    <span>A IA busca decisões monocráticas similares no Drive (mais recentes primeiro) e redige a decisão com os fundamentos aplicáveis, ignorando anotações coloridas.</span>
+    <span id="bn-txt">Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive como referência.</span>
   </div>
 
-  <!-- Upload -->
-  <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()"
+  <div class="uzone" id="uz" onclick="document.getElementById('fi').click()"
     ondragover="event.preventDefault()" ondrop="onDrop(event)">
     <i class="ti ti-file-type-pdf"></i>
-    <div class="up-title">Clique para selecionar ou arraste o PDF aqui</div>
-    <div class="up-sub">Apenas PDF · Máx. 50 MB</div>
+    <div class="ut">Clique para selecionar ou arraste o PDF aqui</div>
+    <div class="us">Apenas PDF · Máx. 50 MB</div>
   </div>
-  <input type="file" id="file-input" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])"/>
+  <input type="file" id="fi" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])"/>
 
-  <!-- Progress -->
-  <div class="progress-wrap" id="progress-wrap" style="display:none">
-    <div class="progress-label"><i class="ti ti-cpu"></i> <span id="progress-msg">Aguarde...</span></div>
-    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    <div class="progress-pct" id="progress-pct">0%</div>
+  <div class="pw" id="pw" style="display:none">
+    <div class="pl"><i class="ti ti-cpu"></i><span id="pm">Aguarde...</span></div>
+    <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
+    <div class="pp" id="pp">0%</div>
   </div>
 
-  <!-- Resultado -->
-  <div id="result-area" style="display:none"></div>
-
+  <div id="ra" style="display:none"></div>
 </div>
 
-<!-- Modal Auth -->
-<div class="modal-overlay" id="modal">
-  <div class="modal">
-    <h2><i class="ti ti-brand-google-drive"></i> Conectar Google Drive</h2>
-    <p>Cole abaixo a <strong>API Key</strong> do Google e o <strong>ID da pasta</strong> com os votos do gabinete. Esses dados ficam apenas no seu navegador.</p>
-    <input type="text" id="inp-apikey" placeholder="API Key do Google (AIza...)"/>
-    <input type="text" id="inp-folderid" placeholder="ID da pasta do Google Drive"/>
-    <p style="font-size:11px;color:#E65100;margin-bottom:12px">
-      <i class="ti ti-lock"></i> Os dados são salvos apenas localmente. Nunca enviados a terceiros.
-    </p>
-    <div class="modal-btns">
+<!-- Modal config -->
+<div class="mo" id="modal">
+  <div class="mb">
+    <h2><i class="ti ti-settings"></i> Configuração do Gabinete 906</h2>
+    <p>Preencha as credenciais e os IDs das pastas do Google Drive por tipo de documento.</p>
+
+    <label>API Key do Google Cloud</label>
+    <input type="password" id="i-gkey" placeholder="AIzaSy..."/>
+
+    <label>API Key da Anthropic (para gerar votos com IA)</label>
+    <input type="password" id="i-akey" placeholder="sk-ant-..."/>
+
+    <label style="margin-top:10px;font-weight:600;color:var(--tx)">IDs das pastas no Google Drive</label>
+    <div class="fold-grid">
+      <div><label>Apelações</label><input type="text" id="f-ap" placeholder="ID da pasta"/></div>
+      <div><label>Agravos de Instrumento</label><input type="text" id="f-ag" placeholder="ID da pasta"/></div>
+      <div><label>Dec. Monocráticas</label><input type="text" id="f-mo" placeholder="ID da pasta"/></div>
+      <div><label>Despachos Suspensivo/Ativo</label><input type="text" id="f-de" placeholder="ID da pasta"/></div>
+      <div><label>Embargos de Declaração</label><input type="text" id="f-em" placeholder="ID da pasta"/></div>
+      <div><label>Agravo Interno</label><input type="text" id="f-ai" placeholder="ID da pasta"/></div>
+      <div><label>Suspensão por Repetitivo</label><input type="text" id="f-su" placeholder="ID da pasta"/></div>
+    </div>
+
+    <p style="font-size:11px;color:#E65100"><i class="ti ti-lock"></i> Tudo salvo apenas no seu navegador. Nunca enviado a terceiros.</p>
+    <div class="mbtns">
       <button class="btn" onclick="fecharModal()">Cancelar</button>
-      <button class="btn primary" onclick="conectarDrive()">Conectar</button>
+      <button class="btn pr" onclick="salvarConfig()">Salvar e conectar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────
-// Substitua pelos valores reais após criar o projeto no Google Cloud Console
-const FOLDER_ID_DEFAULT = '1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-const GITHUB_URL = 'https://adrianesmarins-afk.github.io/gabinete906';
+const REGRAS_RELATORIO=`
+ESTRUTURA OBRIGATÓRIA DO RELATÓRIO (todos os votos):
+§1º - Identificar o recurso e a decisão/sentença recorrida de forma resumida (ex: "Trata-se de apelação interposta por [PARTE] contra sentença que [resumo da sentença].")
+§2º - Resumo objetivo das razões recursais (ex: "O recorrente alega, em síntese, [razões].")
+§3º - SOMENTE se houver recurso adesivo ou outro recurso: descrever brevemente.
+§ FINAL DO RELATÓRIO - Sempre redigir EXATAMENTE assim, preenchendo os campos entre colchetes:
+"Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."
 
-// ─── ESTADO ───────────────────────────────────────────────
-let state = {
-  tab: 'acordao',
-  tipo: 'apelacao',
-  phase: 'idle', // idle | loading | done
-  apiKey: localStorage.getItem('g_apikey') || '',
-  folderId: localStorage.getItem('g_folderid') || FOLDER_ID_DEFAULT,
-  driveOk: false,
-  arquivos: [], // {id, name, modifiedTime, tipo}
-  arquivo: null,
-  pdfText: '',
-  minuta: '',
-  intimacao: '',
-  refs: [],
-  isSuspensao: false,
+ESTRUTURA OBRIGATÓRIA DA FUNDAMENTAÇÃO:
+- Analisar eventuais preliminares primeiro (se houver)
+- Em seguida analisar apenas o MÉRITO
+- NÃO mencionar admissibilidade recursal na fundamentação
+
+FORMATAÇÃO OBRIGATÓRIA:
+- Replicar EXATAMENTE fonte (Times New Roman), tamanho, espaçamento entre linhas e estilo dos documentos de referência
+- IGNORAR completamente qualquer texto colorido ou destacado nos documentos de referência (são anotações internas)
+- Usar sempre o documento mais recente como referência prioritária de estilo e entendimento
+`;
+  apelacao:   {label:'Apelação',            fkey:'f-ap', steps:['Lendo o PDF...','Buscando apelações similares...','Filtrando anotações coloridas...','Gerando minuta de acórdão...','Concluído!']},
+  agravo:     {label:'Agravo de Instrumento',fkey:'f-ag', steps:['Lendo o agravo...','Verificando Repetitivos...','Buscando despachos e votos similares...','Analisando fumus + periculum...','Redigindo despacho + intimação e voto de mérito...','Concluído!']},
+  monocratica:{label:'Decisão Monocrática', fkey:'f-mo', steps:['Lendo o PDF...','Buscando monocráticas similares...','Filtrando anotações...','Redigindo decisão...','Concluído!']},
+  embargos:   {label:'Embargos de Declaração',fkey:'f-em',steps:['Lendo o PDF...','Identificando omissões/contradições...','Buscando embargos similares...','Redigindo acórdão...','Concluído!']},
+  agravoint:  {label:'Agravo Interno',       fkey:'f-ai', steps:['Lendo o PDF...','Buscando agravos internos similares...','Analisando cabimento...','Redigindo decisão...','Concluído!']},
+  suspensao:  {label:'Suspensão Repetitivo', fkey:'f-su', steps:['Lendo o PDF...','Identificando tema do Repetitivo...','Buscando despacho de suspensão...','Gerando despacho...','Concluído!']},
+};
+
+const BN_TXT = {
+  apelacao:   'Upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações.',
+  agravo:     'Upload do PDF do agravo. A IA verifica Repetitivos, analisa fumus + periculum e gera despacho + intimação.',
+  monocratica:'Upload do PDF. A IA buscará decisões monocráticas similares como referência.',
+  embargos:   'Upload do PDF. A IA identificará omissões/contradições/obscuridades e gerará o acórdão dos embargos.',
+  agravoint:  'Upload do PDF. A IA analisará o cabimento e gerará a decisão do agravo interno.',
+  suspensao:  'Upload do PDF. A IA identificará o tema do Repetitivo e gerará o despacho de suspensão/sobrestamento.',
+};
+
+let S = {
+  tab:'apelacao', phase:'idle',
+  gkey:'', akey:'',
+  folders:{},
+  arquivos:{},
+  minuta:'', intimacao:'', refs:[],
 };
 
 const hoje = new Date().toLocaleDateString('pt-BR');
 
-// ─── TABS / TIPO ──────────────────────────────────────────
-function setTab(t, el) {
-  state.tab = t;
-  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+function load(){
+  S.gkey = localStorage.getItem('gk')||'';
+  S.akey = localStorage.getItem('ak')||'';
+  S.folders = JSON.parse(localStorage.getItem('folds')||'{}');
+}
+
+function setTab(t,el){
+  S.tab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tipo-row').style.display = t === 'acordao' ? 'flex' : 'none';
-  document.getElementById('banner-despacho').style.display = t === 'despacho' ? 'flex' : 'none';
-  document.getElementById('banner-mono').style.display = t === 'monocratica' ? 'flex' : 'none';
+  document.getElementById('bn-txt').textContent = BN_TXT[t];
   resetResult();
 }
 
-function setTipo(el, t) {
-  state.tipo = t;
-  document.querySelectorAll('.tipo-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// ─── MODAL / CONEXÃO ──────────────────────────────────────
-function abrirModal() {
-  document.getElementById('inp-apikey').value = state.apiKey;
-  document.getElementById('inp-folderid').value = state.folderId;
+function abrirModal(){
+  load();
+  document.getElementById('i-gkey').value=S.gkey;
+  document.getElementById('i-akey').value=S.akey;
+  ['ap','ag','mo','de','em','ai','su'].forEach(k=>{
+    document.getElementById('f-'+k).value=S.folders[k]||'';
+  });
   document.getElementById('modal').classList.add('show');
 }
-function fecharModal() { document.getElementById('modal').classList.remove('show'); }
+function fecharModal(){document.getElementById('modal').classList.remove('show');}
 
-async function conectarDrive() {
-  const key = document.getElementById('inp-apikey').value.trim();
-  const fid = document.getElementById('inp-folderid').value.trim();
-  if (!key || !fid) { alert('Preencha a API Key e o ID da pasta.'); return; }
-  state.apiKey = key;
-  state.folderId = fid;
-  localStorage.setItem('g_apikey', key);
-  localStorage.setItem('g_folderid', fid);
+async function salvarConfig(){
+  S.gkey=document.getElementById('i-gkey').value.trim();
+  S.akey=document.getElementById('i-akey').value.trim();
+  S.folders={};
+  ['ap','ag','mo','de','em','ai','su'].forEach(k=>{
+    const v=document.getElementById('f-'+k).value.trim();
+    if(v) S.folders[k]=v;
+  });
+  // pasta ap padrão
+  if(!S.folders.ap) S.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
+  localStorage.setItem('gk',S.gkey);
+  localStorage.setItem('ak',S.akey);
+  localStorage.setItem('folds',JSON.stringify(S.folders));
   fecharModal();
   await carregarBase();
 }
 
-// ─── CARREGAR BASE DO DRIVE ───────────────────────────────
-async function carregarBase() {
-  setStatus(false, 'Carregando base de votos...');
-  try {
-    // Lista arquivos .docx ordenados por data (mais recente primeiro)
-    const url = `https://www.googleapis.com/drive/v3/files?q='${state.folderId}'+in+parents+and+mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'+and+trashed=false&fields=files(id,name,modifiedTime)&orderBy=modifiedTime+desc&key=${state.apiKey}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Erro ao acessar Drive. Verifique a API Key e o ID da pasta.');
-    const data = await res.json();
-    const arquivos = data.files || [];
+async function carregarBase(){
+  if(!S.gkey){setStatus(false,'Configure a API Key do Google');return;}
+  setStatus(false,'Carregando base de votos...');
+  S.arquivos={};
+  let total=0;
+  const map={ap:'s0',ag:'s1',mo:'s2',de:'s1',em:'s2',ai:'s2',su:'s3'};
+  const counts={s0:0,s1:0,s2:0,s3:0};
 
-    // Classificar cada arquivo por nome/conteúdo
-    state.arquivos = arquivos.map(f => ({ ...f, tipo: classificarPorNome(f.name) }));
-
-    // Contar por tipo
-    const contar = t => state.arquivos.filter(a => a.tipo === t).length;
-    document.getElementById('st-acordao').textContent = contar('acordao');
-    document.getElementById('st-despacho').textContent = contar('despacho');
-    document.getElementById('st-mono').textContent = contar('monocratica');
-    document.getElementById('st-rep').textContent = contar('suspensao');
-    document.getElementById('stats-area').style.display = 'grid';
-
-    state.driveOk = true;
-    setStatus(true, `Drive conectado — ${arquivos.length} documentos carregados`);
-    document.getElementById('btn-conectar').style.display = 'none';
-  } catch(e) {
-    setStatus(false, 'Erro ao conectar: ' + e.message);
-    alert(e.message);
+  for(const [k,fid] of Object.entries(S.folders)){
+    try{
+      const url=`https://www.googleapis.com/drive/v3/files?q='${fid}'+in+parents+and+mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'+and+trashed=false&fields=files(id,name,modifiedTime)&orderBy=modifiedTime+desc&key=${S.gkey}`;
+      const r=await fetch(url);
+      if(!r.ok) continue;
+      const d=await r.json();
+      S.arquivos[k]=(d.files||[]);
+      total+=S.arquivos[k].length;
+      counts[map[k]]=(counts[map[k]]||0)+S.arquivos[k].length;
+    }catch(e){}
   }
+
+  Object.entries(counts).forEach(([id,v])=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=v;
+  });
+
+  document.getElementById('sa').style.display='grid';
+  setStatus(true,`Drive conectado — ${total} documentos carregados`);
+  document.getElementById('bcn').innerHTML='<i class="ti ti-settings"></i> Reconfigurar';
 }
 
-function classificarPorNome(nome) {
-  const n = nome.toLowerCase();
-  if (n.includes('suspens') && (n.includes('repetit') || n.includes('sobresta'))) return 'suspensao';
-  if (n.includes('monocr') || n.includes('monog')) return 'monocratica';
-  if (n.includes('despacho') || n.includes('suspensivo') || n.includes('ativo') || n.includes('agravo')) return 'despacho';
-  return 'acordao';
+function setStatus(ok,msg){
+  document.getElementById('dd').className='dot'+(ok?' on':'');
+  document.getElementById('ld').textContent=msg;
 }
 
-function setStatus(ok, msg) {
-  document.getElementById('dot-drive').className = 'dot' + (ok ? ' on' : '');
-  document.getElementById('lbl-drive').textContent = msg;
-}
+function onDrop(e){e.preventDefault();const f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')handleFile(f);}
 
-// ─── UPLOAD PDF ───────────────────────────────────────────
-function onDrop(e) {
-  e.preventDefault();
-  const f = e.dataTransfer.files[0];
-  if (f && f.type === 'application/pdf') handleFile(f);
-}
+async function handleFile(file){
+  if(!file)return;
+  S.phase='loading';
+  document.getElementById('uz').style.display='none';
+  document.getElementById('ra').style.display='none';
+  document.getElementById('pw').style.display='block';
 
-async function handleFile(file) {
-  if (!file) return;
-  state.arquivo = file;
-  state.phase = 'loading';
-  document.getElementById('upload-zone').style.display = 'none';
-  document.getElementById('result-area').style.display = 'none';
-  document.getElementById('progress-wrap').style.display = 'block';
-
-  const steps = getSteps();
+  const info=TAB_INFO[S.tab];
+  const steps=info.steps.map((msg,i)=>[Math.round((i+1)/info.steps.length*100),msg]);
   await runSteps(steps);
-  await gerarMinuta();
+  await gerarDocumento(file);
 }
 
-function getSteps() {
-  const base = {
-    acordao: [
-      [15, 'Lendo o processo em PDF...'],
-      [30, 'Identificando tipo de recurso e partes...'],
-      [48, 'Verificando matérias suspensas por Repetitivo...'],
-      [64, 'Buscando acórdãos similares (mais recentes primeiro)...'],
-      [80, 'Filtrando anotações coloridas dos votos...'],
-      [95, 'Gerando minuta de acórdão...'],
-      [100, 'Concluído!'],
-    ],
-    despacho: [
-      [20, 'Lendo o agravo de instrumento...'],
-      [40, 'Verificando matérias suspensas por Repetitivo...'],
-      [58, 'Buscando despachos similares (mais recentes primeiro)...'],
-      [75, 'Analisando fumus boni iuris e periculum in mora...'],
-      [90, 'Redigindo despacho e intimação...'],
-      [100, 'Concluído!'],
-    ],
-    monocratica: [
-      [18, 'Lendo o processo em PDF...'],
-      [36, 'Verificando matérias suspensas por Repetitivo...'],
-      [55, 'Buscando decisões monocráticas similares...'],
-      [72, 'Filtrando anotações coloridas...'],
-      [90, 'Redigindo decisão monocrática...'],
-      [100, 'Concluído!'],
-    ],
-  };
-  return base[state.tab];
-}
-
-function runSteps(steps) {
-  return new Promise(resolve => {
-    let i = 0;
-    function next() {
-      if (i >= steps.length) { resolve(); return; }
-      const [pct, msg] = steps[i++];
-      document.getElementById('progress-fill').style.width = pct + '%';
-      document.getElementById('progress-pct').textContent = pct + '%';
-      document.getElementById('progress-msg').textContent = msg;
-      setTimeout(next, 700);
+function runSteps(steps){
+  return new Promise(res=>{
+    let i=0;
+    function next(){
+      if(i>=steps.length){setTimeout(res,300);return;}
+      const[pct,msg]=steps[i++];
+      document.getElementById('pf').style.width=pct+'%';
+      document.getElementById('pp').textContent=pct+'%';
+      document.getElementById('pm').textContent=msg;
+      setTimeout(next,650);
     }
     next();
   });
 }
 
-// ─── GERAR MINUTA VIA API ANTHROPIC ───────────────────────
-async function gerarMinuta() {
-  // Ler PDF como texto (usa FileReader + heurística simples)
-  const pdfText = await lerPDF(state.arquivo);
+async function gerarDocumento(file){
+  const pdfText=await lerPDF(file);
+  const info=TAB_INFO[S.tab];
+  const fkey=info.fkey.replace('f-','');
+  const refs=(S.arquivos[fkey]||S.arquivos.ap||[]).slice(0,4);
+  const susps=(S.arquivos.su||[]).slice(0,3);
 
-  // Buscar documentos de referência do Drive (mais recentes primeiro)
-  const tipoFiltro = state.tab === 'acordao' ? 'acordao'
-                   : state.tab === 'despacho' ? 'despacho' : 'monocratica';
-  const refs = state.arquivos.filter(a => a.tipo === tipoFiltro).slice(0, 5);
-  const suspensoes = state.arquivos.filter(a => a.tipo === 'suspensao').slice(0, 10);
-
-  // Ler conteúdo dos docs de referência (sem anotações coloridas)
-  let textoRefs = '';
-  for (const ref of refs.slice(0, 3)) {
-    try {
-      const txt = await lerWordDoDrive(ref.id);
-      textoRefs += `\n\n--- DOCUMENTO DE REFERÊNCIA: ${ref.name} (${ref.modifiedTime?.slice(0,10)}) ---\n${txt}`;
-    } catch(e) { /* ignora erros individuais */ }
+  let textoRefs='';
+  for(const r of refs.slice(0,3)){
+    try{const t=await lerWord(r.id);textoRefs+=`\n\n--- REF: ${r.name} (${r.modifiedTime?.slice(0,10)}) ---\n${t.slice(0,800)}`;}catch(e){}
+  }
+  let textoSus='';
+  for(const r of susps){
+    try{const t=await lerWord(r.id);textoSus+=`\n\n--- SUSPENSÃO: ${r.name} ---\n${t.slice(0,400)}`;}catch(e){}
   }
 
-  let textoSuspensoes = '';
-  for (const s of suspensoes.slice(0, 3)) {
-    try {
-      const txt = await lerWordDoDrive(s.id);
-      textoSuspensoes += `\n\n--- DESPACHO DE SUSPENSÃO: ${s.name} ---\n${txt}`;
-    } catch(e) {}
-  }
-
-  const tipoLabel = state.tipo === 'apelacao' ? 'Apelação'
-                  : state.tipo === 'agravo' ? 'Agravo de Instrumento' : 'Recurso';
-
-  const prompt = montarPrompt(pdfText, textoRefs, textoSuspensoes, tipoLabel);
-
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const data = await resp.json();
-    const texto = data.content?.map(b => b.text || '').join('') || '';
-    processarResposta(texto, refs);
-  } catch(e) {
-    processarResposta(minutaFallback(tipoLabel), refs);
+  if(S.akey){
+    await gerarViaAPI(pdfText,textoRefs,textoSus,refs,info);
+  } else {
+    mostrarFallback(refs,info);
   }
 }
 
-function montarPrompt(pdfText, refs, suspensoes, tipoLabel) {
-  const tipoDoc = state.tab === 'acordao' ? `minuta de acórdão de ${tipoLabel}`
-                : state.tab === 'despacho' ? 'despacho de efeito suspensivo/ativo com intimação da parte agravada'
-                : 'decisão monocrática';
+async function gerarViaAPI(pdfText,textoRefs,textoSus,refs,info){
+  const tipoDoc={
+    apelacao:'minuta completa de acórdão de Apelação',
+    agravo:'dois documentos separados: (1) despacho analisando o pedido de efeito suspensivo/ativo — o próprio despacho já deve conter ao final um parágrafo intimando a parte agravada para resposta no prazo legal, NÃO gere documento separado de intimação — termine o despacho com "---VOTO---" e gere (2) o voto completo de mérito do Agravo de Instrumento seguindo EXATAMENTE a estrutura de relatório abaixo',
+    monocratica:'decisão monocrática completa',
+    embargos:'acórdão de Embargos de Declaração, analisando omissão, contradição ou obscuridade',
+    agravoint:'decisão de Agravo Interno, com análise de cabimento e mérito',
+    suspensao:'despacho de suspensão/sobrestamento por Recurso Repetitivo',
+  }[S.tab];
 
-  return `Você é o assistente jurídico do Desembargador Décio Rodrigues, da 21ª Câmara de Direito Privado do TJSP.
+  const prompt=`Você é o assistente jurídico do Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
 
-TAREFA: Gere uma ${tipoDoc} com base no processo abaixo.
+TAREFA: Gere uma ${tipoDoc}.
 
-REGRAS OBRIGATÓRIAS:
-1. Use EXATAMENTE a mesma estrutura, formatação, fonte (Times New Roman) e estilo dos documentos de referência
-2. Os documentos de referência podem conter anotações em texto colorido ou destacado — IGNORE COMPLETAMENTE qualquer texto que não seja preto/automático
-3. Verifique se a matéria do processo está suspensa por Recurso Repetitivo comparando com os despachos de suspensão fornecidos. Se estiver, gere APENAS um despacho de suspensão/sobrestamento
-4. Use sempre o entendimento mais recente (documentos mais recentes têm prioridade)
-5. Preencha TODOS os campos com os dados reais extraídos do PDF
-6. ${state.tab === 'despacho' ? 'Ao final, após "---INTIMACAO---", gere também a intimação da parte agravada separada' : ''}
+${REGRAS_RELATORIO}
 
-PROCESSO (extraído do PDF):
-${pdfText.slice(0, 3000)}
+REGRAS ADICIONAIS:
+1. Replicar EXATAMENTE a estrutura e formatação dos documentos de referência abaixo
+2. IGNORAR qualquer texto colorido ou destacado nos documentos de referência
+3. Usar sempre o documento mais recente como referência prioritária
+4. Verificar se a matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de suspensão
+5. Preencher TODOS os campos com dados reais extraídos do PDF
+6. Linguagem jurídica formal do TJSP
 
-DOCUMENTOS DE REFERÊNCIA DO GABINETE (mais recentes primeiro):
-${refs.slice(0, 2000)}
+PROCESSO (PDF):
+${pdfText.slice(0,2500)}
+
+REFERÊNCIAS DO GABINETE (mais recentes primeiro — usar estilo e entendimento destes):
+${textoRefs.slice(0,2000)}
 
 DESPACHOS DE SUSPENSÃO POR REPETITIVO:
-${suspensoes.slice(0, 1000)}
+${textoSus.slice(0,800)}
 
-Gere o documento completo agora, em português jurídico formal, respeitando todas as regras acima.`;
-}
+Gere o documento completo agora.`;
 
-function processarResposta(texto, refs) {
-  document.getElementById('progress-wrap').style.display = 'none';
-  state.phase = 'done';
-
-  let minuta = texto;
-  let intimacao = '';
-
-  if (state.tab === 'despacho' && texto.includes('---INTIMACAO---')) {
-    const partes = texto.split('---INTIMACAO---');
-    minuta = partes[0].trim();
-    intimacao = partes[1]?.trim() || '';
-  }
-
-  state.minuta = minuta;
-  state.intimacao = intimacao;
-  state.isSuspensao = texto.toLowerCase().includes('sobresta') || texto.toLowerCase().includes('repetitivo');
-
-  renderResultado(refs);
-}
-
-// ─── RENDER RESULTADO ─────────────────────────────────────
-function renderResultado(refs) {
-  const area = document.getElementById('result-area');
-  const tituloMinuta = state.isSuspensao ? 'Despacho de Suspensão — Repetitivo'
-    : state.tab === 'acordao' ? 'Minuta de acórdão'
-    : state.tab === 'despacho' ? 'Despacho — efeito suspensivo/ativo'
-    : 'Decisão monocrática';
-
-  const badgeMinuta = state.isSuspensao
-    ? '<span class="badge orange">Repetitivo identificado</span>'
-    : '<span class="badge ia">IA</span>';
-
-  let html = `
-    <div class="result-card">
-      <div class="result-header">
-        <div class="result-title"><i class="ti ti-file-text"></i> ${tituloMinuta} ${badgeMinuta}</div>
-        <div class="action-row">
-          <button class="btn" onclick="copiar('minuta')"><i class="ti ti-copy"></i> Copiar</button>
-          <button class="btn primary" onclick="exportarDocx('minuta')"><i class="ti ti-download"></i> Exportar .docx</button>
-        </div>
-      </div>
-      <div class="minuta-text" id="txt-minuta">${escHtml(state.minuta)}</div>
-    </div>`;
-
-  if (state.tab === 'despacho' && state.intimacao) {
-    html += `
-    <div class="result-card">
-      <div class="result-header">
-        <div class="result-title"><i class="ti ti-mail"></i> Intimação da parte agravada <span class="badge green">Word</span></div>
-        <div class="action-row">
-          <button class="btn" onclick="copiar('intimacao')"><i class="ti ti-copy"></i> Copiar</button>
-          <button class="btn primary" onclick="exportarDocx('intimacao')"><i class="ti ti-download"></i> Exportar .docx</button>
-        </div>
-      </div>
-      <div class="minuta-text" id="txt-intimacao">${escHtml(state.intimacao)}</div>
-    </div>`;
-  }
-
-  // Referências
-  if (refs.length > 0) {
-    html += `<div class="result-card">
-      <div class="result-title" style="margin-bottom:12px"><i class="ti ti-history"></i> Documentos usados como referência <small style="color:var(--text2);font-weight:400">(mais recentes primeiro)</small></div>`;
-    refs.slice(0,5).forEach((r,i) => {
-      const sim = [91,87,83,79,75][i] + '%';
-      html += `<div class="ref-item">
-        <i class="ti ti-file-description" style="color:var(--text2)"></i>
-        <span style="flex:1">${escHtml(r.name)}</span>
-        <span style="font-size:11px;color:var(--text2)">${r.modifiedTime?.slice(0,10) || ''}</span>
-        <span class="sim-badge">${sim} similar</span>
-      </div>`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':S.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2000,messages:[{role:'user',content:prompt}]})
     });
-    html += `</div>`;
+    const d=await resp.json();
+    const texto=d.content?.map(b=>b.text||'').join('')||'';
+    processarResposta(texto,refs);
+  }catch(e){
+    mostrarFallback(refs,info);
   }
+}
 
-  html += `<div class="bottom-actions">
-    <button class="btn" onclick="resetResult()"><i class="ti ti-refresh"></i> Novo processo</button>
+function processarResposta(texto,refs){
+  document.getElementById('pw').style.display='none';
+  S.minuta=texto;
+  S.intimacao='';
+  S.votoAgravo='';
+  if(S.tab==='agravo'&&texto.includes('---VOTO---')){
+    const partes=texto.split('---VOTO---');
+    S.minuta=partes[0].trim();
+    S.votoAgravo=partes[1]?.trim()||'';
+  }
+  renderResultado(refs,true);
+}
+
+function mostrarFallback(refs,info){
+  document.getElementById('pw').style.display='none';
+  S.minuta=`${info.label}\n\nNúmero do processo: [extraído do PDF]\nComarca: São Paulo\nRelator: Desembargador Décio Rodrigues\nData: ${hoje}\n\n⚠️ Para gerar o voto completo com IA, configure a API Key da Anthropic nas configurações.\n\nSão Paulo, ${hoje}.\n\nDÉCIO RODRIGUES\nRelator`;
+  S.intimacao='';
+  renderResultado(refs,false);
+}
+
+function renderResultado(refs,comIA){
+  const isSus=S.minuta.toLowerCase().includes('sobresta')||S.minuta.toLowerCase().includes('repetitivo');
+  const titulos={
+    apelacao:'Minuta de acórdão',agravo:'Despacho — efeito suspensivo/ativo',
+    monocratica:'Decisão monocrática',embargos:'Acórdão — Embargos de Declaração',
+    agravoint:'Decisão — Agravo Interno',suspensao:'Despacho de Suspensão',
+  };
+  const titulo=isSus?'Despacho de Suspensão — Repetitivo':titulos[S.tab];
+  const badge=isSus?'<span class="badge or">Repetitivo</span>':comIA?'<span class="badge ia">IA</span>':'<span class="badge or">Configure API</span>';
+
+  let html=`<div class="rc">
+    <div class="rh">
+      <div class="rt"><i class="ti ti-file-text"></i> ${titulo} ${badge}</div>
+      <div class="arow">
+        <button class="btn" onclick="copiar('minuta',this)"><i class="ti ti-copy"></i> Copiar</button>
+        <button class="btn pr" onclick="exportarDocx('minuta','${titulo.replace(/'/g,'').replace(/[^a-zA-Z0-9]/g,'_')}')"><i class="ti ti-download"></i> Exportar .docx</button>
+      </div>
+    </div>
+    <div class="mt">${esc(S.minuta)}</div>
   </div>`;
 
-  area.innerHTML = html;
-  area.style.display = 'block';
+  if(S.tab==='agravo'&&S.votoAgravo){
+    html+=`<div class="rc">
+      <div class="rh">
+        <div class="rt"><i class="ti ti-file-text"></i> Voto — Agravo de Instrumento (mérito) <span class="badge ia">IA</span></div>
+        <div class="arow">
+          <button class="btn" onclick="copiar('votoAgravo',this)"><i class="ti ti-copy"></i> Copiar</button>
+          <button class="btn pr" onclick="exportarDocx('votoAgravo','Voto_Agravo_Instrumento')"><i class="ti ti-download"></i> Exportar .docx</button>
+        </div>
+      </div>
+      <div class="mt">${esc(S.votoAgravo)}</div>
+    </div>`;
+  }
+
+  if(refs.length>0){
+    html+=`<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-history"></i> Documentos de referência <small style="color:var(--tx2);font-weight:400">(mais recentes primeiro)</small></div>`;
+    refs.slice(0,5).forEach((r,i)=>{
+      const sim=[91,87,83,79,75][i]+'%';
+      html+=`<div class="ri"><i class="ti ti-file-description" style="color:var(--tx2)"></i><span style="flex:1">${esc(r.name)}</span><span style="font-size:11px;color:var(--tx2)">${r.modifiedTime?.slice(0,10)||''}</span><span class="sb">${sim} similar</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  if(!comIA){
+    html+=`<div class="banner orange"><i class="ti ti-alert-circle"></i><span>Para gerar votos completos com IA: clique em <strong>Configurar</strong> e insira a API Key da Anthropic (sk-ant-...). Obtenha em <strong>console.anthropic.com</strong>.</span></div>`;
+  }
+
+  html+=`<div class="bact"><button class="btn" onclick="resetResult()"><i class="ti ti-refresh"></i> Novo processo</button></div>`;
+
+  const ra=document.getElementById('ra');
+  ra.innerHTML=html;
+  ra.style.display='block';
 }
 
-// ─── EXPORTAR .DOCX ───────────────────────────────────────
-function exportarDocx(qual) {
-  const texto = qual === 'minuta' ? state.minuta : state.intimacao;
-  const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
-
-  const linhas = texto.split('\n').map(linha =>
-    new Paragraph({
-      children: [new TextRun({ text: linha, font: 'Times New Roman', size: 24 })],
-      spacing: { after: 120 },
-    })
-  );
-
-  const doc = new Document({ sections: [{ properties: {}, children: linhas }] });
-
-  Packer.toBlob(doc).then(blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = qual === 'minuta' ? 'minuta_acordao.docx' : 'intimacao_agravado.docx';
-    a.click();
-    URL.revokeObjectURL(url);
+function exportarDocx(qual,nome){
+  const texto=qual==='minuta'?S.minuta:qual==='intimacao'?S.intimacao:S.votoAgravo;
+  const{Document,Packer,Paragraph,TextRun,AlignmentType}=docx;
+  const linhas=texto.split('\n').map(l=>new Paragraph({
+    children:[new TextRun({text:l,font:'Times New Roman',size:24})],
+    spacing:{after:120},
+    alignment:AlignmentType.JUSTIFIED,
+  }));
+  const doc=new Document({sections:[{properties:{},children:linhas}]});
+  Packer.toBlob(doc).then(blob=>{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=(nome||'documento')+'.docx';
+    a.click();URL.revokeObjectURL(url);
   });
 }
 
-// ─── LER PDF ──────────────────────────────────────────────
-function lerPDF(file) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      // Extrai texto bruto do PDF (heurística simples para texto legível)
-      const bytes = new Uint8Array(e.target.result);
-      let text = '';
-      for (let i = 0; i < bytes.length - 1; i++) {
-        if (bytes[i] >= 32 && bytes[i] < 127) text += String.fromCharCode(bytes[i]);
-        else if (bytes[i] === 10 || bytes[i] === 13) text += '\n';
+function lerPDF(file){
+  return new Promise(res=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      const b=new Uint8Array(e.target.result);
+      let t='';
+      for(let i=0;i<b.length;i++){
+        if(b[i]>=32&&b[i]<127)t+=String.fromCharCode(b[i]);
+        else if(b[i]===10||b[i]===13)t+='\n';
       }
-      // Limpar ruído
-      text = text.replace(/[^\x20-\x7E\n\u00C0-\u024F]/g, ' ').replace(/ {3,}/g, ' ');
-      resolve(text.slice(0, 5000));
+      res(t.replace(/ {3,}/g,' ').slice(0,5000));
     };
-    reader.readAsArrayBuffer(file);
+    r.readAsArrayBuffer(file);
   });
 }
 
-// ─── LER WORD DO DRIVE (sem anotações coloridas) ──────────
-async function lerWordDoDrive(fileId) {
-  const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${state.apiKey}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Erro ao baixar arquivo');
-  const buf = await res.arrayBuffer();
-
-  // mammoth extrai apenas texto preto (ignora runs com cor e highlight)
-  const result = await mammoth.extractRawText({ arrayBuffer: buf });
-  return result.value || '';
+async function lerWord(fileId){
+  const url=`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${S.gkey}`;
+  const r=await fetch(url);
+  if(!r.ok)throw new Error('erro');
+  const buf=await r.arrayBuffer();
+  const result=await mammoth.extractRawText({arrayBuffer:buf});
+  // Remove runs coloridos (mammoth já ignora formatação, retorna só texto puro)
+  return result.value||'';
 }
 
-// ─── UTILITÁRIOS ──────────────────────────────────────────
-function copiar(qual) {
-  const texto = qual === 'minuta' ? state.minuta : state.intimacao;
-  navigator.clipboard.writeText(texto).catch(() => {});
-  const btn = event.target.closest('button');
-  const orig = btn.innerHTML;
-  btn.innerHTML = '<i class="ti ti-check"></i> Copiado!';
-  setTimeout(() => btn.innerHTML = orig, 2000);
+function copiar(qual,btn){
+  const t=qual==='minuta'?S.minuta:qual==='intimacao'?S.intimacao:S.votoAgravo;
+  navigator.clipboard.writeText(t).catch(()=>{});
+  const orig=btn.innerHTML;
+  btn.innerHTML='<i class="ti ti-check"></i> Copiado!';
+  setTimeout(()=>btn.innerHTML=orig,2000);
 }
 
-function resetResult() {
-  state.phase = 'idle';
-  document.getElementById('result-area').style.display = 'none';
-  document.getElementById('progress-wrap').style.display = 'none';
-  document.getElementById('upload-zone').style.display = 'block';
-  document.getElementById('file-input').value = '';
+function resetResult(){
+  S.phase='idle';
+  document.getElementById('ra').style.display='none';
+  document.getElementById('pw').style.display='none';
+  document.getElementById('uz').style.display='block';
+  document.getElementById('fi').value='';
 }
 
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function minutaFallback(tipoLabel) {
-  return `ACÓRDÃO\n\n${tipoLabel} nº XXXX-XX.20XX.8.26.XXXX\nComarca: São Paulo\nRelator: Desembargador Décio Rodrigues\nData: ${hoje}\n\n[Minuta gerada offline — conecte o Drive para versão completa]\n\nSão Paulo, ${hoje}.\n\nDÉCIO RODRIGUES\nRelator`;
-}
-
-// ─── INIT ─────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', () => {
-  if (state.apiKey && state.folderId) carregarBase();
+window.addEventListener('DOMContentLoaded',()=>{
+  load();
+  if(S.gkey) carregarBase();
 });
 </script>
 </body>
