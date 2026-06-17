@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Gabinete 906</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.umd.min.js"></script>
+<script>
+// docx inline fallback — exporta como RTF com formatação Times New Roman
+window._docxReady = false;
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.umd.min.js" onload="window._docxReady=true"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh}
@@ -356,7 +360,7 @@ async function gerarViaAPI(pdfText,textoRefs,textoSus,refs){
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':S.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,messages:[{role:'user',content:prompt}]})
     });
     var d=await resp.json();
     var texto=(d.content||[]).map(function(b){return b.text||'';}).join('');
@@ -414,18 +418,39 @@ function renderResultado(refs,comIA){
 
 function exportarDocx(qual,nome){
   var texto=qual==='minuta'?S.minuta:S.votoAgravo;
-  var D=docx;
-  var linhas=texto.split('\n').map(function(l){
-    return new D.Paragraph({children:[new D.TextRun({text:l,font:'Times New Roman',size:24})],spacing:{after:120},alignment:D.AlignmentType.JUSTIFIED});
-  });
-  var doc=new D.Document({sections:[{properties:{},children:linhas}]});
-  D.Packer.toBlob(doc).then(function(blob){
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url;a.download=(nome||'documento')+'.docx';
-    document.body.appendChild(a);a.click();
-    document.body.removeChild(a);URL.revokeObjectURL(url);
-  });
+  if(!texto){alert('Nenhum conteúdo para exportar.');return;}
+
+  // Tenta exportar como .docx se a biblioteca carregou
+  if(window._docxReady && typeof docx !== 'undefined'){
+    var D=docx;
+    var linhas=texto.split('\n').map(function(l){
+      return new D.Paragraph({children:[new D.TextRun({text:l,font:'Times New Roman',size:24})],spacing:{after:120},alignment:D.AlignmentType.JUSTIFIED});
+    });
+    var doc=new D.Document({sections:[{properties:{},children:linhas}]});
+    D.Packer.toBlob(doc).then(function(blob){
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');
+      a.href=url;a.download=(nome||'documento')+'.docx';
+      document.body.appendChild(a);a.click();
+      document.body.removeChild(a);URL.revokeObjectURL(url);
+    });
+    return;
+  }
+
+  // Fallback: exporta como RTF (abre no Word normalmente)
+  var rtf='\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj\\li0\\ri0 ';
+  var linhas=texto.split('\n');
+  for(var i=0;i<linhas.length;i++){
+    var l=linhas[i].replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}');
+    rtf+=l+'\\par ';
+  }
+  rtf+='}';
+  var blob=new Blob([rtf],{type:'application/rtf'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download=(nome||'documento')+'.rtf';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
 function lerPDF(file){
