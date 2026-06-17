@@ -354,18 +354,29 @@ async function gerarDocumento(file){
   }
 }
 
-async function gerarViaAPI(pdfText,textoRefs,textoSus,refs){
-  var prompt='Você é o assistente jurídico do Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Gere uma '+TIPO_DOC[S.tab]+'.\n\n'+REGRAS+'\n\nREGRAS ADICIONAIS:\n- Verificar se matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de sobrestamento\n- Preencher TODOS os campos com dados reais do PDF\n- Linguagem jurídica formal do TJSP\n\nPROCESSO (PDF):\n'+pdfText.slice(0,2500)+'\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro):\n'+textoRefs.slice(0,2000)+'\n\nDESPACHOS DE SUSPENSÃO POR REPETITIVO:\n'+textoSus.slice(0,800)+'\n\nGere o documento completo agora.';
+async function gerarViaAPI(pdfBase64,textoRefs,textoSus,refs){
+  var prompt=REGRAS+'\n\nREGRAS ADICIONAIS:\n- Verificar se matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de sobrestamento\n- Preencher TODOS os campos com dados reais do PDF anexo\n- Linguagem jurídica formal do TJSP\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro — usar estilo e entendimento destes):\n'+textoRefs.slice(0,2000)+'\n\nDESPACHOS DE SUSPENSÃO POR REPETITIVO:\n'+textoSus.slice(0,800)+'\n\nGere agora uma '+TIPO_DOC[S.tab]+' com base no PDF anexo.';
   try{
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':S.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:3000,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'document',source:{type:'base64',media_type:'application/pdf',data:pdfBase64}},
+            {type:'text',text:prompt}
+          ]
+        }]
+      })
     });
     var d=await resp.json();
+    if(d.error){console.error('API error:',d.error);mostrarFallback(refs);return;}
     var texto=(d.content||[]).map(function(b){return b.text||'';}).join('');
     processarResposta(texto,refs);
-  }catch(e){mostrarFallback(refs);}
+  }catch(e){console.error('fetch error:',e);mostrarFallback(refs);}
 }
 
 function processarResposta(texto,refs){
@@ -451,6 +462,15 @@ function exportarDocx(qual,nome){
   a.href=url;a.download=(nome||'documento')+'.rtf';
   document.body.appendChild(a);a.click();
   document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function fileToBase64(file){
+  return new Promise(function(res,rej){
+    var r=new FileReader();
+    r.onload=function(e){res(e.target.result.split(',')[1]);};
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
 }
 
 function lerPDF(file){
