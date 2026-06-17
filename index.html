@@ -354,8 +354,8 @@ async function gerarDocumento(file){
   }
 }
 
-async function gerarViaAPI(pdfBase64,textoRefs,textoSus,refs){
-  var prompt=REGRAS+'\n\nREGRAS ADICIONAIS:\n- Verificar se matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de sobrestamento\n- Preencher TODOS os campos com dados reais do PDF anexo\n- Linguagem jurídica formal do TJSP\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro — usar estilo e entendimento destes):\n'+textoRefs.slice(0,2000)+'\n\nDESPACHOS DE SUSPENSÃO POR REPETITIVO:\n'+textoSus.slice(0,800)+'\n\nGere agora uma '+TIPO_DOC[S.tab]+' com base no PDF anexo.';
+async function gerarViaAPI(pdfText,textoRefs,textoSus,refs){
+  var prompt='Você é o assistente jurídico do Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Gere uma '+TIPO_DOC[S.tab]+'.\n\n'+REGRAS+'\n\nREGRAS ADICIONAIS:\n- Verificar se matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de sobrestamento\n- Preencher TODOS os campos com dados reais extraídos do texto do processo abaixo\n- Linguagem jurídica formal do TJSP\n\nTEXTO DO PROCESSO (extraído do PDF):\n'+pdfText+'\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro):\n'+textoRefs.slice(0,2000)+'\n\nDESPACHOS DE SUSPENSÃO POR REPETITIVO:\n'+textoSus.slice(0,800)+'\n\nGere o documento completo agora.';
   try{
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -363,13 +363,7 @@ async function gerarViaAPI(pdfBase64,textoRefs,textoSus,refs){
       body:JSON.stringify({
         model:'claude-sonnet-4-6',
         max_tokens:3000,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'document',source:{type:'base64',media_type:'application/pdf',data:pdfBase64}},
-            {type:'text',text:prompt}
-          ]
-        }]
+        messages:[{role:'user',content:prompt}]
       })
     });
     var d=await resp.json();
