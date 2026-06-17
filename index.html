@@ -165,6 +165,19 @@ h1{font-size:17px;font-weight:600}
   </div>
   <input type="file" id="fi" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])"/>
 
+  <!-- Área de texto alternativa -->
+  <div id="txt-area-wrap" style="margin-bottom:1.25rem">
+    <div style="font-size:13px;color:#6b7280;margin-bottom:6px">
+      OU cole o texto do processo aqui (copie do e-SAJ/e-PROC com Ctrl+A, Ctrl+C):
+    </div>
+    <textarea id="txt-processo" rows="6"
+      style="width:100%;font-size:13px;padding:10px;border:1px solid #e2e6ea;border-radius:8px;background:#f7f8fa;color:#1a1d23;resize:vertical;font-family:'Segoe UI',Arial,sans-serif"
+      placeholder="Cole aqui o texto completo do processo extraído do e-SAJ ou e-PROC..."></textarea>
+    <button onclick="processarTexto()" style="margin-top:8px;padding:8px 20px;background:#042C53;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer">
+      ▶ Gerar minuta com este texto
+    </button>
+  </div>
+
   <!-- Progress -->
   <div class="pw" id="pw" style="display:none">
     <div style="font-size:13px;color:#6b7280" id="pm">Aguarde...</div>
@@ -309,14 +322,39 @@ function setTab(t,el){
 
 function onDrop(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')handleFile(f);}
 
+function processarTexto(){
+  var txt=document.getElementById('txt-processo').value.trim();
+  if(!txt||txt.length<100){alert('Cole o texto do processo antes de continuar.');return;}
+  iniciarProcessamento(txt);
+}
+
 async function handleFile(file){
   if(!file)return;
   document.getElementById('uz').style.display='none';
+  document.getElementById('txt-area-wrap').style.display='none';
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='block';
   var steps=STEPS[S.tab];
   await runSteps(steps);
-  await gerarDocumento(file);
+  // Converte PDF para base64 puro (sem prefixo data:...)
+  var base64=await fileToBase64Clean(file);
+  await continuarProcessamento(base64);
+}
+
+function fileToBase64Clean(file){
+  return new Promise(function(res,rej){
+    var r=new FileReader();
+    r.onload=function(e){
+      var result=e.target.result;
+      // Garante que só os dados base64 são enviados, sem o prefixo
+      var base64=result.split(',')[1]||result;
+      // Remove espaços e quebras de linha que possam corromper
+      base64=base64.replace(/\s/g,'');
+      res(base64);
+    };
+    r.onerror=rej;
+    r.readAsDataURL(file);
+  });
 }
 
 function runSteps(steps){
@@ -509,6 +547,8 @@ function resetResult(){
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='none';
   document.getElementById('uz').style.display='block';
+  document.getElementById('txt-area-wrap').style.display='block';
+  document.getElementById('txt-processo').value='';
   document.getElementById('fi').value='';
 }
 
