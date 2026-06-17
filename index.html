@@ -467,7 +467,12 @@ function exportarDocx(qual,nome){
 function fileToBase64(file){
   return new Promise(function(res,rej){
     var r=new FileReader();
-    r.onload=function(e){res(e.target.result.split(',')[1]);};
+    r.onload=function(e){
+      var result=e.target.result;
+      // Remove o prefixo "data:application/pdf;base64," se existir
+      var base64=result.indexOf(',')>=0 ? result.split(',')[1] : result;
+      res(base64);
+    };
     r.onerror=rej;
     r.readAsDataURL(file);
   });
