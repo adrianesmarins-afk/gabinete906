@@ -259,17 +259,26 @@ function salvarConfig(){
     if(v) S.folders[ks[i]]=v;
   }
   if(!S.folders.ap) S.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-  localStorage.setItem('gk',S.gkey);
-  localStorage.setItem('ak',S.akey);
-  localStorage.setItem('folds',JSON.stringify(S.folders));
+  // Salva em sessionStorage (não bloqueado pelo Edge)
+  try{
+    sessionStorage.setItem('gk',S.gkey);
+    sessionStorage.setItem('ak',S.akey);
+    sessionStorage.setItem('folds',JSON.stringify(S.folders));
+  }catch(e){}
+  // Também guarda nas variáveis globais para uso imediato
   toggleCfg();
   carregarBase();
 }
 
 function load(){
-  S.gkey=localStorage.getItem('gk')||'';
-  S.akey=localStorage.getItem('ak')||'';
-  S.folders=JSON.parse(localStorage.getItem('folds')||'{}');
+  // Usa sessionStorage em vez de localStorage (não bloqueado pelo Edge)
+  try{
+    S.gkey=sessionStorage.getItem('gk')||'';
+    S.akey=sessionStorage.getItem('ak')||'';
+    S.folders=JSON.parse(sessionStorage.getItem('folds')||'{}');
+  }catch(e){
+    S.gkey=''; S.akey=''; S.folders={};
+  }
   if(!S.folders.ap) S.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
   document.getElementById('i-gkey').value=S.gkey;
   document.getElementById('i-akey').value=S.akey;
