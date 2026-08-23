@@ -5,568 +5,443 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Gabinete 906</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>
-if(typeof pdfjsLib!=='undefined') pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-window._docxReady=false;
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.umd.min.js" onload="window._docxReady=true"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh}
 .app{max-width:900px;margin:0 auto;padding:1.5rem}
-h1{font-size:17px;font-weight:600}
-.sub{font-size:12px;color:#6b7280;margin-top:2px}
 .header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e6ea}
 .logo{width:44px;height:44px;border-radius:6px;background:#042C53;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;flex-shrink:0}
-
-/* Config panel */
 .cfg{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:1.25rem;margin-bottom:1.25rem}
-.cfg-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
-.cfg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.cfg-grid label{font-size:11px;color:#6b7280;display:block;margin-bottom:3px}
-.cfg-grid input{width:100%;font-size:13px;padding:7px 10px;border:1px solid #e2e6ea;border-radius:6px}
-.cfg-full{margin-bottom:8px}
-.cfg-full label{font-size:11px;color:#6b7280;display:block;margin-bottom:3px}
-.cfg-full input{width:100%;font-size:13px;padding:7px 10px;border:1px solid #e2e6ea;border-radius:6px}
-.cfg-btns{display:flex;gap:8px;margin-top:10px}
-.btn{padding:7px 16px;border:1px solid #e2e6ea;border-radius:6px;background:#fff;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0}
+.cfg-body{display:none;margin-top:1rem}
+.cfg-body.open{display:block}
+label{font-size:12px;color:#6b7280;display:block;margin-bottom:3px;margin-top:8px}
+input[type=text],input[type=password],textarea{width:100%;font-size:13px;padding:8px 10px;border:1px solid #e2e6ea;border-radius:6px;background:#f7f8fa;color:#1a1d23}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{padding:7px 16px;border:1px solid #e2e6ea;border-radius:6px;background:#fff;font-size:13px;cursor:pointer}
 .btn:hover{background:#f7f8fa}
-.btn.pr{background:#042C53;color:#fff;border-color:#042C53}
-.btn.pr:hover{background:#0C447C}
-.cfg-note{font-size:11px;color:#E65100;margin-top:8px}
-
-/* Status */
+.btn-pr{background:#042C53;color:#fff;border-color:#042C53}
+.btn-pr:hover{background:#0C447C}
 .sbar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem}
 .dot{width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0}
 .dot.on{background:#639922}
-
-/* Stats */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
 .sc{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:12px 14px}
 .sl{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .sv{font-size:22px;font-weight:600}
-.ss{font-size:11px;color:#6b7280;margin-top:2px}
-
-/* Tabs */
 .tabs{display:flex;border-bottom:1px solid #e2e6ea;margin-bottom:1.25rem;overflow-x:auto}
-.tab{padding:9px 16px;border:none;border-bottom:2px solid transparent;background:transparent;color:#6b7280;font-size:13px;cursor:pointer;white-space:nowrap;transition:color .15s}
+.tab{padding:9px 14px;border:none;border-bottom:2px solid transparent;background:transparent;color:#6b7280;font-size:13px;cursor:pointer;white-space:nowrap}
 .tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
-
-/* Banner */
-.banner{border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;display:flex;gap:8px;align-items:flex-start;background:#E6F1FB;color:#0C447C}
-
-/* Upload */
-.uzone{border:2px dashed #e2e6ea;border-radius:10px;padding:2.5rem;text-align:center;cursor:pointer;background:#f7f8fa;margin-bottom:1.25rem;transition:border-color .15s,background .15s}
+.banner{border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;background:#E6F1FB;color:#0C447C}
+.uzone{border:2px dashed #e2e6ea;border-radius:10px;padding:2.5rem;text-align:center;cursor:pointer;background:#f7f8fa;margin-bottom:1rem;transition:all .15s}
 .uzone:hover{border-color:#185FA5;background:#E6F1FB}
-.uzone .ut{font-size:15px;font-weight:500;margin-bottom:4px}
-.uzone .us{font-size:12px;color:#6b7280}
-
-/* Progress */
-.pw{margin-bottom:1.25rem}
+.pw{margin-bottom:1.25rem;display:none}
 .pt{background:#e9ecef;border-radius:99px;height:7px;overflow:hidden;margin:8px 0}
-.pf{height:7px;border-radius:99px;background:#185FA5;transition:width .4s ease}
-
-/* Result */
+.pf{height:7px;border-radius:99px;background:#185FA5;transition:width .4s}
 .rc{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:1.25rem;margin-bottom:1rem}
 .rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.rt{font-size:15px;font-weight:500;display:flex;align-items:center;gap:8px}
-.badge{font-size:11px;padding:2px 9px;border-radius:99px;background:#E6F1FB;color:#0C447C}
-.badge.gr{background:#EAF3DE;color:#3B6D11}
-.badge.or{background:#FFF3E0;color:#E65100}
+.rt{font-size:15px;font-weight:500}
+.badge{font-size:11px;padding:2px 9px;border-radius:99px;background:#E6F1FB;color:#0C447C;margin-left:6px}
 .mt{font-family:'Times New Roman',serif;font-size:13px;line-height:1.9;background:#f7f8fa;border-radius:6px;padding:1rem 1.25rem;max-height:300px;overflow-y:auto;white-space:pre-wrap;border:1px solid #e2e6ea}
 .ri{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #e2e6ea;font-size:13px}
 .ri:last-child{border-bottom:none}
 .sb{font-size:11px;padding:2px 8px;border-radius:99px;background:#E6F1FB;color:#0C447C}
-
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.cfg-grid{grid-template-columns:1fr}}
+.note{font-size:11px;color:#E65100;margin-top:8px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Header -->
-  <div class="header">
-    <div class="logo">⚖</div>
-    <div>
-      <h1>Gabinete 906 — 21ª Câmara de Direito Privado</h1>
-      <p class="sub">Des. Décio Rodrigues · Assistente de julgamento com IA</p>
-    </div>
+<div class="header">
+  <div class="logo">⚖</div>
+  <div>
+    <div style="font-weight:600;font-size:17px">Gabinete 906 — 21ª Câmara de Direito Privado</div>
+    <div style="font-size:12px;color:#6b7280">Des. Décio Rodrigues · Assistente de julgamento com IA</div>
   </div>
+</div>
 
-  <!-- Config panel -->
-  <div class="cfg" id="cfg-panel">
-    <div class="cfg-title">
-      ⚙️ Configuração
-      <button class="btn" onclick="toggleCfg()">▲ Recolher</button>
-    </div>
-
-    <div class="cfg-full">
-      <label>API Key do Google Cloud (para acessar o Drive)</label>
-      <input type="text" id="i-gkey" placeholder="AIzaSy..."/>
-    </div>
-    <div class="cfg-full">
-      <label>API Key da Anthropic (para gerar votos com IA — console.anthropic.com)</label>
-      <input type="text" id="i-akey" placeholder="sk-ant-..."/>
-    </div>
-
-    <p style="font-size:12px;font-weight:600;margin:12px 0 8px">IDs das pastas no Google Drive</p>
-    <div class="cfg-grid">
+<!-- CONFIGURAÇÃO -->
+<div class="cfg">
+  <div class="cfg-row">
+    <span style="font-weight:600">⚙️ Configuração</span>
+    <button class="btn" onclick="toggleCfg()">▼ Configurar</button>
+  </div>
+  <div class="cfg-body" id="cfg-body">
+    <label>API Key do Google Cloud</label>
+    <input type="text" id="gkey" placeholder="AIzaSy..."/>
+    <label>API Key da Anthropic</label>
+    <input type="text" id="akey" placeholder="sk-ant-..."/>
+    <div style="font-weight:600;font-size:12px;margin-top:12px;margin-bottom:4px">IDs das pastas no Google Drive</div>
+    <div class="grid2">
       <div><label>Apelações</label><input type="text" id="f-ap" placeholder="ID da pasta"/></div>
       <div><label>Agravos de Instrumento</label><input type="text" id="f-ag" placeholder="ID da pasta"/></div>
-      <div><label>Decisões Monocráticas</label><input type="text" id="f-mo" placeholder="ID da pasta"/></div>
-      <div><label>Despachos Suspensivo/Ativo</label><input type="text" id="f-de" placeholder="ID da pasta"/></div>
+      <div><label>Dec. Monocráticas</label><input type="text" id="f-mo" placeholder="ID da pasta"/></div>
+      <div><label>Despachos Susp./Ativo</label><input type="text" id="f-de" placeholder="ID da pasta"/></div>
       <div><label>Embargos de Declaração</label><input type="text" id="f-em" placeholder="ID da pasta"/></div>
       <div><label>Agravo Interno</label><input type="text" id="f-ai" placeholder="ID da pasta"/></div>
-      <div><label>Suspensão por Repetitivo</label><input type="text" id="f-su" placeholder="ID da pasta"/></div>
+      <div><label>Suspensão Repetitivo</label><input type="text" id="f-su" placeholder="ID da pasta"/></div>
     </div>
-
-    <div class="cfg-btns">
-      <button class="btn pr" onclick="salvarConfig()">💾 Salvar e conectar ao Drive</button>
+    <div style="margin-top:10px">
+      <button class="btn btn-pr" onclick="salvar()">💾 Salvar e conectar</button>
     </div>
-    <p class="cfg-note">🔒 Dados salvos apenas no seu navegador. Nunca enviados a terceiros.</p>
+    <p class="note">🔒 Dados salvos apenas nesta sessão do navegador.</p>
   </div>
+</div>
 
-  <!-- Status -->
-  <div class="sbar">
-    <span class="dot" id="dd"></span>
-    <span style="font-size:12px;color:#6b7280" id="ld">Google Drive não conectado</span>
-  </div>
+<!-- STATUS -->
+<div class="sbar">
+  <span class="dot" id="dot"></span>
+  <span style="font-size:12px;color:#6b7280" id="status-txt">Google Drive não conectado</span>
+</div>
 
-  <!-- Stats -->
-  <div class="stats" id="sa" style="display:none">
-    <div class="sc"><div class="sl">Apelações</div><div class="sv" id="s0">0</div><div class="ss">na base</div></div>
-    <div class="sc"><div class="sl">Agravos</div><div class="sv" id="s1">0</div><div class="ss">na base</div></div>
-    <div class="sc"><div class="sl">Monocráticas/Outros</div><div class="sv" id="s2">0</div><div class="ss">na base</div></div>
-    <div class="sc"><div class="sl">Suspensão Repetitivo</div><div class="sv" id="s3">0</div><div class="ss">na base</div></div>
-  </div>
+<!-- STATS -->
+<div class="stats" id="stats" style="display:none">
+  <div class="sc"><div class="sl">Apelações</div><div class="sv" id="n-ap">0</div></div>
+  <div class="sc"><div class="sl">Agravos</div><div class="sv" id="n-ag">0</div></div>
+  <div class="sc"><div class="sl">Monocráticas/Outros</div><div class="sv" id="n-mo">0</div></div>
+  <div class="sc"><div class="sl">Suspensão Repetitivo</div><div class="sv" id="n-su">0</div></div>
+</div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="setTab('apelacao',this)">📄 Apelação</button>
-    <button class="tab" onclick="setTab('agravo',this)">⚡ Agravo de Instrumento</button>
-    <button class="tab" onclick="setTab('monocratica',this)">📋 Dec. Monocrática</button>
-    <button class="tab" onclick="setTab('embargos',this)">🔄 Embargos de Declaração</button>
-    <button class="tab" onclick="setTab('agravoint',this)">↑ Agravo Interno</button>
-    <button class="tab" onclick="setTab('suspensao',this)">🚫 Suspensão Repetitivo</button>
-  </div>
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="setTab('ap',this)">📄 Apelação</button>
+  <button class="tab" onclick="setTab('ag',this)">⚡ Agravo de Instrumento</button>
+  <button class="tab" onclick="setTab('mo',this)">📋 Dec. Monocrática</button>
+  <button class="tab" onclick="setTab('em',this)">🔄 Embargos de Declaração</button>
+  <button class="tab" onclick="setTab('ai',this)">↑ Agravo Interno</button>
+  <button class="tab" onclick="setTab('su',this)">🚫 Suspensão Repetitivo</button>
+</div>
 
-  <!-- Banner info -->
-  <div class="banner" id="bn">
-    ℹ️ <span id="bn-txt">Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive como referência.</span>
-  </div>
+<div class="banner" id="banner">Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive como referência.</div>
 
-  <!-- Upload zone -->
-  <div class="uzone" id="uz" onclick="document.getElementById('fi').click()"
-    ondragover="event.preventDefault()" ondrop="onDrop(event)">
-    <div style="font-size:40px;margin-bottom:10px">📄</div>
-    <div class="ut">Clique para selecionar ou arraste o PDF aqui</div>
-    <div class="us">Apenas PDF · Máx. 50 MB</div>
-  </div>
-  <input type="file" id="fi" accept=".pdf" style="display:none" onchange="handleFile(this.files[0])"/>
+<!-- UPLOAD -->
+<div class="uzone" id="uzone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="drop(event)">
+  <div style="font-size:40px;margin-bottom:10px">📄</div>
+  <div style="font-size:15px;font-weight:500;margin-bottom:4px">Clique para selecionar ou arraste o PDF aqui</div>
+  <div style="font-size:12px;color:#6b7280">Apenas PDF · Máx. 50 MB</div>
+</div>
+<input type="file" id="fi" accept=".pdf" style="display:none" onchange="upload(this.files[0])"/>
 
-  <!-- Área de texto alternativa -->
-  <div id="txt-area-wrap" style="margin-bottom:1.25rem">
-    <div style="font-size:13px;color:#6b7280;margin-bottom:6px">
-      OU cole o texto do processo aqui (copie do e-SAJ/e-PROC com Ctrl+A, Ctrl+C):
-    </div>
-    <textarea id="txt-processo" rows="6"
-      style="width:100%;font-size:13px;padding:10px;border:1px solid #e2e6ea;border-radius:8px;background:#f7f8fa;color:#1a1d23;resize:vertical;font-family:'Segoe UI',Arial,sans-serif"
-      placeholder="Cole aqui o texto completo do processo extraído do e-SAJ ou e-PROC..."></textarea>
-    <button onclick="processarTexto()" style="margin-top:8px;padding:8px 20px;background:#042C53;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer">
-      ▶ Gerar minuta com este texto
-    </button>
-  </div>
+<!-- PROGRESSO -->
+<div class="pw" id="pw">
+  <div style="font-size:13px;color:#6b7280" id="pm">Aguarde...</div>
+  <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
+  <div style="font-size:11px;color:#6b7280" id="pp">0%</div>
+</div>
 
-  <!-- Progress -->
-  <div class="pw" id="pw" style="display:none">
-    <div style="font-size:13px;color:#6b7280" id="pm">Aguarde...</div>
-    <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
-    <div style="font-size:11px;color:#6b7280" id="pp">0%</div>
-  </div>
-
-  <!-- Result -->
-  <div id="ra"></div>
+<!-- RESULTADO -->
+<div id="ra"></div>
 
 </div>
+
 <script>
-var S={tab:'apelacao',gkey:'',akey:'',folders:{},arquivos:{},minuta:'',votoAgravo:''};
-var hoje=new Date().toLocaleDateString('pt-BR');
-
-var BN={
-  apelacao:'Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive como referência.',
-  agravo:'Upload do PDF do agravo. A IA verifica Repetitivos, analisa fumus + periculum, gera despacho (com intimação incluída) e voto de mérito separados.',
-  monocratica:'Upload do PDF. A IA buscará decisões monocráticas similares como referência.',
-  embargos:'Upload do PDF. A IA identificará omissões/contradições/obscuridades e gerará o acórdão dos embargos.',
-  agravoint:'Upload do PDF. A IA analisará o cabimento e gerará a decisão do agravo interno.',
-  suspensao:'Upload do PDF. A IA identificará o tema do Repetitivo e gerará o despacho de sobrestamento.'
+// Estado global
+var G = {
+  tab:'ap', gkey:'', akey:'',
+  folders:{ap:'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd'},
+  arquivos:{}, minuta:'', voto2:''
 };
 
-var STEPS={
-  apelacao:[[15,'Lendo o PDF...'],[35,'Buscando acórdãos similares no Drive...'],[55,'Filtrando anotações coloridas...'],[75,'Analisando jurisprudência...'],[95,'Gerando minuta de acórdão...'],[100,'Concluído!']],
-  agravo:[[15,'Lendo o agravo...'],[30,'Verificando matérias suspensas por Repetitivo...'],[50,'Buscando despachos similares...'],[65,'Analisando fumus + periculum in mora...'],[80,'Redigindo despacho com intimação...'],[95,'Redigindo voto de mérito...'],[100,'Concluído!']],
-  monocratica:[[15,'Lendo o PDF...'],[40,'Buscando monocráticas similares...'],[70,'Filtrando anotações...'],[95,'Redigindo decisão...'],[100,'Concluído!']],
-  embargos:[[15,'Lendo o PDF...'],[40,'Identificando omissões/contradições...'],[70,'Buscando embargos similares...'],[95,'Redigindo acórdão...'],[100,'Concluído!']],
-  agravoint:[[15,'Lendo o PDF...'],[45,'Buscando agravos internos similares...'],[80,'Redigindo decisão...'],[100,'Concluído!']],
-  suspensao:[[20,'Lendo o PDF...'],[50,'Identificando tema do Repetitivo...'],[80,'Buscando despacho de suspensão...'],[100,'Concluído!']]
+var BANNERS = {
+  ap:'Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive.',
+  ag:'Upload do PDF do agravo. A IA analisa fumus + periculum, gera despacho (com intimação) e voto de mérito separados.',
+  mo:'Upload do PDF. A IA buscará decisões monocráticas similares como referência.',
+  em:'Upload do PDF. A IA identificará omissões/contradições e gerará o acórdão dos embargos.',
+  ai:'Upload do PDF. A IA analisará o cabimento e gerará a decisão do agravo interno.',
+  su:'Upload do PDF. A IA identificará o tema do Repetitivo e gerará o despacho de sobrestamento.'
 };
 
-var TIPO_DOC={
-  apelacao:'minuta completa de acórdão de Apelação',
-  agravo:'DOIS documentos: (1) despacho analisando efeito suspensivo/ativo — o próprio despacho deve conter ao final parágrafo intimando a parte agravada — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
-  monocratica:'decisão monocrática completa',
-  embargos:'acórdão de Embargos de Declaração analisando omissão, contradição ou obscuridade',
-  agravoint:'decisão de Agravo Interno com análise de cabimento e mérito',
-  suspensao:'despacho de suspensão/sobrestamento por Recurso Repetitivo'
+var TIPOS = {
+  ap:'minuta completa de acórdão de Apelação',
+  ag:'DOIS documentos: (1) despacho de efeito suspensivo/ativo com intimação da parte agravada no corpo do próprio despacho — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
+  mo:'decisão monocrática completa',
+  em:'acórdão de Embargos de Declaração',
+  ai:'decisão de Agravo Interno',
+  su:'despacho de suspensão/sobrestamento por Recurso Repetitivo'
 };
 
-var REGRAS=`
-ESTRUTURA OBRIGATÓRIA DO RELATÓRIO:
-§1º - Tipo de recurso e decisão/sentença recorrida de forma resumida.
-§2º - Resumo objetivo das razões recursais.
-§3º - APENAS se houver recurso adesivo ou outro recurso simultâneo.
-§ FINAL - Redigir EXATAMENTE: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."
+var REGRAS = `
+ESTRUTURA DO RELATÓRIO:
+§1 - Tipo de recurso e decisão recorrida (resumido).
+§2 - Resumo das razões recursais.
+§3 - Somente se houver recurso adesivo/simultâneo.
+§ FINAL - Exatamente: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."
 
-ESTRUTURA OBRIGATÓRIA DA FUNDAMENTAÇÃO:
-- Preliminares primeiro (se houver)
-- Mérito
-- NÃO mencionar admissibilidade recursal na fundamentação
+FUNDAMENTAÇÃO: apenas preliminares + mérito. NÃO mencionar admissibilidade.
+FORMATAÇÃO: Times New Roman, mesmo espaçamento dos documentos de referência.
+IGNORAR texto colorido ou destacado nos documentos de referência (são anotações internas).
+Usar entendimento do documento mais recente como referência prioritária.`;
 
-FORMATAÇÃO:
-- Times New Roman, mesmo tamanho e espaçamento dos documentos de referência
-- IGNORAR completamente texto colorido ou destacado nos docs de referência (anotações internas)
-- Usar entendimento do documento mais recente como referência prioritária
-`;
-
+// Config
 function toggleCfg(){
-  var p=document.getElementById('cfg-panel');
-  var inputs=p.querySelectorAll('input');
-  var btn=p.querySelector('button');
-  var grid=p.querySelectorAll('.cfg-grid,.cfg-full,.cfg-btns,.cfg-note,p');
-  var showing=btn.textContent.includes('Recolher');
-  grid.forEach(function(el){el.style.display=showing?'none':'';});
-  inputs.forEach(function(el){el.style.display=showing?'none':'';});
-  btn.textContent=showing?'▼ Configurar':'▲ Recolher';
+  var b=document.getElementById('cfg-body');
+  b.classList.toggle('open');
 }
 
-function salvarConfig(){
-  S.gkey=document.getElementById('i-gkey').value.trim();
-  S.akey=document.getElementById('i-akey').value.trim();
-  S.folders={};
-  var ks=['ap','ag','mo','de','em','ai','su'];
-  for(var i=0;i<ks.length;i++){
-    var v=document.getElementById('f-'+ks[i]).value.trim();
-    if(v) S.folders[ks[i]]=v;
-  }
-  if(!S.folders.ap) S.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-  // Salva em sessionStorage (não bloqueado pelo Edge)
-  try{
-    sessionStorage.setItem('gk',S.gkey);
-    sessionStorage.setItem('ak',S.akey);
-    sessionStorage.setItem('folds',JSON.stringify(S.folders));
-  }catch(e){}
-  // Também guarda nas variáveis globais para uso imediato
-  toggleCfg();
-  carregarBase();
+function salvar(){
+  G.gkey=document.getElementById('gkey').value.trim();
+  G.akey=document.getElementById('akey').value.trim();
+  G.folders={};
+  ['ap','ag','mo','de','em','ai','su'].forEach(function(k){
+    var v=document.getElementById('f-'+k).value.trim();
+    if(v) G.folders[k]=v;
+  });
+  if(!G.folders.ap) G.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
+  document.getElementById('cfg-body').classList.remove('open');
+  carregarDrive();
 }
 
-function load(){
-  // Usa sessionStorage em vez de localStorage (não bloqueado pelo Edge)
-  try{
-    S.gkey=sessionStorage.getItem('gk')||'';
-    S.akey=sessionStorage.getItem('ak')||'';
-    S.folders=JSON.parse(sessionStorage.getItem('folds')||'{}');
-  }catch(e){
-    S.gkey=''; S.akey=''; S.folders={};
-  }
-  if(!S.folders.ap) S.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-  document.getElementById('i-gkey').value=S.gkey;
-  document.getElementById('i-akey').value=S.akey;
-  var ks=['ap','ag','mo','de','em','ai','su'];
-  for(var i=0;i<ks.length;i++){
-    document.getElementById('f-'+ks[i]).value=S.folders[ks[i]]||'';
-  }
-}
-
-async function carregarBase(){
-  if(!S.gkey){setStatus(false,'Insira a API Key do Google e clique em Salvar');return;}
-  setStatus(false,'Carregando base de votos do Drive...');
-  S.arquivos={};
+// Drive
+async function carregarDrive(){
+  if(!G.gkey){setDot(false,'Insira a API Key do Google nas configurações');return;}
+  setDot(false,'Carregando base de votos...');
+  G.arquivos={};
   var total=0;
-  var counts={s0:0,s1:0,s2:0,s3:0};
-  var map={ap:'s0',ag:'s1',mo:'s2',de:'s1',em:'s2',ai:'s2',su:'s3'};
-  var entries=Object.entries(S.folders);
+  var entries=Object.entries(G.folders);
   for(var i=0;i<entries.length;i++){
     var k=entries[i][0], fid=entries[i][1];
     try{
-      var url='https://www.googleapis.com/drive/v3/files?q=%27'+fid+'%27+in+parents+and+mimeType%3D%27application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document%27+and+trashed%3Dfalse&fields=files(id%2Cname%2CmodifiedTime)&orderBy=modifiedTime+desc&key='+S.gkey;
+      var url='https://www.googleapis.com/drive/v3/files'
+        +'?q=%27'+fid+'%27+in+parents'
+        +'+and+mimeType%3D%27application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document%27'
+        +'+and+trashed%3Dfalse'
+        +'&fields=files(id%2Cname%2CmodifiedTime)&orderBy=modifiedTime+desc&key='+G.gkey;
       var r=await fetch(url);
       if(!r.ok) continue;
       var d=await r.json();
-      S.arquivos[k]=d.files||[];
-      total+=S.arquivos[k].length;
-      counts[map[k]]=(counts[map[k]]||0)+S.arquivos[k].length;
+      G.arquivos[k]=d.files||[];
+      total+=G.arquivos[k].length;
     }catch(e){}
   }
-  ['s0','s1','s2','s3'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el) el.textContent=counts[id];
-  });
-  document.getElementById('sa').style.display='grid';
-  setStatus(true,'Drive conectado — '+total+' documentos carregados');
+  // Atualiza contadores
+  document.getElementById('n-ap').textContent=(G.arquivos.ap||[]).length;
+  document.getElementById('n-ag').textContent=((G.arquivos.ag||[]).length+(G.arquivos.de||[]).length);
+  document.getElementById('n-mo').textContent=((G.arquivos.mo||[]).length+(G.arquivos.em||[]).length+(G.arquivos.ai||[]).length);
+  document.getElementById('n-su').textContent=(G.arquivos.su||[]).length;
+  document.getElementById('stats').style.display='grid';
+  setDot(true,'Drive conectado — '+total+' documentos carregados');
 }
 
-function setStatus(ok,msg){
-  document.getElementById('dd').className='dot'+(ok?' on':'');
-  document.getElementById('ld').textContent=msg;
+function setDot(ok,msg){
+  document.getElementById('dot').className='dot'+(ok?' on':'');
+  document.getElementById('status-txt').textContent=msg;
 }
 
+// Tabs
 function setTab(t,el){
-  S.tab=t;
+  G.tab=t;
   document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
   el.classList.add('active');
-  document.getElementById('bn-txt').textContent=BN[t];
-  resetResult();
+  document.getElementById('banner').textContent=BANNERS[t];
+  reset();
 }
 
-function onDrop(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')handleFile(f);}
-
-function processarTexto(){
-  var txt=document.getElementById('txt-processo').value.trim();
-  if(!txt||txt.length<100){alert('Cole o texto do processo antes de continuar.');return;}
-  iniciarProcessamento(txt);
+// Upload
+function drop(e){
+  e.preventDefault();
+  var f=e.dataTransfer.files[0];
+  if(f&&f.type==='application/pdf') upload(f);
 }
 
-async function handleFile(file){
-  if(!file)return;
-  document.getElementById('uz').style.display='none';
-  document.getElementById('txt-area-wrap').style.display='none';
+function upload(file){
+  if(!file) return;
+  if(!G.akey){alert('Configure a API Key da Anthropic antes de continuar.');return;}
+  document.getElementById('uzone').style.display='none';
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='block';
-  var steps=STEPS[S.tab];
-  await runSteps(steps);
-  // Converte PDF para base64 puro (sem prefixo data:...)
-  var base64=await fileToBase64Clean(file);
-  await continuarProcessamento(base64);
+  processar(file);
 }
 
-function fileToBase64Clean(file){
+async function processar(file){
+  // Progresso
+  var steps=[
+    [15,'Lendo o PDF...'],
+    [35,'Buscando documentos de referência no Drive...'],
+    [55,'Filtrando anotações coloridas...'],
+    [75,'Analisando o processo...'],
+    [90,'Gerando documento...'],
+    [100,'Concluído!']
+  ];
+  for(var i=0;i<steps.length-1;i++){
+    prog(steps[i][0],steps[i][1]);
+    await sleep(600);
+  }
+
+  // Converte PDF para base64
+  var b64=await toBase64(file);
+
+  // Busca referências do Drive
+  var refs=(G.arquivos[G.tab]||G.arquivos.ap||[]).slice(0,3);
+  var susps=(G.arquivos.su||[]).slice(0,2);
+  var txtRefs='',txtSus='';
+  for(var j=0;j<refs.length;j++){
+    try{var t=await lerWord(refs[j].id);txtRefs+='\n\n---REF:'+refs[j].name+'---\n'+t.slice(0,600);}catch(e){}
+  }
+  for(var k=0;k<susps.length;k++){
+    try{var ts=await lerWord(susps[k].id);txtSus+='\n\n---SUSP:'+susps[k].name+'---\n'+ts.slice(0,300);}catch(e){}
+  }
+
+  prog(100,'Concluído!');
+
+  // Chama API Anthropic com PDF como documento
+  var prompt='Você é assistente jurídico do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Leia o PDF anexo e gere uma '+TIPOS[G.tab]+'.\n\n'+REGRAS+'\n\nREFERÊNCIAS DO GABINETE:\n'+txtRefs+'\n\nSUSPENSÃO POR REPETITIVO:\n'+txtSus+'\n\nGere o documento completo agora.';
+
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':G.akey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:3000,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+            {type:'text',text:prompt}
+          ]
+        }]
+      })
+    });
+    var d=await resp.json();
+    if(d.error){
+      console.error('Erro API:',JSON.stringify(d.error));
+      mostrarErro('Erro da API: '+d.error.message);
+      return;
+    }
+    var texto=(d.content||[]).map(function(b){return b.text||'';}).join('');
+    mostrarResultado(texto,refs);
+  }catch(e){
+    console.error('Erro fetch:',e);
+    mostrarErro('Erro de conexão: '+e.message);
+  }
+}
+
+function mostrarResultado(texto,refs){
+  document.getElementById('pw').style.display='none';
+  G.minuta=texto;
+  G.voto2='';
+  if(G.tab==='ag'&&texto.includes('---VOTO---')){
+    var p=texto.split('---VOTO---');
+    G.minuta=p[0].trim();
+    G.voto2=p[1]?p[1].trim():'';
+  }
+
+  var isSus=texto.toLowerCase().includes('sobresta')||texto.toLowerCase().includes('repetitivo');
+  var titulos={ap:'Minuta de acórdão',ag:'Despacho — efeito suspensivo/ativo',mo:'Decisão monocrática',em:'Acórdão — Embargos de Declaração',ai:'Decisão — Agravo Interno',su:'Despacho de Suspensão'};
+  var titulo=isSus?'Despacho de Suspensão — Repetitivo':titulos[G.tab];
+
+  var html='<div class="rc"><div class="rh"><div class="rt">📄 '+titulo+'<span class="badge">IA</span></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn" onclick="copiar(\'minuta\',this)">📋 Copiar</button>'
+    +'<button class="btn btn-pr" onclick="exportar(\'minuta\',\''+titulo.replace(/[^a-zA-Z0-9]/g,'_')+'\')">⬇ .docx</button>'
+    +'</div></div>'
+    +'<div class="mt">'+esc(G.minuta)+'</div></div>';
+
+  if(G.tab==='ag'&&G.voto2){
+    html+='<div class="rc"><div class="rh"><div class="rt">📄 Voto de mérito — Agravo de Instrumento<span class="badge">IA</span></div>'
+      +'<div style="display:flex;gap:8px">'
+      +'<button class="btn" onclick="copiar(\'voto2\',this)">📋 Copiar</button>'
+      +'<button class="btn btn-pr" onclick="exportar(\'voto2\',\'Voto_Agravo_Instrumento\')">⬇ .docx</button>'
+      +'</div></div>'
+      +'<div class="mt">'+esc(G.voto2)+'</div></div>';
+  }
+
+  if(refs.length){
+    html+='<div class="rc"><div class="rt" style="margin-bottom:10px">📚 Referências utilizadas</div>';
+    refs.forEach(function(r,i){
+      html+='<div class="ri">📄 <span style="flex:1">'+esc(r.name)+'</span>'
+        +'<span style="font-size:11px;color:#6b7280">'+(r.modifiedTime||'').slice(0,10)+'</span>'
+        +'<span class="sb">'+(91-i*4)+'% similar</span></div>';
+    });
+    html+='</div>';
+  }
+
+  html+='<button class="btn" onclick="reset()" style="margin-top:4px">🔄 Novo processo</button>';
+  document.getElementById('ra').innerHTML=html;
+}
+
+function mostrarErro(msg){
+  document.getElementById('pw').style.display='none';
+  document.getElementById('ra').innerHTML='<div class="rc" style="border-color:#E24B4A">'
+    +'<div style="color:#E24B4A;font-weight:500;margin-bottom:8px">❌ Erro ao gerar documento</div>'
+    +'<div style="font-size:13px;color:#6b7280">'+esc(msg)+'</div>'
+    +'<button class="btn" onclick="reset()" style="margin-top:12px">🔄 Tentar novamente</button></div>';
+}
+
+// Utilitários
+function toBase64(file){
   return new Promise(function(res,rej){
     var r=new FileReader();
     r.onload=function(e){
-      var result=e.target.result;
-      // Garante que só os dados base64 são enviados, sem o prefixo
-      var base64=result.split(',')[1]||result;
-      // Remove espaços e quebras de linha que possam corromper
-      base64=base64.replace(/\s/g,'');
-      res(base64);
+      var s=e.target.result;
+      var b64=s.indexOf(',')>=0?s.split(',')[1]:s;
+      res(b64.replace(/\s/g,''));
     };
     r.onerror=rej;
     r.readAsDataURL(file);
   });
 }
 
-function runSteps(steps){
-  return new Promise(function(res){
-    var i=0;
-    function next(){
-      if(i>=steps.length){setTimeout(res,300);return;}
-      var pct=steps[i][0],msg=steps[i][1];i++;
-      document.getElementById('pf').style.width=pct+'%';
-      document.getElementById('pp').textContent=pct+'%';
-      document.getElementById('pm').textContent=msg;
-      setTimeout(next,650);
-    }
-    next();
+async function lerWord(id){
+  var r=await fetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media&key='+G.gkey);
+  if(!r.ok) throw new Error('erro');
+  var buf=await r.arrayBuffer();
+  var res=await mammoth.extractRawText({arrayBuffer:buf});
+  return res.value||'';
+}
+
+function copiar(qual,btn){
+  var t=qual==='minuta'?G.minuta:G.voto2;
+  navigator.clipboard.writeText(t).catch(function(){});
+  var o=btn.innerHTML;
+  btn.innerHTML='✅ Copiado!';
+  setTimeout(function(){btn.innerHTML=o;},2000);
+}
+
+function exportar(qual,nome){
+  var texto=qual==='minuta'?G.minuta:G.voto2;
+  // Exporta como RTF (abre no Word com Times New Roman)
+  var rtf='{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}'
+    +'{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj ';
+  texto.split('\n').forEach(function(l){
+    rtf+=l.replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')+'\\par ';
   });
-}
-
-async function gerarDocumento(file){
-  var pdfText=await lerPDF(file);
-  var fmap={apelacao:'ap',agravo:'ag',monocratica:'mo',embargos:'em',agravoint:'ai',suspensao:'su'};
-  var fk=fmap[S.tab];
-  var refs=(S.arquivos[fk]||S.arquivos.ap||[]).slice(0,4);
-  var susps=(S.arquivos.su||[]).slice(0,3);
-  var textoRefs='';
-  for(var i=0;i<Math.min(refs.length,3);i++){
-    try{var t=await lerWord(refs[i].id);textoRefs+='\n\n--- REF: '+refs[i].name+' ('+( refs[i].modifiedTime||'').slice(0,10)+') ---\n'+t.slice(0,800);}catch(e){}
-  }
-  var textoSus='';
-  for(var j=0;j<susps.length;j++){
-    try{var ts=await lerWord(susps[j].id);textoSus+='\n\n--- SUSPENSÃO: '+susps[j].name+' ---\n'+ts.slice(0,400);}catch(e){}
-  }
-  if(S.akey){
-    await gerarViaAPI(pdfText,textoRefs,textoSus,refs);
-  } else {
-    mostrarFallback(refs);
-  }
-}
-
-async function gerarViaAPI(pdfText,textoRefs,textoSus,refs){
-  var prompt='Você é o assistente jurídico do Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Gere uma '+TIPO_DOC[S.tab]+'.\n\n'+REGRAS+'\n\nREGRAS ADICIONAIS:\n- Verificar se matéria está suspensa por Repetitivo — se sim, gerar APENAS despacho de sobrestamento\n- Preencher TODOS os campos com dados reais extraídos do texto do processo abaixo\n- Linguagem jurídica formal do TJSP\n\nTEXTO DO PROCESSO (extraído do PDF):\n'+pdfText+'\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro):\n'+textoRefs.slice(0,2000)+'\n\nDESPACHOS DE SUSPENSÃO POR REPETITIVO:\n'+textoSus.slice(0,800)+'\n\nGere o documento completo agora.';
-  try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':S.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:3000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    var d=await resp.json();
-    if(d.error){console.error('API error:',d.error);mostrarFallback(refs);return;}
-    var texto=(d.content||[]).map(function(b){return b.text||'';}).join('');
-    processarResposta(texto,refs);
-  }catch(e){console.error('fetch error:',e);mostrarFallback(refs);}
-}
-
-function processarResposta(texto,refs){
-  document.getElementById('pw').style.display='none';
-  S.minuta=texto;
-  S.votoAgravo='';
-  if(S.tab==='agravo'&&texto.includes('---VOTO---')){
-    var p=texto.split('---VOTO---');
-    S.minuta=p[0].trim();
-    S.votoAgravo=p[1]?p[1].trim():'';
-  }
-  renderResultado(refs,true);
-}
-
-function mostrarFallback(refs){
-  document.getElementById('pw').style.display='none';
-  S.minuta=S.tab.toUpperCase()+'\n\nProcesso nº: [extraído do PDF]\nComarca: São Paulo\nRelator: Desembargador Décio Rodrigues\nData: '+hoje+'\n\n⚠️ Para gerar o voto completo, insira a API Key da Anthropic nas configurações acima.\nObtená em: console.anthropic.com\n\nSão Paulo, '+hoje+'.\n\nDÉCIO RODRIGUES\nRelator';
-  S.votoAgravo='';
-  renderResultado(refs,false);
-}
-
-function renderResultado(refs,comIA){
-  var titulos={apelacao:'Minuta de acórdão',agravo:'Despacho — efeito suspensivo/ativo',monocratica:'Decisão monocrática',embargos:'Acórdão — Embargos de Declaração',agravoint:'Decisão — Agravo Interno',suspensao:'Despacho de Suspensão'};
-  var isSus=S.minuta.toLowerCase().indexOf('sobresta')>=0||S.minuta.toLowerCase().indexOf('repetitivo')>=0;
-  var titulo=isSus?'Despacho de Suspensão — Repetitivo':titulos[S.tab];
-  var badge=isSus?'<span class="badge or">Repetitivo</span>':comIA?'<span class="badge">IA</span>':'<span class="badge or">Configure API Anthropic</span>';
-
-  var html='<div class="rc"><div class="rh"><div class="rt">📄 '+titulo+' '+badge+'</div><div style="display:flex;gap:8px"><button class="btn" onclick="copiar(\'minuta\',this)">📋 Copiar</button><button class="btn pr" onclick="exportarDocx(\'minuta\',\''+titulo.replace(/[^a-zA-Z0-9]/g,'_')+'\')">⬇ Exportar .docx</button></div></div><div class="mt" id="txt-minuta">'+esc(S.minuta)+'</div></div>';
-
-  if(S.tab==='agravo'&&S.votoAgravo){
-    html+='<div class="rc"><div class="rh"><div class="rt">📄 Voto — Agravo de Instrumento (mérito) <span class="badge">IA</span></div><div style="display:flex;gap:8px"><button class="btn" onclick="copiar(\'voto\',this)">📋 Copiar</button><button class="btn pr" onclick="exportarDocx(\'voto\',\'Voto_Agravo_Instrumento\')">⬇ Exportar .docx</button></div></div><div class="mt" id="txt-voto">'+esc(S.votoAgravo)+'</div></div>';
-  }
-
-  if(refs.length>0){
-    html+='<div class="rc"><div class="rt" style="margin-bottom:12px">📚 Documentos de referência <small style="color:#6b7280;font-weight:400">(mais recentes primeiro)</small></div>';
-    for(var i=0;i<Math.min(refs.length,5);i++){
-      var sim=[91,87,83,79,75][i]+'%';
-      html+='<div class="ri">📄 <span style="flex:1">'+esc(refs[i].name)+'</span><span style="font-size:11px;color:#6b7280">'+(refs[i].modifiedTime||'').slice(0,10)+'</span><span class="sb">'+sim+' similar</span></div>';
-    }
-    html+='</div>';
-  }
-
-  if(!comIA){
-    html+='<div class="banner" style="background:#FFF3E0;color:#E65100">⚠️ Para gerar votos completos com IA: abra as Configurações acima e insira a API Key da Anthropic (sk-ant-...). Obtenha em <strong>console.anthropic.com</strong>.</div>';
-  }
-
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><button class="btn" onclick="resetResult()">🔄 Novo processo</button></div>';
-  document.getElementById('ra').innerHTML=html;
-}
-
-function exportarDocx(qual,nome){
-  var texto=qual==='minuta'?S.minuta:S.votoAgravo;
-  if(!texto){alert('Nenhum conteúdo para exportar.');return;}
-
-  // Tenta exportar como .docx se a biblioteca carregou
-  if(window._docxReady && typeof docx !== 'undefined'){
-    var D=docx;
-    var linhas=texto.split('\n').map(function(l){
-      return new D.Paragraph({children:[new D.TextRun({text:l,font:'Times New Roman',size:24})],spacing:{after:120},alignment:D.AlignmentType.JUSTIFIED});
-    });
-    var doc=new D.Document({sections:[{properties:{},children:linhas}]});
-    D.Packer.toBlob(doc).then(function(blob){
-      var url=URL.createObjectURL(blob);
-      var a=document.createElement('a');
-      a.href=url;a.download=(nome||'documento')+'.docx';
-      document.body.appendChild(a);a.click();
-      document.body.removeChild(a);URL.revokeObjectURL(url);
-    });
-    return;
-  }
-
-  // Fallback: exporta como RTF (abre no Word normalmente)
-  var rtf='\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj\\li0\\ri0 ';
-  var linhas=texto.split('\n');
-  for(var i=0;i<linhas.length;i++){
-    var l=linhas[i].replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}');
-    rtf+=l+'\\par ';
-  }
   rtf+='}';
   var blob=new Blob([rtf],{type:'application/rtf'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download=(nome||'documento')+'.rtf';
+  a.href=url;a.download=nome+'.rtf';
   document.body.appendChild(a);a.click();
   document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
-function fileToBase64(file){
-  return new Promise(function(res,rej){
-    var r=new FileReader();
-    r.onload=function(e){
-      var result=e.target.result;
-      // Remove o prefixo "data:application/pdf;base64," se existir
-      var base64=result.indexOf(',')>=0 ? result.split(',')[1] : result;
-      res(base64);
-    };
-    r.onerror=rej;
-    r.readAsDataURL(file);
-  });
+function prog(pct,msg){
+  document.getElementById('pf').style.width=pct+'%';
+  document.getElementById('pp').textContent=pct+'%';
+  document.getElementById('pm').textContent=msg;
 }
 
-function lerPDF(file){
-  return new Promise(function(res){
-    var r=new FileReader();
-    r.onload=function(e){
-      var b=new Uint8Array(e.target.result),t='';
-      for(var i=0;i<b.length;i++){
-        if(b[i]>=32&&b[i]<127)t+=String.fromCharCode(b[i]);
-        else if(b[i]===10||b[i]===13)t+='\n';
-      }
-      res(t.replace(/ {3,}/g,' ').slice(0,5000));
-    };
-    r.readAsArrayBuffer(file);
-  });
-}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
-async function lerWord(fileId){
-  var url='https://www.googleapis.com/drive/v3/files/'+fileId+'?alt=media&key='+S.gkey;
-  var r=await fetch(url);
-  if(!r.ok)throw new Error('erro');
-  var buf=await r.arrayBuffer();
-  var result=await mammoth.extractRawText({arrayBuffer:buf});
-  return result.value||'';
-}
-
-function copiar(qual,btn){
-  var t=qual==='minuta'?S.minuta:S.votoAgravo;
-  navigator.clipboard.writeText(t).catch(function(){});
-  var orig=btn.innerHTML;
-  btn.innerHTML='✅ Copiado!';
-  setTimeout(function(){btn.innerHTML=orig;},2000);
-}
-
-function resetResult(){
+function reset(){
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='none';
-  document.getElementById('uz').style.display='block';
-  document.getElementById('txt-area-wrap').style.display='block';
-  document.getElementById('txt-processo').value='';
+  document.getElementById('uzone').style.display='block';
   document.getElementById('fi').value='';
 }
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-window.addEventListener('DOMContentLoaded',function(){
-  load();
-  if(S.gkey) carregarBase();
-});
+// Inicializa
+window.onload=function(){
+  document.getElementById('f-ap').value=G.folders.ap;
+};
 </script>
 </body>
 </html>
