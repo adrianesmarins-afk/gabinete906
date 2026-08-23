@@ -5,8 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Gabinete 906 — Des. Décio Rodrigues</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+if(typeof pdfjsLib!=='undefined'){
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+*{box-sizing
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh}
 .app{max-width:920px;margin:0 auto;padding:1.5rem}
 .header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e6ea}
@@ -267,9 +271,11 @@ async function iniciar(file){
   prog(8,'Lendo o PDF...');
   await sleep(400);
 
-  // PDF reduzido para triagem (primeiras páginas), completo para geração
-  var b64Triagem=await toBase64Reduzido(file);
+  // PDF completo para geração da minuta
   var b64Completo=await toBase64(file);
+
+  // Extrai texto das primeiras páginas para triagem (evita limite de tokens)
+  var textoTriagem=await extrairTextoPDF(file);
 
   prog(18,'Enviando para análise...');
   await sleep(300);
@@ -331,8 +337,7 @@ REGRAS DE REPETITIVO/IRDR: Verifique se a matéria está com julgamento suspenso
         model:'claude-sonnet-4-6',
         max_tokens:800,
         messages:[{role:'user',content:[
-          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64Triagem}},
-          {type:'text',text:promptTriagem}
+          {type:'text',text:'TEXTO DO PROCESSO (primeiras páginas):\n'+textoTriagem+'\n\n'+promptTriagem}
         ]}]
       })
     });
@@ -699,19 +704,39 @@ function toBase64(file){
   });
 }
 
-// Versão reduzida do PDF para triagem (primeiros 2MB)
-function toBase64Reduzido(file){
-  return new Promise(function(res,rej){
-    var MAX=2*1024*1024; // 2MB
-    var blob=file.size>MAX?file.slice(0,MAX):file;
+// Extrai texto das primeiras 15 páginas do PDF usando PDF.js
+async function extrairTextoPDF(file){
+  try{
+    var buf=await file.arrayBuffer();
+    var pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    var numPags=Math.min(pdf.numPages,15);
+    var texto='';
+    for(var i=1;i<=numPags;i++){
+      var pag=await pdf.getPage(i);
+      var content=await pag.getTextContent();
+      texto+=content.items.map(function(it){return it.str;}).join(' ')+'\n';
+    }
+    // Limita a 8000 caracteres para não estourar tokens
+    return texto.slice(0,8000);
+  }catch(e){
+    console.warn('PDF.js falhou, usando fallback:',e);
+    // Fallback: leitura binária simples
+    return await lerPDFSimples(file);
+  }
+}
+
+async function lerPDFSimples(file){
+  return new Promise(function(res){
     var r=new FileReader();
     r.onload=function(e){
-      var s=e.target.result;
-      var b64=s.indexOf(',')>=0?s.split(',')[1]:s;
-      res(b64.replace(/\s/g,''));
+      var b=new Uint8Array(e.target.result),t='';
+      for(var i=0;i<Math.min(b.length,50000);i++){
+        if(b[i]>=32&&b[i]<127)t+=String.fromCharCode(b[i]);
+        else if(b[i]===10||b[i]===13)t+='\n';
+      }
+      res(t.replace(/ {3,}/g,' ').slice(0,8000));
     };
-    r.onerror=rej;
-    r.readAsDataURL(blob);
+    r.readAsArrayBuffer(file);
   });
 }
 
