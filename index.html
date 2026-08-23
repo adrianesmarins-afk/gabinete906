@@ -267,7 +267,10 @@ async function iniciar(file){
   prog(8,'Lendo o PDF...');
   await sleep(400);
 
-  var b64=await toBase64(file);
+  // PDF reduzido para triagem (primeiras páginas), completo para geração
+  var b64Triagem=await toBase64Reduzido(file);
+  var b64Completo=await toBase64(file);
+
   prog(18,'Enviando para análise...');
   await sleep(300);
 
@@ -328,7 +331,7 @@ REGRAS DE REPETITIVO/IRDR: Verifique se a matéria está com julgamento suspenso
         model:'claude-sonnet-4-6',
         max_tokens:800,
         messages:[{role:'user',content:[
-          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64Triagem}},
           {type:'text',text:promptTriagem}
         ]}]
       })
@@ -693,6 +696,22 @@ function toBase64(file){
     };
     r.onerror=rej;
     r.readAsDataURL(file);
+  });
+}
+
+// Versão reduzida do PDF para triagem (primeiros 2MB)
+function toBase64Reduzido(file){
+  return new Promise(function(res,rej){
+    var MAX=2*1024*1024; // 2MB
+    var blob=file.size>MAX?file.slice(0,MAX):file;
+    var r=new FileReader();
+    r.onload=function(e){
+      var s=e.target.result;
+      var b64=s.indexOf(',')>=0?s.split(',')[1]:s;
+      res(b64.replace(/\s/g,''));
+    };
+    r.onerror=rej;
+    r.readAsDataURL(blob);
   });
 }
 
