@@ -3,21 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Gabinete 906</title>
+<title>Gabinete 906 — Des. Décio Rodrigues</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh}
-.app{max-width:900px;margin:0 auto;padding:1.5rem}
+.app{max-width:920px;margin:0 auto;padding:1.5rem}
 .header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e6ea}
 .logo{width:44px;height:44px;border-radius:6px;background:#042C53;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;flex-shrink:0}
 .cfg{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:1.25rem;margin-bottom:1.25rem}
-.cfg-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0}
+.cfg-row{display:flex;align-items:center;justify-content:space-between}
 .cfg-body{display:none;margin-top:1rem}
 .cfg-body.open{display:block}
 label{font-size:12px;color:#6b7280;display:block;margin-bottom:3px;margin-top:8px}
-input[type=text],input[type=password],textarea{width:100%;font-size:13px;padding:8px 10px;border:1px solid #e2e6ea;border-radius:6px;background:#f7f8fa;color:#1a1d23}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=text]{width:100%;font-size:13px;padding:8px 10px;border:1px solid #e2e6ea;border-radius:6px;background:#f7f8fa;color:#1a1d23}
 .btn{padding:7px 16px;border:1px solid #e2e6ea;border-radius:6px;background:#fff;font-size:13px;cursor:pointer}
 .btn:hover{background:#f7f8fa}
 .btn-pr{background:#042C53;color:#fff;border-color:#042C53}
@@ -25,34 +24,50 @@ input[type=text],input[type=password],textarea{width:100%;font-size:13px;padding
 .sbar{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem}
 .dot{width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0}
 .dot.on{background:#639922}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
 .sc{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:12px 14px}
 .sl{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
 .sv{font-size:22px;font-weight:600}
-.tabs{display:flex;border-bottom:1px solid #e2e6ea;margin-bottom:1.25rem;overflow-x:auto}
-.tab{padding:9px 14px;border:none;border-bottom:2px solid transparent;background:transparent;color:#6b7280;font-size:13px;cursor:pointer;white-space:nowrap}
-.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
-.banner{border-radius:6px;padding:10px 14px;font-size:13px;margin-bottom:1.25rem;background:#E6F1FB;color:#0C447C}
-.uzone{border:2px dashed #e2e6ea;border-radius:10px;padding:2.5rem;text-align:center;cursor:pointer;background:#f7f8fa;margin-bottom:1rem;transition:all .15s}
+.ss{font-size:11px;color:#6b7280;margin-top:2px}
+.uzone{border:2px dashed #e2e6ea;border-radius:10px;padding:3rem;text-align:center;cursor:pointer;background:#fff;margin-bottom:1rem;transition:all .15s}
 .uzone:hover{border-color:#185FA5;background:#E6F1FB}
 .pw{margin-bottom:1.25rem;display:none}
-.pt{background:#e9ecef;border-radius:99px;height:7px;overflow:hidden;margin:8px 0}
-.pf{height:7px;border-radius:99px;background:#185FA5;transition:width .4s}
+.pt{background:#e9ecef;border-radius:99px;height:8px;overflow:hidden;margin:8px 0}
+.pf{height:8px;border-radius:99px;background:#185FA5;transition:width .5s}
+/* Painel de triagem */
+.triagem{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:1.25rem;margin-bottom:1rem;display:none}
+.t-title{font-weight:600;font-size:15px;margin-bottom:14px;color:#1a1d23}
+.t-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6}
+.t-item:last-child{border-bottom:none}
+.t-ico{font-size:20px;flex-shrink:0;margin-top:1px}
+.t-info{flex:1}
+.t-label{font-weight:500;font-size:13px;margin-bottom:3px}
+.t-sub{font-size:12px;color:#6b7280;line-height:1.5}
+.t-badge{font-size:11px;padding:3px 10px;border-radius:99px;flex-shrink:0;margin-top:2px}
+.b-ok{background:#EAF3DE;color:#3B6D11}
+.b-warn{background:#FFF3E0;color:#E65100}
+.b-err{background:#FFEBEE;color:#C62828}
+.b-load{background:#f3f4f6;color:#6b7280}
+/* Resultado */
 .rc{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.rc.ok{border-left:4px solid #639922}
+.rc.warn{border-left:4px solid #FF6D00}
+.rc.err{border-left:4px solid #E24B4A}
 .rh{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
-.rt{font-size:15px;font-weight:500}
-.badge{font-size:11px;padding:2px 9px;border-radius:99px;background:#E6F1FB;color:#0C447C;margin-left:6px}
-.mt{font-family:'Times New Roman',serif;font-size:13px;line-height:1.9;background:#f7f8fa;border-radius:6px;padding:1rem 1.25rem;max-height:300px;overflow-y:auto;white-space:pre-wrap;border:1px solid #e2e6ea}
+.rt{font-size:15px;font-weight:500;display:flex;align-items:center;gap:8px}
+.badge{font-size:11px;padding:2px 9px;border-radius:99px;background:#E6F1FB;color:#0C447C}
+.mt{font-family:'Times New Roman',serif;font-size:13px;line-height:1.9;background:#f7f8fa;border-radius:6px;padding:1rem 1.25rem;max-height:320px;overflow-y:auto;white-space:pre-wrap;border:1px solid #e2e6ea}
 .ri{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #e2e6ea;font-size:13px}
 .ri:last-child{border-bottom:none}
 .sb{font-size:11px;padding:2px 8px;border-radius:99px;background:#E6F1FB;color:#0C447C}
-.note{font-size:11px;color:#E65100;margin-top:8px}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+.tipo-tag{display:inline-block;font-size:12px;padding:3px 12px;border-radius:99px;background:#042C53;color:#fff;margin-bottom:12px}
+@media(max-width:600px){.stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- HEADER -->
 <div class="header">
   <div class="logo">⚖</div>
   <div>
@@ -64,163 +79,168 @@ input[type=text],input[type=password],textarea{width:100%;font-size:13px;padding
 <!-- CONFIGURAÇÃO -->
 <div class="cfg">
   <div class="cfg-row">
-    <span style="font-weight:600">⚙️ Configuração</span>
-    <button class="btn" onclick="toggleCfg()">▼ Configurar</button>
+    <span style="font-weight:600;font-size:14px">⚙️ Configuração</span>
+    <button class="btn" onclick="document.getElementById('cfg-body').classList.toggle('open')">▼ Configurar</button>
   </div>
   <div class="cfg-body" id="cfg-body">
     <label>API Key do Google Cloud</label>
     <input type="text" id="gkey" placeholder="AIzaSy..."/>
     <label>API Key da Anthropic</label>
     <input type="text" id="akey" placeholder="sk-ant-..."/>
-    <div style="font-weight:600;font-size:12px;margin-top:12px;margin-bottom:4px">IDs das pastas no Google Drive</div>
-    <div class="grid2">
-      <div><label>Apelações</label><input type="text" id="f-ap" placeholder="ID da pasta"/></div>
-      <div><label>Agravos de Instrumento</label><input type="text" id="f-ag" placeholder="ID da pasta"/></div>
-      <div><label>Dec. Monocráticas</label><input type="text" id="f-mo" placeholder="ID da pasta"/></div>
-      <div><label>Despachos Susp./Ativo</label><input type="text" id="f-de" placeholder="ID da pasta"/></div>
-      <div><label>Embargos de Declaração</label><input type="text" id="f-em" placeholder="ID da pasta"/></div>
-      <div><label>Agravo Interno</label><input type="text" id="f-ai" placeholder="ID da pasta"/></div>
-      <div><label>Suspensão Repetitivo</label><input type="text" id="f-su" placeholder="ID da pasta"/></div>
-    </div>
-    <div style="margin-top:10px">
+    <label>ID da pasta do Google Drive (todos os documentos juntos)</label>
+    <input type="text" id="fid" placeholder="ID da pasta"/>
+    <div style="margin-top:12px;display:flex;gap:8px">
       <button class="btn btn-pr" onclick="salvar()">💾 Salvar e conectar</button>
     </div>
-    <p class="note">🔒 Dados salvos apenas nesta sessão do navegador.</p>
+    <p style="font-size:11px;color:#E65100;margin-top:8px">🔒 Dados salvos apenas nesta sessão do navegador.</p>
   </div>
 </div>
 
 <!-- STATUS -->
 <div class="sbar">
   <span class="dot" id="dot"></span>
-  <span style="font-size:12px;color:#6b7280" id="status-txt">Google Drive não conectado</span>
+  <span style="font-size:12px;color:#6b7280" id="status-txt">Drive não conectado — configure acima</span>
 </div>
 
 <!-- STATS -->
 <div class="stats" id="stats" style="display:none">
-  <div class="sc"><div class="sl">Apelações</div><div class="sv" id="n-ap">0</div></div>
-  <div class="sc"><div class="sl">Agravos</div><div class="sv" id="n-ag">0</div></div>
-  <div class="sc"><div class="sl">Monocráticas/Outros</div><div class="sv" id="n-mo">0</div></div>
-  <div class="sc"><div class="sl">Suspensão Repetitivo</div><div class="sv" id="n-su">0</div></div>
+  <div class="sc">
+    <div class="sl">Total de documentos</div>
+    <div class="sv" id="n-total">0</div>
+    <div class="ss">na base do Drive</div>
+  </div>
+  <div class="sc">
+    <div class="sl">Mais recente</div>
+    <div class="sv" style="font-size:14px;padding-top:4px" id="n-recente">—</div>
+    <div class="ss">data do último documento</div>
+  </div>
+  <div class="sc">
+    <div class="sl">Status</div>
+    <div class="sv" style="font-size:13px;padding-top:4px;color:#3B6D11">✅ Pronto</div>
+    <div class="ss">para receber processos</div>
+  </div>
 </div>
-
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab active" onclick="setTab('ap',this)">📄 Apelação</button>
-  <button class="tab" onclick="setTab('ag',this)">⚡ Agravo de Instrumento</button>
-  <button class="tab" onclick="setTab('mo',this)">📋 Dec. Monocrática</button>
-  <button class="tab" onclick="setTab('em',this)">🔄 Embargos de Declaração</button>
-  <button class="tab" onclick="setTab('ai',this)">↑ Agravo Interno</button>
-  <button class="tab" onclick="setTab('su',this)">🚫 Suspensão Repetitivo</button>
-</div>
-
-<div class="banner" id="banner">Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive como referência.</div>
 
 <!-- UPLOAD -->
-<div class="uzone" id="uzone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="drop(event)">
-  <div style="font-size:40px;margin-bottom:10px">📄</div>
-  <div style="font-size:15px;font-weight:500;margin-bottom:4px">Clique para selecionar ou arraste o PDF aqui</div>
-  <div style="font-size:12px;color:#6b7280">Apenas PDF · Máx. 50 MB</div>
+<div class="uzone" id="uzone"
+  onclick="document.getElementById('fi').click()"
+  ondragover="event.preventDefault()"
+  ondrop="onDrop(event)">
+  <div style="font-size:48px;margin-bottom:12px">📄</div>
+  <div style="font-size:16px;font-weight:500;margin-bottom:6px">Clique para selecionar ou arraste o PDF do processo aqui</div>
+  <div style="font-size:13px;color:#6b7280">O sistema identificará automaticamente o tipo de recurso e realizará a triagem completa</div>
+  <div style="font-size:12px;color:#adb5bd;margin-top:6px">Apenas PDF · Máx. 50 MB</div>
 </div>
-<input type="file" id="fi" accept=".pdf" style="display:none" onchange="upload(this.files[0])"/>
+<input type="file" id="fi" accept=".pdf" style="display:none" onchange="iniciar(this.files[0])"/>
 
 <!-- PROGRESSO -->
 <div class="pw" id="pw">
-  <div style="font-size:13px;color:#6b7280" id="pm">Aguarde...</div>
+  <div style="font-size:13px;color:#6b7280;font-weight:500" id="pm">Aguarde...</div>
   <div class="pt"><div class="pf" id="pf" style="width:0%"></div></div>
   <div style="font-size:11px;color:#6b7280" id="pp">0%</div>
+</div>
+
+<!-- PAINEL DE TRIAGEM -->
+<div class="triagem" id="triagem">
+  <div class="t-title">🔍 Análise Prévia — Etapas de Triagem</div>
+
+  <div class="t-item">
+    <span class="t-ico" id="ico-tipo">⏳</span>
+    <div class="t-info">
+      <div class="t-label">Identificação do Recurso</div>
+      <div class="t-sub" id="sub-tipo">Identificando tipo de recurso, partes e matéria principal...</div>
+    </div>
+    <span class="t-badge b-load" id="badge-tipo">Analisando</span>
+  </div>
+
+  <div class="t-item">
+    <span class="t-ico" id="ico-comp">⏳</span>
+    <div class="t-info">
+      <div class="t-label">Verificação de Competência — Res. 623/2013</div>
+      <div class="t-sub" id="sub-comp">Verificando se a matéria é da 2ª Subseção (11ª–24ª Câmaras)...</div>
+    </div>
+    <span class="t-badge b-load" id="badge-comp">Aguardando</span>
+  </div>
+
+  <div class="t-item">
+    <span class="t-ico" id="ico-rep">⏳</span>
+    <div class="t-info">
+      <div class="t-label">Verificação de Repetitivo / IRDR</div>
+      <div class="t-sub" id="sub-rep">Verificando suspensão por Repetitivo do STJ/STF ou IRDR do TJSP...</div>
+    </div>
+    <span class="t-badge b-load" id="badge-rep">Aguardando</span>
+  </div>
+
+  <div class="t-item">
+    <span class="t-ico" id="ico-adm">⏳</span>
+    <div class="t-info">
+      <div class="t-label">Análise de Admissibilidade</div>
+      <div class="t-sub" id="sub-adm">Verificando pressupostos recursais...</div>
+    </div>
+    <span class="t-badge b-load" id="badge-adm">Aguardando</span>
+  </div>
+
+  <div class="t-item">
+    <span class="t-ico" id="ico-doc">⏳</span>
+    <div class="t-info">
+      <div class="t-label">Consulta ao banco de dados (Drive) e elaboração da minuta</div>
+      <div class="t-sub" id="sub-doc">Aguardando triagem completa...</div>
+    </div>
+    <span class="t-badge b-load" id="badge-doc">Aguardando</span>
+  </div>
 </div>
 
 <!-- RESULTADO -->
 <div id="ra"></div>
 
 </div>
-
 <script>
-// Estado global
-var G = {
-  tab:'ap', gkey:'', akey:'',
-  folders:{ap:'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd'},
-  arquivos:{}, minuta:'', voto2:''
-};
+var G={gkey:'',akey:'',fid:'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd',docs:[],minuta:'',voto2:''};
 
-var BANNERS = {
-  ap:'Faça upload do PDF da apelação. A IA buscará os acórdãos mais recentes da pasta Apelações no Drive.',
-  ag:'Upload do PDF do agravo. A IA analisa fumus + periculum, gera despacho (com intimação) e voto de mérito separados.',
-  mo:'Upload do PDF. A IA buscará decisões monocráticas similares como referência.',
-  em:'Upload do PDF. A IA identificará omissões/contradições e gerará o acórdão dos embargos.',
-  ai:'Upload do PDF. A IA analisará o cabimento e gerará a decisão do agravo interno.',
-  su:'Upload do PDF. A IA identificará o tema do Repetitivo e gerará o despacho de sobrestamento.'
-};
+var REGRAS_DRIVE=`INSTRUÇÕES SOBRE OS DOCUMENTOS DE REFERÊNCIA DO DRIVE:
+Os documentos Word do gabinete contêm anotações internas em cores diferentes do preto (vermelho, azul, verde, amarelo destacado etc.). Essas anotações são comentários dos assistentes e NÃO fazem parte do voto oficial.
+REGRA: Ignore COMPLETAMENTE qualquer trecho que, no documento original, esteja em cor diferente de preto ou com destaque colorido. Use apenas o texto em preto/automático como modelo.
+A minuta nova deve replicar a estrutura, formatação (Times New Roman), espaçamento e linguagem dos trechos em preto, preenchendo os campos com os dados do processo atual.`;
 
-var TIPOS = {
-  ap:'minuta completa de acórdão de Apelação',
-  ag:'DOIS documentos: (1) despacho de efeito suspensivo/ativo com intimação da parte agravada no corpo do próprio despacho — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
-  mo:'decisão monocrática completa',
-  em:'acórdão de Embargos de Declaração',
-  ai:'decisão de Agravo Interno',
-  su:'despacho de suspensão/sobrestamento por Recurso Repetitivo'
-};
-
-var REGRAS = `
-ESTRUTURA DO RELATÓRIO:
+var REGRAS=`ESTRUTURA OBRIGATÓRIA DO RELATÓRIO:
 §1 - Tipo de recurso e decisão recorrida (resumido).
 §2 - Resumo das razões recursais.
-§3 - Somente se houver recurso adesivo/simultâneo.
-§ FINAL - Exatamente: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."
-
-FUNDAMENTAÇÃO: apenas preliminares + mérito. NÃO mencionar admissibilidade.
-FORMATAÇÃO: Times New Roman, mesmo espaçamento dos documentos de referência.
-IGNORAR texto colorido ou destacado nos documentos de referência (são anotações internas).
-Usar entendimento do documento mais recente como referência prioritária.`;
+§3 - Somente se houver recurso adesivo ou simultâneo.
+§ FINAL - Redigir exatamente: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."
+FUNDAMENTAÇÃO: apenas preliminares (se houver) + mérito. NÃO mencionar admissibilidade.
+FORMATAÇÃO: Times New Roman, mesmo tamanho e espaçamento dos documentos de referência.
+IGNORAR todo texto colorido ou destacado nos documentos de referência (são anotações internas).
+Usar sempre o entendimento do documento mais recente como referência prioritária.`;
 
 // Config
-function toggleCfg(){
-  var b=document.getElementById('cfg-body');
-  b.classList.toggle('open');
-}
-
 function salvar(){
   G.gkey=document.getElementById('gkey').value.trim();
   G.akey=document.getElementById('akey').value.trim();
-  G.folders={};
-  ['ap','ag','mo','de','em','ai','su'].forEach(function(k){
-    var v=document.getElementById('f-'+k).value.trim();
-    if(v) G.folders[k]=v;
-  });
-  if(!G.folders.ap) G.folders.ap='1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
+  G.fid=document.getElementById('fid').value.trim()||'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
   document.getElementById('cfg-body').classList.remove('open');
-  carregarDrive();
+  conectar();
 }
 
-// Drive
-async function carregarDrive(){
-  if(!G.gkey){setDot(false,'Insira a API Key do Google nas configurações');return;}
-  setDot(false,'Carregando base de votos...');
-  G.arquivos={};
-  var total=0;
-  var entries=Object.entries(G.folders);
-  for(var i=0;i<entries.length;i++){
-    var k=entries[i][0], fid=entries[i][1];
-    try{
-      var url='https://www.googleapis.com/drive/v3/files'
-        +'?q=%27'+fid+'%27+in+parents'
-        +'+and+mimeType%3D%27application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document%27'
-        +'+and+trashed%3Dfalse'
-        +'&fields=files(id%2Cname%2CmodifiedTime)&orderBy=modifiedTime+desc&key='+G.gkey;
-      var r=await fetch(url);
-      if(!r.ok) continue;
-      var d=await r.json();
-      G.arquivos[k]=d.files||[];
-      total+=G.arquivos[k].length;
-    }catch(e){}
+async function conectar(){
+  if(!G.gkey){setDot(false,'Insira a API Key do Google Cloud nas configurações');return;}
+  setDot(false,'Conectando ao Drive...');
+  try{
+    var url='https://www.googleapis.com/drive/v3/files'
+      +'?q=%27'+G.fid+'%27+in+parents'
+      +'+and+mimeType%3D%27application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document%27'
+      +'+and+trashed%3Dfalse'
+      +'&fields=files(id%2Cname%2CmodifiedTime)&orderBy=modifiedTime+desc&pageSize=200&key='+G.gkey;
+    var r=await fetch(url);
+    if(!r.ok) throw new Error('Erro HTTP '+r.status);
+    var d=await r.json();
+    G.docs=d.files||[];
+    document.getElementById('n-total').textContent=G.docs.length;
+    document.getElementById('n-recente').textContent=G.docs.length?(G.docs[0].modifiedTime||'').slice(0,10):'—';
+    document.getElementById('stats').style.display='grid';
+    setDot(true,'Drive conectado — '+G.docs.length+' documentos carregados');
+  }catch(e){
+    setDot(false,'Erro ao conectar: '+e.message);
   }
-  // Atualiza contadores
-  document.getElementById('n-ap').textContent=(G.arquivos.ap||[]).length;
-  document.getElementById('n-ag').textContent=((G.arquivos.ag||[]).length+(G.arquivos.de||[]).length);
-  document.getElementById('n-mo').textContent=((G.arquivos.mo||[]).length+(G.arquivos.em||[]).length+(G.arquivos.ai||[]).length);
-  document.getElementById('n-su').textContent=(G.arquivos.su||[]).length;
-  document.getElementById('stats').style.display='grid';
-  setDot(true,'Drive conectado — '+total+' documentos carregados');
 }
 
 function setDot(ok,msg){
@@ -228,67 +248,75 @@ function setDot(ok,msg){
   document.getElementById('status-txt').textContent=msg;
 }
 
-// Tabs
-function setTab(t,el){
-  G.tab=t;
-  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
-  el.classList.add('active');
-  document.getElementById('banner').textContent=BANNERS[t];
-  reset();
-}
-
 // Upload
-function drop(e){
+function onDrop(e){
   e.preventDefault();
   var f=e.dataTransfer.files[0];
-  if(f&&f.type==='application/pdf') upload(f);
+  if(f&&f.type==='application/pdf') iniciar(f);
 }
 
-function upload(file){
+async function iniciar(file){
   if(!file) return;
   if(!G.akey){alert('Configure a API Key da Anthropic antes de continuar.');return;}
   document.getElementById('uzone').style.display='none';
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='block';
-  processar(file);
+  document.getElementById('triagem').style.display='none';
+  resetTriagem();
+
+  prog(8,'Lendo o PDF...');
+  await sleep(400);
+
+  var b64=await toBase64(file);
+  prog(18,'Enviando para análise...');
+  await sleep(300);
+
+  // ETAPA ÚNICA: Triagem completa em uma chamada
+  var promptTriagem=`Você é o assistente jurídico do Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
+
+Leia o PDF do processo anexo e realize a análise completa. Responda APENAS com JSON válido neste formato exato, sem texto adicional:
+
+{
+  "tipo_recurso": "Apelação|Agravo de Instrumento|Embargos de Declaração|Agravo Interno|Decisão Monocrática|Outro",
+  "partes": "Apelante/Apelado ou Agravante/Agravado",
+  "numero_processo": "número completo",
+  "comarca": "comarca de origem",
+  "materia": "matéria jurídica principal do recurso",
+  "gratuidade": "concedida|pedida|sem gratuidade",
+  "preparo": "preparado|sem preparo diante da gratuidade concedida|sem preparo diante do pedido de gratuidade",
+  "resposta": "com resposta|sem resposta",
+  "efeito": "devolutivo|suspensivo",
+  "competencia": {
+    "resultado": "COMPETENTE|INCOMPETENTE",
+    "camara_correta": "nome da câmara/subseção correta se incompetente, null se competente",
+    "motivo": "breve justificativa"
+  },
+  "repetitivo": {
+    "resultado": "SUSPENSO|NAO_SUSPENSO",
+    "tema": "número e nome do tema se suspenso, null se não",
+    "tribunal": "STJ|STF|IRDR-TJSP se suspenso, null se não",
+    "motivo": "breve justificativa"
+  },
+  "admissibilidade": {
+    "resultado": "ADMISSIVEL|INADMISSIVEL",
+    "motivo": "motivo se inadmissível, null se admissível"
+  }
 }
 
-async function processar(file){
-  // Progresso
-  var steps=[
-    [15,'Lendo o PDF...'],
-    [35,'Buscando documentos de referência no Drive...'],
-    [55,'Filtrando anotações coloridas...'],
-    [75,'Analisando o processo...'],
-    [90,'Gerando documento...'],
-    [100,'Concluído!']
-  ];
-  for(var i=0;i<steps.length-1;i++){
-    prog(steps[i][0],steps[i][1]);
-    await sleep(600);
-  }
+REGRAS DE COMPETÊNCIA (Res. 623/2013 TJSP — 2ª Subseção = 11ª a 24ª Câmaras):
+COMPETENTE: contratos bancários, financiamentos, cartão de crédito, CDC bancário, empréstimo, mútuo, alienação fiduciária de veículo (busca e apreensão), consórcio, execução em título extrajudicial, sustação de protesto, comodato, transporte, depósito mercantil, possessória de imóvel, servidão, energia elétrica, telefonia, água, gás, prestação de serviços, superendividamento.
+INCOMPETENTE → 1ª Subseção (1ª-10ª Câmaras): família, divórcio, alimentos, inventário, herança, usucapião, registros públicos, plano de saúde, seguro-saúde, seguro habitacional, direito autoral, reivindicação de imóvel.
+INCOMPETENTE → 3ª Subseção (25ª-36ª Câmaras): condomínio, locação de imóvel, acidente de veículo, previdência privada, seguro de vida/dano, honorários advocatícios, arrendamento rural, bem móvel.
+INCOMPETENTE → Direito Público: tributário, ICMS, TUST, TUSD, servidor público, fazenda pública, desapropriação, responsabilidade civil do estado, previdência social/INSS.
+INCOMPETENTE → Câmaras Empresariais: falência, recuperação judicial, sociedades, propriedade industrial, marcas, patentes.
 
-  // Converte PDF para base64
-  var b64=await toBase64(file);
+REGRAS DE REPETITIVO/IRDR: Verifique se a matéria está com julgamento suspenso por Repetitivo STJ/STF ou IRDR do TJSP. Considere os principais temas de contratos bancários, CDC, seguros e prestação de serviços.`;
 
-  // Busca referências do Drive
-  var refs=(G.arquivos[G.tab]||G.arquivos.ap||[]).slice(0,3);
-  var susps=(G.arquivos.su||[]).slice(0,2);
-  var txtRefs='',txtSus='';
-  for(var j=0;j<refs.length;j++){
-    try{var t=await lerWord(refs[j].id);txtRefs+='\n\n---REF:'+refs[j].name+'---\n'+t.slice(0,600);}catch(e){}
-  }
-  for(var k=0;k<susps.length;k++){
-    try{var ts=await lerWord(susps[k].id);txtSus+='\n\n---SUSP:'+susps[k].name+'---\n'+ts.slice(0,300);}catch(e){}
-  }
+  prog(30,'Analisando competência, Repetitivos e admissibilidade...');
 
-  prog(100,'Concluído!');
-
-  // Chama API Anthropic com PDF como documento
-  var prompt='Você é assistente jurídico do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Leia o PDF anexo e gere uma '+TIPOS[G.tab]+'.\n\n'+REGRAS+'\n\nREFERÊNCIAS DO GABINETE:\n'+txtRefs+'\n\nSUSPENSÃO POR REPETITIVO:\n'+txtSus+'\n\nGere o documento completo agora.';
-
+  var triagem;
   try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+    var r1=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -298,62 +326,311 @@ async function processar(file){
       },
       body:JSON.stringify({
         model:'claude-sonnet-4-6',
-        max_tokens:3000,
-        messages:[{
-          role:'user',
-          content:[
-            {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
-            {type:'text',text:prompt}
-          ]
-        }]
+        max_tokens:800,
+        messages:[{role:'user',content:[
+          {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+          {type:'text',text:promptTriagem}
+        ]}]
       })
     });
-    var d=await resp.json();
-    if(d.error){
-      console.error('Erro API:',JSON.stringify(d.error));
-      mostrarErro('Erro da API: '+d.error.message);
-      return;
-    }
-    var texto=(d.content||[]).map(function(b){return b.text||'';}).join('');
-    mostrarResultado(texto,refs);
+    var d1=await r1.json();
+    if(d1.error) throw new Error(d1.error.message);
+    var txt=(d1.content||[]).map(function(b){return b.text||'';}).join('').replace(/```json|```/g,'').trim();
+    triagem=JSON.parse(txt);
   }catch(e){
-    console.error('Erro fetch:',e);
-    mostrarErro('Erro de conexão: '+e.message);
+    mostrarErro('Erro na triagem: '+e.message);return;
   }
+
+  // Mostra painel de triagem com resultados
+  document.getElementById('pw').style.display='none';
+  document.getElementById('triagem').style.display='block';
+  mostrarTriagem(triagem);
+
+  await sleep(600);
+
+  // Decide o fluxo
+  if(triagem.competencia.resultado==='INCOMPETENTE'){
+    await gerarIncompetencia(triagem,b64);
+    return;
+  }
+  if(triagem.repetitivo.resultado==='SUSPENSO'){
+    await gerarSuspensao(triagem,b64);
+    return;
+  }
+  if(triagem.admissibilidade.resultado==='INADMISSIVEL'){
+    await gerarNaoConhecimento(triagem,b64);
+    return;
+  }
+
+  // Admitido — gera mérito
+  await gerarMerito(triagem,b64);
 }
 
-function mostrarResultado(texto,refs){
-  document.getElementById('pw').style.display='none';
+function mostrarTriagem(t){
+  // Identificação
+  setTItem('tipo','✅',t.tipo_recurso+' · '+t.partes,'b-ok','Identificado');
+  // Competência
+  var cOk=t.competencia.resultado==='COMPETENTE';
+  setTItem('comp',cOk?'✅':'❌',t.competencia.motivo,cOk?'b-ok':'b-err',cOk?'Competente':'Incompetente');
+  // Repetitivo
+  if(t.competencia.resultado==='COMPETENTE'){
+    var rOk=t.repetitivo.resultado==='NAO_SUSPENSO';
+    setTItem('rep',rOk?'✅':'⚠️',t.repetitivo.motivo,rOk?'b-ok':'b-warn',rOk?'Não suspenso':'Suspenso — '+t.repetitivo.tribunal);
+  }
+  // Admissibilidade
+  if(t.competencia.resultado==='COMPETENTE'&&t.repetitivo.resultado==='NAO_SUSPENSO'){
+    var aOk=t.admissibilidade.resultado==='ADMISSIVEL';
+    setTItem('adm',aOk?'✅':'❌',aOk?'Pressupostos recursais verificados':t.admissibilidade.motivo,aOk?'b-ok':'b-err',aOk?'Admissível':'Inadmissível');
+  }
+  // Documento
+  setTItem('doc','🔄','Consultando banco de dados do Drive e elaborando minuta...','b-load','Em elaboração');
+}
+
+function setTItem(key,ico,sub,badgeClass,badgeTxt){
+  document.getElementById('ico-'+key).textContent=ico;
+  document.getElementById('sub-'+key).textContent=sub;
+  var b=document.getElementById('badge-'+key);
+  b.textContent=badgeTxt;
+  b.className='t-badge '+badgeClass;
+}
+
+async function buscarRefs(tipo){
+  // Busca os documentos mais relevantes do Drive (mais recentes primeiro, já ordenado)
+  var relevantes=G.docs.filter(function(d){
+    var n=d.name.toLowerCase();
+    if(tipo==='Agravo de Instrumento') return n.includes('ag')||n.includes('agravo')||n.includes('desp');
+    if(tipo==='Embargos de Declaração') return n.includes('emb')||n.includes('embargo');
+    if(tipo==='Agravo Interno') return n.includes('ai')||n.includes('interno');
+    return true; // Para apelação e outros usa todos
+  });
+  // Pega os 3 mais recentes relevantes, senão os 3 primeiros da base
+  var selecionados=(relevantes.length?relevantes:G.docs).slice(0,3);
+  var txt='';
+  for(var i=0;i<selecionados.length;i++){
+    try{
+      var t=await lerWord(selecionados[i].id);
+      txt+='\n\n--- REFERÊNCIA: '+selecionados[i].name+' ('+( selecionados[i].modifiedTime||'').slice(0,10)+') ---\n'+t.slice(0,700);
+    }catch(e){}
+  }
+  return {txt:txt,docs:selecionados};
+}
+
+async function buscarSuspensoes(){
+  var susps=G.docs.filter(function(d){
+    var n=d.name.toLowerCase();
+    return n.includes('suspens')||n.includes('sobresta')||n.includes('repetit')||n.includes('irdr');
+  }).slice(0,3);
+  var txt='';
+  for(var i=0;i<susps.length;i++){
+    try{var t=await lerWord(susps[i].id);txt+='\n\n--- SUSPENSÃO: '+susps[i].name+' ---\n'+t.slice(0,400);}catch(e){}
+  }
+  return txt;
+}
+
+async function buscarIncompetencia(){
+  var ics=G.docs.filter(function(d){
+    var n=d.name.toLowerCase();
+    return n.includes('incomp')||n.includes('remessa')||n.includes('nao conhec')||n.includes('não conhec');
+  }).slice(0,2);
+  var txt='';
+  for(var i=0;i<ics.length;i++){
+    try{var t=await lerWord(ics[i].id);txt+='\n\n--- MODELO: '+ics[i].name+' ---\n'+t.slice(0,500);}catch(e){}
+  }
+  return txt;
+}
+
+async function gerarIncompetencia(triagem,b64){
+  setTItem('doc','🔄','Buscando modelo de remessa no Drive...','b-load','Elaborando');
+  var txtIc=await buscarIncompetencia();
+  setTItem('doc','🔄','Gerando decisão monocrática de remessa...','b-load','Elaborando');
+
+  var prompt=`Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
+
+TAREFA: Gere uma DECISÃO MONOCRÁTICA de não conhecimento do recurso por incompetência, com remessa à ${triagem.competencia.camara_correta}.
+
+Dados do processo:
+- Número: ${triagem.numero_processo}
+- Recurso: ${triagem.tipo_recurso}
+- Partes: ${triagem.partes}
+- Matéria: ${triagem.materia}
+- Comarca: ${triagem.comarca}
+- Motivo da incompetência: ${triagem.competencia.motivo}
+
+Use a mesma formatação Times New Roman dos modelos abaixo. Fundamente na Resolução 623/2013 do TJSP.
+
+MODELOS DO GABINETE:
+${REGRAS_DRIVE}
+${txtIc||'(sem modelo — use estilo padrão TJSP)'}`;
+
+  var texto=await chamarAPI(prompt,b64);
+  G.minuta=texto;
+  setTItem('doc','✅','Decisão monocrática de remessa elaborada','b-warn','Concluído');
+  mostrarResultado([{titulo:'⚠️ Incompetência — Decisão Monocrática de Remessa',texto:texto,cor:'warn'}],[]);
+}
+
+async function gerarSuspensao(triagem,b64){
+  setTItem('rep','⚠️','Matéria suspensa: '+triagem.repetitivo.tema+' ('+triagem.repetitivo.tribunal+')','b-warn','Suspenso');
+  setTItem('adm','—','Aguardando resolução do Repetitivo/IRDR','b-load','—');
+  setTItem('doc','🔄','Buscando despacho de suspensão no Drive...','b-load','Elaborando');
+
+  var txtSus=await buscarSuspensoes();
+  setTItem('doc','🔄','Gerando despacho de sobrestamento...','b-load','Elaborando');
+
+  var prompt=`Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
+
+TAREFA: Gere um DESPACHO DE SOBRESTAMENTO/SUSPENSÃO determinando aguardar o julgamento do tema.
+
+Dados do processo:
+- Número: ${triagem.numero_processo}
+- Recurso: ${triagem.tipo_recurso}
+- Partes: ${triagem.partes}
+- Matéria: ${triagem.materia}
+- Comarca: ${triagem.comarca}
+- Tema suspenso: ${triagem.repetitivo.tema}
+- Tribunal: ${triagem.repetitivo.tribunal}
+
+Use a mesma formatação Times New Roman dos modelos abaixo.
+Fundamente no art. 1.037 do CPC (Repetitivo) ou no IRDR conforme o caso.
+
+DESPACHOS DE SUSPENSÃO DO GABINETE:
+${REGRAS_DRIVE}
+${txtSus||'(sem modelo — use estilo padrão TJSP)'}`;
+
+  var texto=await chamarAPI(prompt,b64);
+  G.minuta=texto;
+  setTItem('doc','✅','Despacho de sobrestamento elaborado','b-warn','Concluído');
+  mostrarResultado([{titulo:'⚠️ Sobrestamento — '+triagem.repetitivo.tribunal+': '+triagem.repetitivo.tema,texto:texto,cor:'warn'}],[]);
+}
+
+async function gerarNaoConhecimento(triagem,b64){
+  setTItem('adm','❌','Inadmissível: '+triagem.admissibilidade.motivo,'b-err','Inadmissível');
+  setTItem('doc','🔄','Buscando modelo de não conhecimento no Drive...','b-load','Elaborando');
+
+  var txtIc=await buscarIncompetencia();
+  setTItem('doc','🔄','Gerando decisão monocrática de não conhecimento...','b-load','Elaborando');
+
+  var prompt=`Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
+
+TAREFA: Gere uma DECISÃO MONOCRÁTICA de não conhecimento do recurso por inadmissibilidade.
+
+Dados do processo:
+- Número: ${triagem.numero_processo}
+- Recurso: ${triagem.tipo_recurso}
+- Partes: ${triagem.partes}
+- Matéria: ${triagem.materia}
+- Comarca: ${triagem.comarca}
+- Motivo: ${triagem.admissibilidade.motivo}
+
+Use a mesma formatação Times New Roman dos modelos abaixo.
+
+MODELOS DO GABINETE:
+${REGRAS_DRIVE}
+${txtIc||'(sem modelo — use estilo padrão TJSP)'}`;
+
+  var texto=await chamarAPI(prompt,b64);
+  G.minuta=texto;
+  setTItem('doc','✅','Decisão monocrática elaborada','b-err','Concluído');
+  mostrarResultado([{titulo:'❌ Não Conhecimento — Inadmissibilidade',texto:texto,cor:'err'}],[]);
+}
+
+async function gerarMerito(triagem,b64){
+  setTItem('adm','✅','Pressupostos recursais verificados','b-ok','Admissível');
+  setTItem('doc','🔄','Consultando banco de dados do Drive...','b-load','Elaborando');
+
+  var refs=await buscarRefs(triagem.tipo_recurso);
+  setTItem('doc','🔄','Elaborando a minuta completa...','b-load','Elaborando');
+
+  var tipoDoc={
+    'Apelação':'minuta completa de acórdão de Apelação',
+    'Agravo de Instrumento':'DOIS documentos: (1) despacho analisando eventual pedido de efeito suspensivo/ativo, com parágrafo de intimação da parte agravada já no corpo — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
+    'Embargos de Declaração':'acórdão de Embargos de Declaração analisando omissão, contradição ou obscuridade',
+    'Agravo Interno':'decisão de Agravo Interno com análise de cabimento e mérito',
+    'Decisão Monocrática':'decisão monocrática completa'
+  }[triagem.tipo_recurso]||'minuta completa';
+
+  var prompt=`Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.
+
+TAREFA: Gere uma ${tipoDoc}.
+
+${REGRAS}
+
+DADOS DO PROCESSO (já verificados na triagem):
+- Número: ${triagem.numero_processo}
+- Recurso: ${triagem.tipo_recurso}
+- Partes: ${triagem.partes}
+- Matéria: ${triagem.materia}
+- Comarca: ${triagem.comarca}
+- Gratuidade: ${triagem.gratuidade}
+- Preparo: ${triagem.preparo}
+- Resposta: ${triagem.resposta}
+- Efeito: ${triagem.efeito}
+
+FÓRMULA FINAL DO RELATÓRIO (use exatamente):
+"Recurso recebido, em seu efeito ${triagem.efeito}, ${triagem.preparo} e ${triagem.resposta}."
+
+REFERÊNCIAS DO GABINETE (mais recentes primeiro):
+${REGRAS_DRIVE}
+${refs.txt}
+
+Gere o documento completo com todos os campos preenchidos com os dados reais do processo.`;
+
+  var texto=await chamarAPI(prompt,b64);
   G.minuta=texto;
   G.voto2='';
-  if(G.tab==='ag'&&texto.includes('---VOTO---')){
+
+  var docs=[];
+  if(triagem.tipo_recurso==='Agravo de Instrumento'&&texto.includes('---VOTO---')){
     var p=texto.split('---VOTO---');
     G.minuta=p[0].trim();
     G.voto2=p[1]?p[1].trim():'';
+    docs.push({titulo:'📄 Despacho — Efeito Suspensivo/Ativo',texto:G.minuta,cor:'ok'});
+    if(G.voto2) docs.push({titulo:'📄 Voto de Mérito — Agravo de Instrumento',texto:G.voto2,cor:'ok',qual:'voto2'});
+  } else {
+    docs.push({titulo:'📄 '+triagem.tipo_recurso+' — Minuta',texto:G.minuta,cor:'ok'});
   }
 
-  var isSus=texto.toLowerCase().includes('sobresta')||texto.toLowerCase().includes('repetitivo');
-  var titulos={ap:'Minuta de acórdão',ag:'Despacho — efeito suspensivo/ativo',mo:'Decisão monocrática',em:'Acórdão — Embargos de Declaração',ai:'Decisão — Agravo Interno',su:'Despacho de Suspensão'};
-  var titulo=isSus?'Despacho de Suspensão — Repetitivo':titulos[G.tab];
+  setTItem('doc','✅','Minuta elaborada com base nos '+refs.docs.length+' documentos mais recentes do Drive','b-ok','Concluído');
+  mostrarResultado(docs,refs.docs);
+}
 
-  var html='<div class="rc"><div class="rh"><div class="rt">📄 '+titulo+'<span class="badge">IA</span></div>'
-    +'<div style="display:flex;gap:8px">'
-    +'<button class="btn" onclick="copiar(\'minuta\',this)">📋 Copiar</button>'
-    +'<button class="btn btn-pr" onclick="exportar(\'minuta\',\''+titulo.replace(/[^a-zA-Z0-9]/g,'_')+'\')">⬇ .docx</button>'
-    +'</div></div>'
-    +'<div class="mt">'+esc(G.minuta)+'</div></div>';
+async function chamarAPI(prompt,b64){
+  var resp=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':G.akey,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:3000,
+      messages:[{role:'user',content:[
+        {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+        {type:'text',text:prompt}
+      ]}]
+    })
+  });
+  var d=await resp.json();
+  if(d.error) throw new Error(d.error.message);
+  return (d.content||[]).map(function(b){return b.text||'';}).join('');
+}
 
-  if(G.tab==='ag'&&G.voto2){
-    html+='<div class="rc"><div class="rh"><div class="rt">📄 Voto de mérito — Agravo de Instrumento<span class="badge">IA</span></div>'
+function mostrarResultado(docs,refs){
+  var html='';
+  docs.forEach(function(doc){
+    var qual=doc.qual||'minuta';
+    html+='<div class="rc '+doc.cor+'"><div class="rh">'
+      +'<div class="rt">'+doc.titulo+'<span class="badge">IA</span></div>'
       +'<div style="display:flex;gap:8px">'
-      +'<button class="btn" onclick="copiar(\'voto2\',this)">📋 Copiar</button>'
-      +'<button class="btn btn-pr" onclick="exportar(\'voto2\',\'Voto_Agravo_Instrumento\')">⬇ .docx</button>'
+      +'<button class="btn" onclick="copiar(\''+qual+'\',this)">📋 Copiar</button>'
+      +'<button class="btn btn-pr" onclick="exportar(\''+qual+'\',\'minuta\')">⬇ .rtf</button>'
       +'</div></div>'
-      +'<div class="mt">'+esc(G.voto2)+'</div></div>';
-  }
+      +'<div class="mt">'+esc(doc.texto)+'</div></div>';
+  });
 
-  if(refs.length){
-    html+='<div class="rc"><div class="rt" style="margin-bottom:10px">📚 Referências utilizadas</div>';
+  if(refs&&refs.length){
+    html+='<div class="rc"><div class="rt" style="margin-bottom:10px">📚 Documentos do Drive utilizados como referência <small style="color:#6b7280;font-weight:400">(mais recentes primeiro)</small></div>';
     refs.forEach(function(r,i){
       html+='<div class="ri">📄 <span style="flex:1">'+esc(r.name)+'</span>'
         +'<span style="font-size:11px;color:#6b7280">'+(r.modifiedTime||'').slice(0,10)+'</span>'
@@ -368,13 +645,44 @@ function mostrarResultado(texto,refs){
 
 function mostrarErro(msg){
   document.getElementById('pw').style.display='none';
-  document.getElementById('ra').innerHTML='<div class="rc" style="border-color:#E24B4A">'
-    +'<div style="color:#E24B4A;font-weight:500;margin-bottom:8px">❌ Erro ao gerar documento</div>'
+  document.getElementById('triagem').style.display='none';
+  document.getElementById('ra').innerHTML='<div class="rc err">'
+    +'<div style="color:#C62828;font-weight:500;margin-bottom:8px">❌ Erro ao processar</div>'
     +'<div style="font-size:13px;color:#6b7280">'+esc(msg)+'</div>'
     +'<button class="btn" onclick="reset()" style="margin-top:12px">🔄 Tentar novamente</button></div>';
 }
 
-// Utilitários
+function exportar(qual,nome){
+  var texto=qual==='voto2'?G.voto2:G.minuta;
+  var rtf='{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj ';
+  texto.split('\n').forEach(function(l){
+    rtf+=l.replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')+'\\par ';
+  });
+  rtf+='}';
+  var blob=new Blob([rtf],{type:'application/rtf'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download=nome+'.rtf';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function copiar(qual,btn){
+  var t=qual==='voto2'?G.voto2:G.minuta;
+  navigator.clipboard.writeText(t).catch(function(){});
+  var o=btn.innerHTML;
+  btn.innerHTML='✅ Copiado!';
+  setTimeout(function(){btn.innerHTML=o;},2000);
+}
+
+async function lerWord(id){
+  var r=await fetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media&key='+G.gkey);
+  if(!r.ok) throw new Error('erro');
+  var buf=await r.arrayBuffer();
+  var res=await mammoth.extractRawText({arrayBuffer:buf});
+  return res.value||'';
+}
+
 function toBase64(file){
   return new Promise(function(res,rej){
     var r=new FileReader();
@@ -388,39 +696,6 @@ function toBase64(file){
   });
 }
 
-async function lerWord(id){
-  var r=await fetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media&key='+G.gkey);
-  if(!r.ok) throw new Error('erro');
-  var buf=await r.arrayBuffer();
-  var res=await mammoth.extractRawText({arrayBuffer:buf});
-  return res.value||'';
-}
-
-function copiar(qual,btn){
-  var t=qual==='minuta'?G.minuta:G.voto2;
-  navigator.clipboard.writeText(t).catch(function(){});
-  var o=btn.innerHTML;
-  btn.innerHTML='✅ Copiado!';
-  setTimeout(function(){btn.innerHTML=o;},2000);
-}
-
-function exportar(qual,nome){
-  var texto=qual==='minuta'?G.minuta:G.voto2;
-  // Exporta como RTF (abre no Word com Times New Roman)
-  var rtf='{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}'
-    +'{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj ';
-  texto.split('\n').forEach(function(l){
-    rtf+=l.replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')+'\\par ';
-  });
-  rtf+='}';
-  var blob=new Blob([rtf],{type:'application/rtf'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;a.download=nome+'.rtf';
-  document.body.appendChild(a);a.click();
-  document.body.removeChild(a);URL.revokeObjectURL(url);
-}
-
 function prog(pct,msg){
   document.getElementById('pf').style.width=pct+'%';
   document.getElementById('pp').textContent=pct+'%';
@@ -429,18 +704,32 @@ function prog(pct,msg){
 
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 
+function resetTriagem(){
+  ['tipo','comp','rep','adm','doc'].forEach(function(k){
+    document.getElementById('ico-'+k).textContent='⏳';
+    document.getElementById('badge-'+k).textContent=k==='tipo'?'Analisando':'Aguardando';
+    document.getElementById('badge-'+k).className='t-badge b-load';
+  });
+  document.getElementById('sub-tipo').textContent='Identificando tipo de recurso, partes e matéria principal...';
+  document.getElementById('sub-comp').textContent='Verificando se a matéria é da 2ª Subseção (11ª–24ª Câmaras)...';
+  document.getElementById('sub-rep').textContent='Verificando suspensão por Repetitivo do STJ/STF ou IRDR do TJSP...';
+  document.getElementById('sub-adm').textContent='Verificando pressupostos recursais...';
+  document.getElementById('sub-doc').textContent='Aguardando triagem completa...';
+}
+
 function reset(){
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='none';
+  document.getElementById('triagem').style.display='none';
   document.getElementById('uzone').style.display='block';
   document.getElementById('fi').value='';
+  resetTriagem();
 }
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// Inicializa
 window.onload=function(){
-  document.getElementById('f-ap').value=G.folders.ap;
+  document.getElementById('fid').value=G.fid;
 };
 </script>
 </body>
