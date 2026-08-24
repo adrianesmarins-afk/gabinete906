@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f7f8fa;color:#1a1d23;min-height:100vh}
 .app{max-width:920px;margin:0 auto;padding:1.5rem}
 .header{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid #e2e6ea}
@@ -80,33 +80,33 @@ input[type=text]{width:100%;font-size:13px;padding:8px 10px;border:1px solid #e2
   </div>
   <div class="cfg-body" id="cfg-body">
     <label>API Key do Google Cloud</label>
-    <input type="text" id="gkey" placeholder="AIzaSy..."/>
+    <input type="text" id="inp-gkey" placeholder="AIzaSy..."/>
     <label>API Key da Anthropic</label>
-    <input type="text" id="akey" placeholder="sk-ant-..."/>
-    <label>ID da pasta do Google Drive (todos os documentos juntos)</label>
-    <input type="text" id="fid" placeholder="ID da pasta"/>
+    <input type="text" id="inp-akey" placeholder="sk-ant-..."/>
+    <label>ID da pasta do Google Drive</label>
+    <input type="text" id="inp-fid" placeholder="ID da pasta"/>
     <div style="margin-top:12px">
       <button class="btn btn-pr" onclick="salvar()">💾 Salvar e conectar</button>
     </div>
-    <p style="font-size:11px;color:#E65100;margin-top:8px">🔒 Dados salvos apenas nesta sessão do navegador.</p>
+    <p style="font-size:11px;color:#E65100;margin-top:8px">🔒 Dados salvos em cookie no seu navegador.</p>
   </div>
 </div>
 
 <div class="sbar">
   <span class="dot" id="dot"></span>
-  <span style="font-size:12px;color:#6b7280" id="status-txt">Drive não conectado — configure acima</span>
+  <span style="font-size:12px;color:#6b7280" id="status-txt">Drive não conectado</span>
 </div>
 
 <div class="stats" id="stats" style="display:none">
   <div class="sc"><div class="sl">Total de documentos</div><div class="sv" id="n-total">0</div><div class="ss">na base do Drive</div></div>
-  <div class="sc"><div class="sl">Mais recente</div><div class="sv" style="font-size:14px;padding-top:4px" id="n-rec">—</div><div class="ss">data do último documento</div></div>
-  <div class="sc"><div class="sc"><div class="sl">Status</div><div class="sv" style="font-size:13px;padding-top:4px;color:#3B6D11">✅ Pronto</div><div class="ss">para receber processos</div></div></div>
+  <div class="sc"><div class="sl">Mais recente</div><div class="sv" style="font-size:14px;padding-top:4px" id="n-rec">—</div><div class="ss">data do último voto</div></div>
+  <div class="sc"><div class="sl">Status</div><div class="sv" style="font-size:13px;padding-top:4px;color:#3B6D11">✅ Pronto</div><div class="ss">para receber processos</div></div>
 </div>
 
 <div class="uzone" id="uzone" onclick="document.getElementById('fi').click()" ondragover="event.preventDefault()" ondrop="onDrop(event)">
   <div style="font-size:48px;margin-bottom:12px">📄</div>
   <div style="font-size:16px;font-weight:500;margin-bottom:6px">Clique para selecionar ou arraste o PDF do processo aqui</div>
-  <div style="font-size:13px;color:#6b7280">O sistema identificará o tipo de recurso e realizará triagem completa automaticamente</div>
+  <div style="font-size:13px;color:#6b7280">Triagem automática: competência → repetitivo/IRDR → admissibilidade → minuta</div>
   <div style="font-size:12px;color:#adb5bd;margin-top:6px">PDF do e-SAJ ou e-PROC · Máx. 50 MB</div>
 </div>
 <input type="file" id="fi" accept=".pdf" style="display:none" onchange="iniciar(this.files[0])"/>
@@ -150,59 +150,68 @@ input[type=text]{width:100%;font-size:13px;padding:8px 10px;border:1px solid #e2
 
 </div>
 <script>
-// Inicializa PDF.js
+// PDF.js worker
 if(typeof pdfjsLib!=='undefined'){
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-var G={gkey:'',akey:'',fid:'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd',docs:[],minuta:'',voto2:''};
+// Estado
+var G = {
+  gkey: '',
+  akey: '',
+  fid: '1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd',
+  docs: [],
+  minuta: '',
+  voto2: ''
+};
 
-var REGRAS_DRIVE='ATENÇÃO — DOCUMENTOS DE REFERÊNCIA DO DRIVE: Os arquivos Word contêm anotações internas em cores diferentes do preto (vermelho, azul, verde, amarelo destacado). Essas anotações são comentários dos assistentes e NÃO fazem parte do voto oficial. IGNORE COMPLETAMENTE qualquer trecho que no documento original esteja em cor diferente de preto ou com destaque colorido. Use apenas o texto em preto/automático como modelo de estilo, estrutura e fundamentação.';
+// Constantes
+var REGRAS_DRIVE = 'Os documentos Word do gabinete contêm anotações em cores diferentes do preto. IGNORE completamente texto colorido ou destacado — use apenas texto preto como modelo de estilo e fundamentação.';
 
-var REGRAS='ESTRUTURA OBRIGATÓRIA DO RELATÓRIO:\n§1 - Tipo de recurso e decisão recorrida (resumido).\n§2 - Resumo das razões recursais.\n§3 - Somente se houver recurso adesivo ou simultâneo.\n§ FINAL - Redigir exatamente: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."\nFUNDAMENTAÇÃO: apenas preliminares (se houver) + mérito. NÃO mencionar admissibilidade.\nFORMATAÇÃO: Times New Roman, mesmo tamanho e espaçamento dos documentos de referência.';
+var REGRAS = 'ESTRUTURA DO RELATÓRIO:\n§1 - Tipo de recurso e decisão recorrida (resumido).\n§2 - Razões recursais (resumo).\n§3 - Somente se houver recurso adesivo.\n§ FINAL - Exatamente: "Recurso recebido, em seu efeito [devolutivo/suspensivo], [preparado / sem preparo diante da gratuidade concedida / sem preparo diante do pedido de gratuidade] e [com / sem] resposta."\nFUNDAMENTAÇÃO: preliminares (se houver) + mérito. NÃO mencionar admissibilidade.\nFORMATAÇÃO: Times New Roman, mesmo espaçamento dos documentos de referência.';
 
-var COMPETENCIA='REGRAS DE COMPETÊNCIA (Res. 623/2013 TJSP — 2ª Subseção = 11ª a 24ª Câmaras):\nCOMPETENTE: contratos bancários, financiamentos, cartão de crédito, CDC bancário, empréstimo, mútuo, alienação fiduciária de veículo (busca e apreensão), consórcio, execução em título extrajudicial, sustação de protesto, comodato, transporte, depósito mercantil, possessória de imóvel, servidão, energia elétrica, telefonia, água, gás, prestação de serviços, superendividamento.\nINCOMPETENTE → 1ª Subseção (1ª-10ª): família, divórcio, alimentos, inventário, herança, usucapião, registros públicos, plano de saúde, seguro-saúde, seguro habitacional.\nINCOMPETENTE → 3ª Subseção (25ª-36ª): condomínio, locação de imóvel, acidente de veículo, previdência privada, seguro de vida/dano, honorários advocatícios, arrendamento rural, bem móvel.\nINCOMPETENTE → Direito Público: tributário, ICMS, TUST, TUSD, servidor público, fazenda pública, desapropriação, responsabilidade civil do estado, previdência social/INSS.\nINCOMPETENTE → Câmaras Empresariais: falência, recuperação judicial, sociedades, propriedade industrial.';
+var COMPETENCIA = 'COMPETÊNCIA (Res. 623/2013 — 2ª Subseção = 11ª a 24ª Câmaras):\nCOMPETENTE: contratos bancários, financiamentos, cartão de crédito, CDC bancário, empréstimo, mútuo, alienação fiduciária de veículo, consórcio, execução extrajudicial, sustação de protesto, comodato, transporte, depósito mercantil, possessória de imóvel, servidão, energia, telefonia, água, gás, prestação de serviços, superendividamento.\nINCOMPETENTE→1ª Subseção(1ª-10ª): família, divórcio, alimentos, inventário, usucapião, registros públicos, plano de saúde, seguro-saúde.\nINCOMPETENTE→3ª Subseção(25ª-36ª): condomínio, locação de imóvel, acidente de veículo, previdência privada, seguro de vida, honorários, arrendamento rural.\nINCOMPETENTE→Direito Público: tributário, ICMS, servidor público, fazenda pública, INSS.\nINCOMPETENTE→Câmaras Empresariais: falência, recuperação judicial, sociedades, propriedade industrial.';
 
-function salvarCookie(k,v){
-  // Salva por 365 dias
-  var d=new Date();d.setTime(d.getTime()+365*24*60*60*1000);
-  document.cookie=k+'='+encodeURIComponent(v)+';expires='+d.toUTCString()+';path=/;SameSite=Strict';
-}
-function lerCookie(k){
-  var c=document.cookie.split(';');
-  for(var i=0;i<c.length;i++){
-    var p=c[i].trim().split('=');
-    if(p[0]===k) return decodeURIComponent(p[1]||'');
-  }
-  return '';
-}
+// Cookies
+function setCookie(k,v){var d=new Date();d.setTime(d.getTime()+365*24*60*60*1000);document.cookie=k+'='+encodeURIComponent(v)+';expires='+d.toUTCString()+';path=/;SameSite=Strict';}
+function getCookie(k){var c=document.cookie.split(';');for(var i=0;i<c.length;i++){var p=c[i].trim().split('=');if(p[0]===k)return decodeURIComponent(p[1]||'');}return '';}
 
+// Config
 function salvar(){
-  G.gkey=document.getElementById('gkey').value.trim();
-  G.akey=document.getElementById('akey').value.trim();
-  G.fid=document.getElementById('fid').value.trim()||'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-  // Salva em cookies persistentes
-  salvarCookie('gk',G.gkey);
-  salvarCookie('ak',G.akey);
-  salvarCookie('fid',G.fid);
+  G.gkey = document.getElementById('inp-gkey').value.trim();
+  G.akey = document.getElementById('inp-akey').value.trim();
+  G.fid  = document.getElementById('inp-fid').value.trim() || '1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
+  setCookie('gk', G.gkey);
+  setCookie('ak', G.akey);
+  setCookie('fid', G.fid);
   document.getElementById('cfg-body').classList.remove('open');
   conectar();
 }
 
+function carregarConfig(){
+  G.gkey = getCookie('gk') || '';
+  G.akey = getCookie('ak') || '';
+  G.fid  = getCookie('fid') || '1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
+  document.getElementById('inp-gkey').value = G.gkey;
+  document.getElementById('inp-akey').value = G.akey;
+  document.getElementById('inp-fid').value  = G.fid;
+}
+
+// Drive
 async function conectar(){
-  if(!G.gkey){setDot(false,'Insira a API Key do Google Cloud nas configurações');return;}
+  if(!G.gkey){setDot(false,'Insira a API Key do Google nas configurações');return;}
   setDot(false,'Conectando ao Drive...');
   try{
     var url='https://www.googleapis.com/drive/v3/files?q=%27'+G.fid+'%27+in+parents+and+mimeType%3D%27application%2Fvnd.openxmlformats-officedocument.wordprocessingml.document%27+and+trashed%3Dfalse&fields=files(id%2Cname%2CmodifiedTime)&orderBy=modifiedTime+desc&pageSize=200&key='+G.gkey;
     var r=await fetch(url);
-    if(!r.ok) throw new Error('Erro HTTP '+r.status);
+    if(!r.ok)throw new Error('Erro HTTP '+r.status);
     var d=await r.json();
     G.docs=d.files||[];
     document.getElementById('n-total').textContent=G.docs.length;
     document.getElementById('n-rec').textContent=G.docs.length?(G.docs[0].modifiedTime||'').slice(0,10):'—';
     document.getElementById('stats').style.display='grid';
     setDot(true,'Drive conectado — '+G.docs.length+' documentos carregados');
-  }catch(e){setDot(false,'Erro: '+e.message);}
+  }catch(e){setDot(false,'Erro ao conectar: '+e.message);}
 }
 
 function setDot(ok,msg){
@@ -210,297 +219,276 @@ function setDot(ok,msg){
   document.getElementById('status-txt').textContent=msg;
 }
 
-function onDrop(e){
-  e.preventDefault();
-  var f=e.dataTransfer.files[0];
-  if(f&&f.type==='application/pdf') iniciar(f);
-}
+// Upload
+function onDrop(e){e.preventDefault();var f=e.dataTransfer.files[0];if(f&&f.type==='application/pdf')iniciar(f);}
 
 async function iniciar(file){
-  if(!file) return;
+  if(!file)return;
   if(!G.akey){alert('Configure a API Key da Anthropic antes de continuar.');return;}
+
   document.getElementById('uzone').style.display='none';
   document.getElementById('ra').innerHTML='';
   document.getElementById('pw').style.display='block';
   document.getElementById('triagem').style.display='none';
   resetTriagem();
 
-  // PASSO 1: Extrai texto das primeiras páginas para triagem (leve, sem limite de tokens)
-  prog(10,'Extraindo texto do PDF...');
-  var textoPDF=await extrairTextoPDF(file);
+  // Extrai texto do PDF
+  prog(15,'Extraindo texto do PDF...');
+  var texto = await extrairTexto(file);
 
-  // PASSO 2: Converte PDF completo para base64 (para geração da minuta)
-  prog(20,'Preparando documento completo...');
-  var b64=await toBase64(file);
+  prog(30,'Enviando para análise...');
+  await sleep(300);
 
-  // PASSO 3: Triagem via texto
-  prog(35,'Analisando competência, Repetitivos e admissibilidade...');
+  // Triagem
   document.getElementById('pw').style.display='none';
   document.getElementById('triagem').style.display='block';
 
-  var promptTriagem='Você é assistente jurídico do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nAnalise o texto do processo abaixo e responda APENAS com JSON válido neste formato exato:\n\n{"tipo_recurso":"Apelação|Agravo de Instrumento|Embargos de Declaração|Agravo Interno|Decisão Monocrática|Outro","partes":"Apelante vs Apelado","numero_processo":"número","comarca":"comarca","materia":"matéria principal","gratuidade":"concedida|pedida|sem gratuidade","preparo":"preparado|sem preparo diante da gratuidade concedida|sem preparo diante do pedido de gratuidade","resposta":"com resposta|sem resposta","efeito":"devolutivo|suspensivo","competencia":{"resultado":"COMPETENTE|INCOMPETENTE","camara_correta":"câmara se incompetente ou null","motivo":"justificativa"},"repetitivo":{"resultado":"SUSPENSO|NAO_SUSPENSO","tema":"tema e número se suspenso ou null","tribunal":"STJ|STF|IRDR-TJSP ou null","motivo":"justificativa"},"admissibilidade":{"resultado":"ADMISSIVEL|INADMISSIVEL","motivo":"motivo se inadmissível ou null"}}\n\n'+COMPETENCIA+'\n\nREGRAS DE REPETITIVO/IRDR: Verifique se a matéria está suspensa por Repetitivo STJ/STF ou IRDR do TJSP.\n\nTEXTO DO PROCESSO:\n'+textoTriagem;
+  var prompt1 = 'Você é assistente jurídico do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nAnalise o texto do processo e responda APENAS com JSON válido:\n\n{"tipo_recurso":"Apelação|Agravo de Instrumento|Embargos de Declaração|Agravo Interno|Decisão Monocrática|Outro","partes":"parte A vs parte B","numero_processo":"número","comarca":"comarca","materia":"matéria principal","gratuidade":"concedida|pedida|sem gratuidade","preparo":"preparado|sem preparo diante da gratuidade concedida|sem preparo diante do pedido de gratuidade","resposta":"com resposta|sem resposta","efeito":"devolutivo|suspensivo","competencia":{"resultado":"COMPETENTE|INCOMPETENTE","camara_correta":null,"motivo":"justificativa"},"repetitivo":{"resultado":"SUSPENSO|NAO_SUSPENSO","tema":null,"tribunal":null,"motivo":"justificativa"},"admissibilidade":{"resultado":"ADMISSIVEL|INADMISSIVEL","motivo":null}}\n\n'+COMPETENCIA+'\n\nTEXTO DO PROCESSO:\n'+texto.slice(0,10000);
 
   var triagem;
   try{
-    var r1=await chamarAPITexto(promptTriagem);
-    var txt=r1.replace(/```json|```/g,'').trim();
-    triagem=JSON.parse(txt);
+    var r1 = await chamarAPI(prompt1, 1000);
+    var txt = r1.replace(/```json|```/g,'').trim();
+    triagem = JSON.parse(txt);
   }catch(e){
-    mostrarErro('Erro na triagem: '+e.message);return;
+    mostrarErro('Erro na triagem: '+e.message);
+    return;
   }
 
-  mostrarTriagem(triagem);
-  await sleep(500);
+  // Atualiza painel
+  atualizarTriagem(triagem);
+  await sleep(400);
 
+  // Decide fluxo
   if(triagem.competencia.resultado==='INCOMPETENTE'){
-    await gerarIncompetencia(triagem,textoPDF);
+    await fluxoIncompetencia(triagem, texto);
   } else if(triagem.repetitivo.resultado==='SUSPENSO'){
-    await gerarSuspensao(triagem,textoPDF);
+    await fluxoSuspensao(triagem, texto);
   } else if(triagem.admissibilidade.resultado==='INADMISSIVEL'){
-    await gerarNaoConhecimento(triagem,textoPDF);
+    await fluxoNaoConhecimento(triagem, texto);
   } else {
-    await gerarMerito(triagem,textoPDF);
+    await fluxoMerito(triagem, texto);
   }
 }
 
-// Extrai texto das primeiras 15 páginas usando PDF.js
-async function extrairTextoPDF(file){
-  try{
-    var buf=await file.arrayBuffer();
-    var pdf=await pdfjsLib.getDocument({data:buf}).promise;
-    var n=Math.min(pdf.numPages,15);
-    var txt='';
-    for(var i=1;i<=n;i++){
-      var pag=await pdf.getPage(i);
-      var c=await pag.getTextContent();
-      txt+=c.items.map(function(it){return it.str;}).join(' ')+'\n';
-    }
-    return txt.slice(0,10000);
-  }catch(e){
-    // Fallback binário
-    return await new Promise(function(res){
-      var r=new FileReader();
-      r.onload=function(e){
-        var b=new Uint8Array(e.target.result),t='';
-        for(var i=0;i<Math.min(b.length,100000);i++){
-          if(b[i]>=32&&b[i]<127)t+=String.fromCharCode(b[i]);
-          else if(b[i]===10||b[i]===13)t+='\n';
-        }
-        res(t.replace(/ {3,}/g,' ').slice(0,10000));
-      };
-      r.readAsArrayBuffer(file);
-    });
-  }
-}
-
-function toBase64(file){
-  return new Promise(function(res,rej){
-    var r=new FileReader();
-    r.onload=function(e){
-      var s=e.target.result;
-      res((s.indexOf(',')>=0?s.split(',')[1]:s).replace(/\s/g,''));
-    };
-    r.onerror=rej;
-    r.readAsDataURL(file);
-  });
-}
-
-// Chama API apenas com texto (para triagem E geração)
-async function chamarAPITexto(prompt){
-  var controller=new AbortController();
-  var timeout=setTimeout(function(){controller.abort();},90000);
-  try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      signal:controller.signal,
-      headers:{'Content-Type':'application/json','x-api-key':G.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,messages:[{role:'user',content:prompt}]})
-    });
-    clearTimeout(timeout);
-    var d=await resp.json();
-    if(d.error) throw new Error(d.error.message);
-    return (d.content||[]).map(function(b){return b.text||'';}).join('');
-  }catch(e){
-    clearTimeout(timeout);
-    if(e.name==='AbortError') throw new Error('Tempo limite excedido. Tente novamente.');
-    throw e;
-  }
-}
-
-// Chama API com PDF base64 (fallback — não usado por padrão)
-async function chamarAPIPDF(prompt,b64){
-  var controller=new AbortController();
-  var timeout=setTimeout(function(){controller.abort();},90000);
-  try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      signal:controller.signal,
-      headers:{'Content-Type':'application/json','x-api-key':G.akey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:3000,messages:[{role:'user',content:[
-        {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
-        {type:'text',text:prompt}
-      ]}]})
-    });
-    clearTimeout(timeout);
-    var d=await resp.json();
-    if(d.error) throw new Error(d.error.message);
-    return (d.content||[]).map(function(b){return b.text||'';}).join('');
-  }catch(e){
-    clearTimeout(timeout);
-    if(e.name==='AbortError') throw new Error('Tempo limite excedido.');
-    throw e;
-  }
-}
-
-function mostrarTriagem(t){
-  setT('tipo','✅',t.tipo_recurso+' · '+t.partes,'b-ok','Identificado');
-  var cOk=t.competencia.resultado==='COMPETENTE';
-  setT('comp',cOk?'✅':'❌',t.competencia.motivo,cOk?'b-ok':'b-err',cOk?'Competente':'Incompetente');
+function atualizarTriagem(t){
+  setT('tipo','✅', t.tipo_recurso+' · '+t.partes, 'b-ok', 'Identificado');
+  var cOk = t.competencia.resultado==='COMPETENTE';
+  setT('comp', cOk?'✅':'❌', t.competencia.motivo, cOk?'b-ok':'b-err', cOk?'Competente':'Incompetente');
   if(cOk){
-    var rOk=t.repetitivo.resultado==='NAO_SUSPENSO';
-    setT('rep',rOk?'✅':'⚠️',t.repetitivo.motivo+(t.repetitivo.tema?' — '+t.repetitivo.tema:''),rOk?'b-ok':'b-warn',rOk?'Não suspenso':'Suspenso');
+    var rOk = t.repetitivo.resultado==='NAO_SUSPENSO';
+    setT('rep', rOk?'✅':'⚠️', t.repetitivo.motivo+(t.repetitivo.tema?' — '+t.repetitivo.tema:''), rOk?'b-ok':'b-warn', rOk?'Não suspenso':'Suspenso');
     if(rOk){
-      var aOk=t.admissibilidade.resultado==='ADMISSIVEL';
-      setT('adm',aOk?'✅':'❌',aOk?'Pressupostos recursais verificados':t.admissibilidade.motivo,aOk?'b-ok':'b-err',aOk?'Admissível':'Inadmissível');
+      var aOk = t.admissibilidade.resultado==='ADMISSIVEL';
+      setT('adm', aOk?'✅':'❌', aOk?'Pressupostos recursais verificados':t.admissibilidade.motivo, aOk?'b-ok':'b-err', aOk?'Admissível':'Inadmissível');
     }
   }
-  setT('doc','🔄','Consultando banco de dados do Drive e elaborando minuta...','b-load','Em elaboração');
+  setT('doc','🔄','Consultando Drive e elaborando minuta...','b-load','Elaborando');
 }
 
 function setT(k,ico,sub,bc,bt){
   document.getElementById('ico-'+k).textContent=ico;
   document.getElementById('sub-'+k).textContent=sub;
   var b=document.getElementById('badge-'+k);
-  b.textContent=bt; b.className='t-badge '+bc;
+  b.textContent=bt;b.className='t-badge '+bc;
 }
 
+// Busca referências no Drive
 async function buscarRefs(tipo){
   var rel=G.docs.filter(function(d){
     var n=d.name.toLowerCase();
-    if(tipo==='Agravo de Instrumento') return n.includes('ag')||n.includes('agravo')||n.includes('desp');
-    if(tipo==='Embargos de Declaração') return n.includes('emb');
-    if(tipo==='Agravo Interno') return n.includes('ai')||n.includes('interno');
+    if(tipo==='Agravo de Instrumento')return n.includes('ag')||n.includes('agravo')||n.includes('desp');
+    if(tipo==='Embargos de Declaração')return n.includes('emb');
+    if(tipo==='Agravo Interno')return n.includes('ai')||n.includes('interno');
     return true;
   });
   var sel=(rel.length?rel:G.docs).slice(0,3);
   var txt='';
   for(var i=0;i<sel.length;i++){
-    try{var t=await lerWord(sel[i].id);txt+='\n\n---REF:'+sel[i].name+' ('+(sel[i].modifiedTime||'').slice(0,10)+')---\n'+t.slice(0,600);}catch(e){}
+    try{var t=await lerWord(sel[i].id);txt+='\n\n---REF:'+sel[i].name+'('+( sel[i].modifiedTime||'').slice(0,10)+')---\n'+t.slice(0,600);}catch(e){}
   }
   return{txt:txt,docs:sel};
 }
 
 async function buscarModelo(palavras){
-  var rel=G.docs.filter(function(d){
-    var n=d.name.toLowerCase();
-    return palavras.some(function(p){return n.includes(p);});
-  }).slice(0,2);
+  var rel=G.docs.filter(function(d){var n=d.name.toLowerCase();return palavras.some(function(p){return n.includes(p);});}).slice(0,2);
   var txt='';
-  for(var i=0;i<rel.length;i++){
-    try{var t=await lerWord(rel[i].id);txt+='\n\n---MODELO:'+rel[i].name+'---\n'+t.slice(0,500);}catch(e){}
-  }
+  for(var i=0;i<rel.length;i++){try{var t=await lerWord(rel[i].id);txt+='\n\n---MODELO:'+rel[i].name+'---\n'+t.slice(0,500);}catch(e){}}
   return txt;
 }
 
-async function gerarIncompetencia(t,textoPDF){
-  setT('doc','🔄','Buscando modelo de remessa no Drive...','b-load','Elaborando');
-  var modelo=await buscarModelo(['incomp','remessa','nao conhec','não conhec']);
-  setT('doc','🔄','Gerando decisão monocrática...','b-load','Elaborando');
-  var prompt='Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere uma DECISÃO MONOCRÁTICA de não conhecimento por incompetência, com remessa à '+t.competencia.camara_correta+'.\n\nDados: Processo '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+' | Matéria: '+t.materia+' | Comarca: '+t.comarca+'\nMotivo: '+t.competencia.motivo+'\n\nTEXTO DO PROCESSO:\n'+textoPDF.slice(0,5000)+'\n\n'+REGRAS_DRIVE+'\n\nUse Times New Roman. Fundamente na Resolução 623/2013 do TJSP.\n\nMODELOS DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
+// Fluxos
+async function fluxoIncompetencia(t, texto){
+  setT('doc','🔄','Buscando modelo de remessa...','b-load','Elaborando');
+  var modelo = await buscarModelo(['incomp','remessa','nao conhec','não conhec']);
+  var prompt = 'Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere uma DECISÃO MONOCRÁTICA de não conhecimento por incompetência, com remessa à '+t.competencia.camara_correta+'.\n\nProcesso: '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+' | Matéria: '+t.materia+' | Comarca: '+t.comarca+'\nMotivo: '+t.competencia.motivo+'\n\n'+REGRAS_DRIVE+'\n\nFundamente na Resolução 623/2013 do TJSP. Use Times New Roman.\n\nMODELOS DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
   try{
-    var texto=await chamarAPITexto(prompt);
-    G.minuta=texto;
-    setT('doc','✅','Decisão elaborada','b-warn','Concluído');
-    mostrarDocs([{t:'⚠️ Incompetência — Decisão Monocrática de Remessa',texto:texto,cor:'warn'}],[]);
+    var texto2=await chamarAPI(prompt,2000);
+    G.minuta=texto2;
+    setT('doc','✅','Decisão de remessa elaborada','b-warn','Concluído');
+    mostrarDocs([{t:'⚠️ Incompetência — Decisão Monocrática de Remessa',texto:texto2,cor:'warn'}],[]);
   }catch(e){setT('doc','❌','Erro: '+e.message,'b-err','Erro');mostrarErro('Erro: '+e.message);}
 }
 
-async function gerarSuspensao(t,textoPDF){
-  setT('rep','⚠️','Suspenso: '+t.repetitivo.tema+' ('+t.repetitivo.tribunal+')','b-warn','Suspenso');
+async function fluxoSuspensao(t, texto){
+  setT('rep','⚠️','Suspenso: '+(t.repetitivo.tema||''),' ','b-warn','Suspenso');
   setT('adm','—','Aguardando resolução do Repetitivo/IRDR','b-load','—');
-  setT('doc','🔄','Buscando despacho de suspensão no Drive...','b-load','Elaborando');
-  var modelo=await buscarModelo(['suspens','sobresta','repetit','irdr']);
-  setT('doc','🔄','Gerando despacho de sobrestamento...','b-load','Elaborando');
-  var prompt='Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere um DESPACHO DE SOBRESTAMENTO determinando aguardar o julgamento do tema.\n\nDados: Processo '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+' | Matéria: '+t.materia+'\nTema suspenso: '+t.repetitivo.tema+' | Tribunal: '+t.repetitivo.tribunal+'\n\nTEXTO DO PROCESSO:\n'+textoPDF.slice(0,3000)+'\n\n'+REGRAS_DRIVE+'\n\nFundamente no art. 1.037 do CPC ou IRDR conforme o caso.\n\nDESPACHOS DE SUSPENSÃO DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
+  setT('doc','🔄','Buscando despacho de suspensão...','b-load','Elaborando');
+  var modelo = await buscarModelo(['suspens','sobresta','repetit','irdr']);
+  var prompt = 'Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere um DESPACHO DE SOBRESTAMENTO.\n\nProcesso: '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+'\nTema: '+(t.repetitivo.tema||'')+'| Tribunal: '+(t.repetitivo.tribunal||'')+'\n\n'+REGRAS_DRIVE+'\n\nFundamente no art. 1.037 do CPC ou IRDR.\n\nMODELOS DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
   try{
-    var texto=await chamarAPITexto(prompt);
-    G.minuta=texto;
+    var texto2=await chamarAPI(prompt,2000);
+    G.minuta=texto2;
     setT('doc','✅','Despacho elaborado','b-warn','Concluído');
-    mostrarDocs([{t:'⚠️ Sobrestamento — '+t.repetitivo.tribunal+': '+t.repetitivo.tema,texto:texto,cor:'warn'}],[]);
+    mostrarDocs([{t:'⚠️ Sobrestamento — '+(t.repetitivo.tribunal||''),texto:texto2,cor:'warn'}],[]);
   }catch(e){setT('doc','❌','Erro: '+e.message,'b-err','Erro');mostrarErro('Erro: '+e.message);}
 }
 
-async function gerarNaoConhecimento(t,textoPDF){
-  setT('adm','❌','Inadmissível: '+t.admissibilidade.motivo,'b-err','Inadmissível');
-  setT('doc','🔄','Buscando modelo no Drive...','b-load','Elaborando');
-  var modelo=await buscarModelo(['incomp','nao conhec','não conhec','inadmiss']);
-  setT('doc','🔄','Gerando decisão monocrática...','b-load','Elaborando');
-  var prompt='Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere uma DECISÃO MONOCRÁTICA de não conhecimento por inadmissibilidade.\n\nDados: Processo '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+' | Motivo: '+t.admissibilidade.motivo+'\n\nTEXTO DO PROCESSO:\n'+textoPDF.slice(0,3000)+'\n\n'+REGRAS_DRIVE+'\n\nMODELOS DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
+async function fluxoNaoConhecimento(t, texto){
+  setT('adm','❌','Inadmissível: '+(t.admissibilidade.motivo||''),'b-err','Inadmissível');
+  setT('doc','🔄','Buscando modelo...','b-load','Elaborando');
+  var modelo = await buscarModelo(['nao conhec','não conhec','inadmiss','monocr']);
+  var prompt = 'Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nGere uma DECISÃO MONOCRÁTICA de não conhecimento por inadmissibilidade.\n\nProcesso: '+t.numero_processo+' | '+t.tipo_recurso+' | '+t.partes+'\nMotivo: '+(t.admissibilidade.motivo||'')+'\n\n'+REGRAS_DRIVE+'\n\nMODELOS DO GABINETE:\n'+(modelo||'(use estilo padrão TJSP)');
   try{
-    var texto=await chamarAPITexto(prompt);
-    G.minuta=texto;
+    var texto2=await chamarAPI(prompt,2000);
+    G.minuta=texto2;
     setT('doc','✅','Decisão elaborada','b-err','Concluído');
-    mostrarDocs([{t:'❌ Não Conhecimento — Inadmissibilidade',texto:texto,cor:'err'}],[]);
+    mostrarDocs([{t:'❌ Não Conhecimento — Inadmissibilidade',texto:texto2,cor:'err'}],[]);
   }catch(e){setT('doc','❌','Erro: '+e.message,'b-err','Erro');mostrarErro('Erro: '+e.message);}
 }
 
-async function gerarMerito(t,b64){
+async function fluxoMerito(t, texto){
   setT('adm','✅','Pressupostos recursais verificados','b-ok','Admissível');
-  setT('doc','🔄','Consultando banco de dados do Drive...','b-load','Elaborando');
-  var refs=await buscarRefs(t.tipo_recurso);
+  setT('doc','🔄','Consultando Drive...','b-load','Elaborando');
 
-  // Avisa se não encontrou referências sobre a matéria
-  var semRefs=refs.docs.length===0;
+  var refs = await buscarRefs(t.tipo_recurso);
+  var semRefs = refs.docs.length===0;
+
   if(semRefs){
-    setT('doc','⚠️','Nenhum voto encontrado sobre o assunto na base do Drive. Elaborando com estilo padrão do gabinete...','b-warn','Sem referências');
+    setT('doc','⚠️','Nenhum voto encontrado sobre esta matéria. Elaborando com estilo padrão...','b-warn','Sem referências');
   } else {
-    setT('doc','🔄','Elaborando a minuta com '+refs.docs.length+' referência(s) encontrada(s)...','b-load','Elaborando');
+    setT('doc','🔄','Elaborando minuta com '+refs.docs.length+' referência(s)...','b-load','Elaborando');
   }
 
-  var tipoDoc={
-    'Apelação':'minuta completa de acórdão de Apelação',
-    'Agravo de Instrumento':'DOIS documentos: (1) despacho analisando eventual pedido de efeito suspensivo/ativo com parágrafo de intimação da parte agravada já no corpo — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
-    'Embargos de Declaração':'acórdão de Embargos de Declaração',
-    'Agravo Interno':'decisão de Agravo Interno',
-    'Decisão Monocrática':'decisão monocrática completa'
-  }[t.tipo_recurso]||'minuta completa';
+  var tipoDoc = {
+    'Apelação': 'minuta completa de acórdão de Apelação',
+    'Agravo de Instrumento': 'DOIS documentos: (1) despacho analisando eventual efeito suspensivo/ativo com parágrafo de intimação da parte agravada já no corpo — termine com "---VOTO---" e gere (2) voto completo de mérito do Agravo de Instrumento',
+    'Embargos de Declaração': 'acórdão de Embargos de Declaração',
+    'Agravo Interno': 'decisão de Agravo Interno',
+    'Decisão Monocrática': 'decisão monocrática completa'
+  }[t.tipo_recurso] || 'minuta completa';
 
-  var refsTxt=semRefs
-    ? '(Nenhum voto encontrado sobre esta matéria na base do Drive. Use o estilo padrão de acórdãos do TJSP — 21ª Câmara de Direito Privado — com Times New Roman, formatação formal.)'
+  var refsTxt = semRefs
+    ? '(Nenhum voto encontrado sobre esta matéria na base. Use estilo padrão do TJSP — 21ª Câmara — Times New Roman.)'
     : refs.txt;
 
-  var prompt='Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Gere uma '+tipoDoc+'.\n\n'+REGRAS+'\n\n'+REGRAS_DRIVE+'\n\nDADOS DO PROCESSO (extraídos da triagem):\n- Número: '+t.numero_processo+'\n- Recurso: '+t.tipo_recurso+'\n- Partes: '+t.partes+'\n- Matéria: '+t.materia+'\n- Comarca: '+t.comarca+'\n- Gratuidade: '+t.gratuidade+'\n- Preparo: '+t.preparo+'\n- Resposta: '+t.resposta+'\n- Efeito: '+t.efeito+'\n\nFÓRMULA FINAL DO RELATÓRIO (use exatamente):\n"Recurso recebido, em seu efeito '+t.efeito+', '+t.preparo+' e '+t.resposta+'."\n\nTEXTO COMPLETO DO PROCESSO:\n'+textoPDF.slice(0,15000)+'\n\nREFERÊNCIAS DO GABINETE:\n'+refsTxt+'\n\nGere o documento completo com todos os campos preenchidos.';
+  var prompt = 'Você é assistente do Des. Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP.\n\nTAREFA: Gere uma '+tipoDoc+'.\n\n'+REGRAS+'\n\n'+REGRAS_DRIVE+'\n\nDADOS DO PROCESSO:\n- Número: '+t.numero_processo+'\n- Recurso: '+t.tipo_recurso+'\n- Partes: '+t.partes+'\n- Matéria: '+t.materia+'\n- Comarca: '+t.comarca+'\n- Gratuidade: '+t.gratuidade+'\n- Preparo: '+t.preparo+'\n- Resposta: '+t.resposta+'\n- Efeito: '+t.efeito+'\n\nFÓRMULA FINAL DO RELATÓRIO (use exatamente):\n"Recurso recebido, em seu efeito '+t.efeito+', '+t.preparo+' e '+t.resposta+'."\n\nTEXTO DO PROCESSO:\n'+texto.slice(0,12000)+'\n\nREFERÊNCIAS DO GABINETE (mais recentes primeiro):\n'+refsTxt+'\n\nGere o documento completo.';
 
   try{
-    var texto=await chamarAPITexto(prompt);
-    if(!texto||texto.trim().length===0) throw new Error('API retornou resposta vazia');
-    G.minuta=texto; G.voto2='';
-    var docList=[];
-    if(t.tipo_recurso==='Agravo de Instrumento'&&texto.includes('---VOTO---')){
-      var p=texto.split('---VOTO---');
-      G.minuta=p[0].trim(); G.voto2=p[1]?p[1].trim():'';
-      docList.push({t:'📄 Despacho — Efeito Suspensivo/Ativo',texto:G.minuta,cor:'ok'});
-      if(G.voto2) docList.push({t:'📄 Voto de Mérito — Agravo de Instrumento',texto:G.voto2,cor:'ok',qual:'voto2'});
+    var resultado = await chamarAPI(prompt, 3000);
+    G.minuta = resultado;
+    G.voto2 = '';
+    var docList = [];
+
+    if(t.tipo_recurso==='Agravo de Instrumento' && resultado.includes('---VOTO---')){
+      var partes = resultado.split('---VOTO---');
+      G.minuta = partes[0].trim();
+      G.voto2  = partes[1] ? partes[1].trim() : '';
+      docList.push({t:'📄 Despacho — Efeito Suspensivo/Ativo', texto:G.minuta, cor:'ok'});
+      if(G.voto2) docList.push({t:'📄 Voto de Mérito — Agravo de Instrumento', texto:G.voto2, cor:'ok', qual:'voto2'});
     } else {
-      docList.push({t:'📄 '+t.tipo_recurso+' — Minuta',texto:G.minuta,cor:'ok'});
+      docList.push({t:'📄 '+t.tipo_recurso+' — Minuta', texto:G.minuta, cor:'ok'});
     }
-    var msg=semRefs?'Minuta elaborada (sem referências na base do Drive)':'Minuta elaborada com '+refs.docs.length+' referência(s) do Drive';
-    setT('doc','✅',msg,semRefs?'b-warn':'b-ok','Concluído');
-    mostrarDocs(docList,refs.docs);
+
+    var msg = semRefs ? 'Minuta elaborada (sem referências na base)' : 'Minuta elaborada com '+refs.docs.length+' referência(s)';
+    setT('doc','✅', msg, semRefs?'b-warn':'b-ok', 'Concluído');
+    mostrarDocs(docList, refs.docs);
   }catch(e){
-    setT('doc','❌','Erro ao elaborar: '+e.message,'b-err','Erro');
+    setT('doc','❌','Erro: '+e.message,'b-err','Erro');
     mostrarErro('Erro ao gerar minuta: '+e.message);
   }
 }
 
-function mostrarDocs(docs,refs){
+// API
+async function chamarAPI(prompt, maxTokens){
+  var ctrl = new AbortController();
+  var timer = setTimeout(function(){ctrl.abort();}, 90000);
+  try{
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      signal: ctrl.signal,
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': G.akey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens: maxTokens||2000,
+        messages:[{role:'user', content: prompt}]
+      })
+    });
+    clearTimeout(timer);
+    var d = await resp.json();
+    if(d.error) throw new Error(d.error.message);
+    var txt = (d.content||[]).map(function(b){return b.text||'';}).join('');
+    if(!txt.trim()) throw new Error('Resposta vazia da API');
+    return txt;
+  }catch(e){
+    clearTimeout(timer);
+    if(e.name==='AbortError') throw new Error('Tempo limite excedido (90s). Tente novamente.');
+    throw e;
+  }
+}
+
+// PDF
+async function extrairTexto(file){
+  try{
+    var buf = await file.arrayBuffer();
+    var pdf = await pdfjsLib.getDocument({data:buf}).promise;
+    var n = Math.min(pdf.numPages, 30);
+    var txt = '';
+    for(var i=1;i<=n;i++){
+      var pag = await pdf.getPage(i);
+      var c = await pag.getTextContent();
+      txt += c.items.map(function(it){return it.str;}).join(' ')+'\n';
+    }
+    return txt.slice(0,30000);
+  }catch(e){
+    return await new Promise(function(res){
+      var r=new FileReader();
+      r.onload=function(ev){
+        var b=new Uint8Array(ev.target.result),t='';
+        for(var i=0;i<Math.min(b.length,200000);i++){
+          if(b[i]>=32&&b[i]<127)t+=String.fromCharCode(b[i]);
+          else if(b[i]===10||b[i]===13)t+='\n';
+        }
+        res(t.replace(/ {3,}/g,' ').slice(0,30000));
+      };
+      r.readAsArrayBuffer(file);
+    });
+  }
+}
+
+// Word
+async function lerWord(id){
+  var r=await fetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media&key='+G.gkey);
+  if(!r.ok)throw new Error('erro');
+  var buf=await r.arrayBuffer();
+  var res=await mammoth.extractRawText({arrayBuffer:buf});
+  return res.value||'';
+}
+
+// Resultado
+function mostrarDocs(docs, refs){
   var html='';
   docs.forEach(function(doc){
     var qual=doc.qual||'minuta';
-    html+='<div class="rc '+doc.cor+'"><div class="rh"><div class="rt">'+doc.t+'<span class="badge">IA</span></div><div style="display:flex;gap:8px"><button class="btn" onclick="copiar(\''+qual+'\',this)">📋 Copiar</button><button class="btn btn-pr" onclick="exportar(\''+qual+'\',\'minuta\')">⬇ .rtf</button></div></div><div class="mt">'+esc(doc.texto)+'</div></div>';
+    html+='<div class="rc '+doc.cor+'"><div class="rh"><div class="rt">'+doc.t+'<span class="badge">IA</span></div><div style="display:flex;gap:8px"><button class="btn" onclick="copiar(\''+qual+'\',this)">📋 Copiar</button><button class="btn btn-pr" onclick="exportar(\''+qual+'\')">⬇ .rtf</button></div></div><div class="mt">'+esc(doc.texto)+'</div></div>';
   });
   if(refs&&refs.length){
-    html+='<div class="rc"><div class="rt" style="margin-bottom:10px">📚 Referências do Drive utilizadas <small style="color:#6b7280;font-weight:400">(mais recentes primeiro)</small></div>';
+    html+='<div class="rc"><div class="rt" style="margin-bottom:10px">📚 Referências utilizadas <small style="color:#6b7280;font-weight:400">(mais recentes primeiro)</small></div>';
     refs.forEach(function(r,i){html+='<div class="ri">📄 <span style="flex:1">'+esc(r.name)+'</span><span style="font-size:11px;color:#6b7280">'+(r.modifiedTime||'').slice(0,10)+'</span><span class="sb">'+(91-i*4)+'% similar</span></div>';});
     html+='</div>';
   }
@@ -514,15 +502,7 @@ function mostrarErro(msg){
   document.getElementById('ra').innerHTML='<div class="rc err"><div style="color:#C62828;font-weight:500;margin-bottom:8px">❌ Erro ao processar</div><div style="font-size:13px;color:#6b7280">'+esc(msg)+'</div><button class="btn" onclick="reset()" style="margin-top:12px">🔄 Tentar novamente</button></div>';
 }
 
-async function lerWord(id){
-  var r=await fetch('https://www.googleapis.com/drive/v3/files/'+id+'?alt=media&key='+G.gkey);
-  if(!r.ok) throw new Error('erro');
-  var buf=await r.arrayBuffer();
-  var res=await mammoth.extractRawText({arrayBuffer:buf});
-  return res.value||'';
-}
-
-function exportar(qual,nome){
+function exportar(qual){
   var texto=qual==='voto2'?G.voto2:G.minuta;
   var rtf='{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0 Times New Roman;}}{\\colortbl;\\red0\\green0\\blue0;}\\f0\\fs24\\qj ';
   texto.split('\n').forEach(function(l){rtf+=l.replace(/\\/g,'\\\\').replace(/\{/g,'\\{').replace(/\}/g,'\\}')+'\\par ';});
@@ -530,7 +510,7 @@ function exportar(qual,nome){
   var blob=new Blob([rtf],{type:'application/rtf'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download=nome+'.rtf';
+  a.href=url;a.download='minuta.rtf';
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
@@ -572,15 +552,9 @@ function reset(){
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-window.onload=function(){
-  // Carrega chaves salvas nos cookies
-  G.gkey=lerCookie('gk')||'';
-  G.akey=lerCookie('ak')||'';
-  G.fid=lerCookie('fid')||'1PLAXpMXn3k4JRc187IGzLViJ8EBDcKAd';
-  document.getElementById('gkey').value=G.gkey;
-  document.getElementById('akey').value=G.akey;
-  document.getElementById('fid').value=G.fid;
-  // Conecta automaticamente se já tiver chave
+// Init
+window.onload = function(){
+  carregarConfig();
   if(G.gkey) conectar();
 };
 </script>
