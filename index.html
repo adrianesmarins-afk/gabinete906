@@ -259,6 +259,13 @@ Direcione a busca nos documentos de referência fornecidos nesta ordem de priori
 Ao usar um documento de referência, ADAPTE o texto ao caso concreto (nomes, valores, datas, particularidades) — nunca copie de forma idêntica sem ajustar. Todos os parágrafos da fundamentação devem estar adaptados ao processo em análise, mesmo quando a tese jurídica for reaproveitada.
 DICA DE PADRÃO: casos de ações revisionais, declaratórias de inexistência de débito e indenizatórias contra bancos e instituições financeiras, ajuizadas em massa pelos mesmos advogados com teses e documentos semelhantes, tendem a se repetir — priorize como referência votos que tratem de casos dessa natureza quando o caso em análise for semelhante.
 
+--- QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA ---
+Antes de redigir a fundamentação, avalie honestamente se algum dos documentos de referência fornecidos realmente trata do tema principal (ou de tema suficientemente próximo) do processo em análise. Se NENHUM documento de referência for aplicável:
+- Defina "referencia_insuficiente": true e preencha "aviso_referencia" com uma frase objetiva, ex: "Não foi localizado, na base de referência, voto do Desembargador Décio Rodrigues sobre [tema específico]. A fundamentação abaixo foi elaborada com base na jurisprudência majoritária do TJSP/STJ sobre a matéria, seguindo a estrutura e o padrão redacional do Desembargador."
+- Mesmo assim, redija a fundamentação normalmente, usando seu próprio conhecimento da jurisprudência majoritária do TJSP e do STJ sobre o tema, mantendo a estrutura, o tom e o padrão redacional do template do Desembargador.
+- NÃO invente a existência de um voto de referência que não existe, e não cite os documentos de referência fornecidos se eles não tratam do tema.
+Se pelo menos um documento de referência for aplicável, defina "referencia_insuficiente": false e "aviso_referencia": "".
+
 --- CONSECTÁRIOS LEGAIS E HONORÁRIOS RECURSAIS ---
 Analise os consectários legais (juros, correção monetária, etc.) de acordo com o entendimento already firmado pelo Desembargador nos votos de referência, e reajuste-os se houver acolhimento, ainda que parcial, do recurso.
 REGRA DE HONORÁRIOS (aplica-se apenas a APELAÇÃO): se o recurso for DESPROVIDO (integralmente mantida a sentença) E já havia honorários advocatícios sucumbenciais fixados na sentença de origem EM DESFAVOR DO APELANTE, majore esses honorários para o patamar de 20% (vinte por cento), com base no art. 85, §§ 2º e 11, do CPC. NÃO aplique esta majoração automática se: (a) o recurso for provido, total ou parcialmente; ou (b) não havia honorários fixados na origem contra o apelante. Nesses casos, trate os honorários conforme o resultado do julgamento e o entendimento dos votos de referência.
@@ -273,6 +280,8 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "materia_sobrestada": true ou false,
   "cabe_monocratica": true ou false,
   "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou null,
+  "referencia_insuficiente": true ou false,
+  "aviso_referencia": "string (ver instrução acima) ou vazio",
   "numero_processo": "string - número do processo extraído do PDF",
   "comarca": "string em caixa alta",
   "recorrente_nome": "string em caixa alta",
@@ -283,6 +292,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "dispositivo": "string - formato depende do tipo de saída indicado (colegiado/monocrático), ver instrução específica abaixo. Marque a expressão-verbo decisória entre **dois asteriscos** (ex: **NÃO CONHEÇO** do presente recurso...) para que seja formatada em negrito no Word — use ** apenas nessa expressão curta, não no parágrafo inteiro.",
   "despacho_bullets": ["Vistos.", "..."]
 }
+Regra ESTRITA para "despacho_bullets": cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NÃO inclua no array a frase final de fechamento ("É o que se decide...") nem a assinatura ("DÉCIO RODRIGUES" / "Relator") — essas duas partes já são adicionadas automaticamente pelo site, fora do array. Incluí-las no array causaria numeração e conteúdo duplicados no documento final.
 O campo "despacho_bullets" tem DOIS usos possíveis (nunca os dois ao mesmo tempo):
 (a) Se materia_sobrestada=true: despacho de sobrestamento, para QUALQUER tipo de recurso.
 (b) Se materia_sobrestada=false E cabe_monocratica=false E o tipo de recurso for Agravo de Instrumento: despacho decidindo o efeito suspensivo/ativo, com item final intimando a parte agravada para responder no prazo legal.
@@ -305,8 +315,8 @@ Mantenha a mesma estrutura de relatório e a mesma lógica de fundamentação (p
    ============================================================ */
 const TEMAS_SUSPENSOS = [
   {tema:'Tema 1.378/STJ', tribunal:'STJ — 2ª Seção', especif:'Critério de aferição da abusividade dos juros remuneratórios em contratos bancários. Suspensos: REsp/AgREsp e instâncias ordinárias. Discute se a taxa média BACEN basta, isoladamente, para caracterizar abusividade. Ainda pendente (set/2026).'},
-  {tema:'Tema 1.328/STJ', tribunal:'STJ — 2ª Seção', especif:'Dano moral in re ipsa na invalidação de contratação de cartão de crédito consignado com RMC (reserva de margem consignável). Suspensão nacional de todos os processos pendentes, individuais ou coletivos, em qualquer grau. Tema-irmão do Tema 1.414 (cuida só da consequência indenizatória). Ainda pendente (set/2026).'},
-  {tema:'Tema 1.414/STJ', tribunal:'STJ — 2ª Seção', especif:'Critérios objetivos de validade e abusividade dos contratos de cartão de crédito consignado (RMC/RCC) — dever de informação, vício de consentimento, legalidade dos descontos. Suspensão nacional determinada em 17/03/2026. Aplica-se mesmo quando a causa de pedir é fraude/ausência de contratação. Ainda pendente (set/2026).'},
+  {tema:'Tema 1.328/STJ', tribunal:'STJ — 2ª Seção', especif:'Dano moral in re ipsa na invalidação de contratação de CARTÃO DE CRÉDITO CONSIGNADO com RMC (reserva de margem consignável). Suspensão nacional de todos os processos pendentes, individuais ou coletivos, em qualquer grau. Tema-irmão do Tema 1.414 (cuida só da consequência indenizatória). Ainda pendente (set/2026). ⚠️ NÃO CONFUNDIR com empréstimo consignado comum (desconto de parcelas fixas em folha/benefício, sem cartão de crédito) — isso é produto financeiro DIFERENTE e NÃO está sobrestado, mesmo que a causa de pedir também seja fraude/inexistência de contratação/dano moral. Só sobresta se o processo tratar especificamente de CARTÃO de crédito consignado (RMC/RCC).'},
+  {tema:'Tema 1.414/STJ', tribunal:'STJ — 2ª Seção', especif:'Critérios objetivos de validade e abusividade dos contratos de CARTÃO DE CRÉDITO CONSIGNADO (RMC/RCC) — dever de informação, vício de consentimento, legalidade dos descontos. Suspensão nacional determinada em 17/03/2026. Aplica-se mesmo quando a causa de pedir é fraude/ausência de contratação — DESDE QUE o produto discutido seja especificamente cartão de crédito consignado. Ainda pendente (set/2026). ⚠️ NÃO CONFUNDIR com empréstimo consignado comum (sem cartão de crédito) — produto financeiro diferente, NÃO sobrestado. O termo "consignado" sozinho não basta; é preciso haver CARTÃO DE CRÉDITO consignado (RMC/RCC) especificamente.'},
   {tema:'Tema 1.348/STJ', tribunal:'STJ — 2ª Seção', especif:'Rescisão de compromisso de compra e venda de imóvel com alienação fiduciária REGISTRADA, por desistência do adquirente SEM mora constituída — aplica-se a Lei 9.514/97 ou o CDC? Diferente do Tema 1.095 (já julgado — trata de inadimplemento COM mora) e do Tema 1.420 (sem registro). Ainda pendente (set/2026).'},
   {tema:'Tema 1.420/STJ', tribunal:'STJ — 2ª Seção', especif:'Rescisão de compromisso de compra e venda de imóvel com alienação fiduciária NÃO REGISTRADA em cartório — aplica-se a Lei 9.514/97 ou o CDC quando a garantia não foi registrada. Distingue-se dos Temas 1.095 e 1.348 pela ausência de registro. Ainda pendente (set/2026).'},
   {tema:'Revisão do Tema 886/STJ', tribunal:'STJ — 2ª Seção', especif:'Legitimidade passiva do promitente vendedor e/ou comprador em cobrança de débitos condominiais pós-imissão na posse. Proposta de revisão da tese já firmada — checar se a suspensão alcança só a tese em xeque ou também os que já aplicam a tese vigente. "Afetado", última atualização 30/05/2026.'},
@@ -617,12 +627,14 @@ async function chamarAnthropic(prompt, maxTokens){
 async function realizarTriagem(pdfText, meta, textoSusp, textoMono){
   const prompt = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
+REGRA DE RIGOR NA LEITURA (aplica-se a toda a triagem): leia com atenção a decisão/sentença recorrida, as razões recursais e as contrarrazões (se houver) no texto do processo abaixo, identificando com precisão qual é o produto financeiro, o tipo de contrato e a causa de pedir REAL do caso — não presuma ou generalize a partir de palavras-chave soltas (ex: "consignado" sozinho não identifica o produto; é preciso confirmar se é empréstimo consignado comum ou especificamente cartão de crédito consignado/RMC/RCC). Erros de sobrestamento por matéria parecida mas distinta já ocorreram e devem ser evitados a todo custo.
+
 TIPO DE RECURSO INFORMADO PELO USUÁRIO: ${meta.numProcessoLabel}
 
 REGRAS ATUAIS DE COMPETÊNCIA DAS CÂMARAS DE DIREITO PRIVADO DO TJSP (verifique SEMPRE, antes de qualquer outra coisa, se a 21ª Câmara é competente):
 ${TJSP_COMPETENCIA_TEXTO}
 
-LISTA OFICIAL DE TEMAS ATUALMENTE SUSPENSOS POR REPETITIVO/IRDR (compare a matéria do processo com esta lista para checar sobrestamento — use o "distinguishing" de cada item para não sobrestar por engano um caso que apenas parece semelhante):
+LISTA OFICIAL DE TEMAS ATUALMENTE SUSPENSOS POR REPETITIVO/IRDR (compare a matéria do processo com esta lista para checar sobrestamento — preste atenção especial às notas "⚠️ NÃO CONFUNDIR" de cada item; se o produto/matéria não corresponder EXATAMENTE ao tema, NÃO marque como sobrestada, mesmo que pareça semelhante):
 ${TEMAS_SUSPENSOS_TEXTO}
 ${textoSusp ? '\nOutros despachos de sobrestamento já proferidos pelo Gabinete (referência adicional):\n'+textoSusp : ''}
 
@@ -643,11 +655,12 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "comarca": "string em caixa alta",
   "recorrente_nome": "string em caixa alta",
   "recorrido_nome": "string em caixa alta",
-  "tema_principal": "resumo curto (1 linha) do tema central do recurso",
+  "tema_principal": "resumo curto (1 linha) do tema central do recurso, incluindo o produto financeiro/contratual exato quando aplicável",
   "tem_preliminar": true ou false,
   "preliminar_resumo": "string curta ou vazio se não houver",
   "materia_sobrestada": true ou false,
   "tema_sobrestado": "string (qual Tema/IRDR, exatamente como na lista oficial) ou vazio",
+  "elemento_correspondencia": "string curta citando TEXTUALMENTE do processo o elemento que confirma a correspondência exata com o tema sobrestado (ex: 'contrato de cartão de crédito consignado RMC nº X') — obrigatório preencher se materia_sobrestada=true; deixe vazio se materia_sobrestada=false",
   "cabe_monocratica": true ou false,
   "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou null,
   "motivo_monocratica": "string curta com o motivo específico (se for incompetencia, diga também para onde deve ser redistribuído: Câmara Especializada de Família e Sucessões / Câmara Reservada de Direito Empresarial / Seção de Direito Público / outro Relator ou Câmara por prevenção, conforme o caso) ou vazio se não cabível"
@@ -667,7 +680,7 @@ function buildTriagemHTML(triagem, meta){
   itens.push(['ti-target', `Tema principal: ${esc(triagem.tema_principal||'—')}`]);
   itens.push(['ti-alert-triangle', triagem.tem_preliminar ? `Preliminar arguida: ${esc(triagem.preliminar_resumo)}` : 'Nenhuma preliminar identificada']);
   itens.push(['ti-ban', triagem.materia_sobrestada
-    ? `Matéria <strong>SOBRESTADA</strong> — ${esc(triagem.tema_sobrestado)}. Será gerado apenas o despacho de sobrestamento.`
+    ? `Matéria <strong>SOBRESTADA</strong> — ${esc(triagem.tema_sobrestado)}${triagem.elemento_correspondencia ? ' (baseado em: "'+esc(triagem.elemento_correspondencia)+'")' : ''}. Será gerado apenas o despacho de sobrestamento.`
     : 'Matéria não sobrestada — segue para julgamento']);
   if(!triagem.materia_sobrestada){
     const rotuloSubtipo = {inadmissibilidade_art1015:'inadmissibilidade — art. 1.015 do CPC', incompetencia:'incompetência absoluta em razão da matéria', outro:'art. 932 do CPC'}[triagem.subtipo_monocratica] || '';
@@ -690,7 +703,8 @@ function montarPromptFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMo
   let tipoBloco;
   if(triagem.materia_sobrestada){
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DESPACHO DE SOBRESTAMENTO.
-A triagem já identificou que a matéria está sobrestada (tema: ${triagem.tema_sobrestado}). Gere SOMENTE "despacho_bullets" com o despacho de sobrestamento, seguindo a estrutura e o tom do MODELO DE DESPACHO DE SOBRESTAMENTO abaixo (itens numerados 1, 2, 3...). Deixe "relatorio" e "fundamentacao" vazios ([]) e "dispositivo" vazio ("").
+A triagem já identificou que a matéria está sobrestada (tema: ${triagem.tema_sobrestado}; elemento de correspondência: ${triagem.elemento_correspondencia||'—'}). Gere SOMENTE "despacho_bullets" com o despacho de sobrestamento, seguindo a estrutura e o tom do MODELO DE DESPACHO DE SOBRESTAMENTO abaixo. Deixe "relatorio" e "fundamentacao" vazios ([]) e "dispositivo" vazio ("").
+LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, NÃO inclua esses números, NÃO inclua a frase final "É o que se decide..." e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona essas três coisas automaticamente.
 MODELO DE DESPACHO DE SOBRESTAMENTO (referência estrutural — adapte ao caso concreto e ao tema realmente identificado):
 ${MODELO_DESPACHO_SOBRESTAMENTO}`;
   } else if(triagem.cabe_monocratica){
@@ -795,6 +809,10 @@ function renderResultado(meta, comIA, triagem){
   let html = '';
 
   if(triagem) html += buildTriagemHTML(triagem, meta);
+
+  if(comIA && d.referencia_insuficiente && d.aviso_referencia){
+    html += `<div class="banner orange"><i class="ti ti-alert-triangle"></i><span><strong>Atenção:</strong> ${esc(d.aviso_referencia)}</span></div>`;
+  }
 
   if(comIA && d.materia_sobrestada){
     html += `<div class="rc">
