@@ -627,7 +627,14 @@ async function chamarAnthropic(prompt, maxTokens){
   const data = await resp.json();
   if(data.error) throw new Error(data.error.message||'erro da API');
   const raw = (data.content||[]).map(b=>b.text||'').join('');
-  return extrairJSON(raw);
+  try{
+    return extrairJSON(raw);
+  }catch(e){
+    if(data.stop_reason === 'max_tokens'){
+      throw new Error('A resposta da IA foi cortada por exceder o limite de tokens de saída. Tente novamente (às vezes uma nova tentativa gera um texto mais enxuto), ou avise o desenvolvedor para aumentar o limite.');
+    }
+    throw e;
+  }
 }
 
 /* ============================================================
@@ -761,7 +768,7 @@ Gere o JSON completo agora, seguindo rigorosamente o formato especificado.`;
 
 async function gerarDocumentoFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono){
   const prompt = montarPromptFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono);
-  return await chamarAnthropic(prompt, 4096);
+  return await chamarAnthropic(prompt, 8192);
 }
 
 function extrairJSON(texto){
