@@ -501,7 +501,7 @@ async function handleFile(file){
 
   try{
     setProgress(8, 'Lendo o PDF do processo...');
-    const pdfText = await lerPDF(file, 250000);
+    const pdfText = await lerPDF(file, 350000);
 
     setProgress(20, 'Carregando documentos de referência da base...');
     const textoRefs = await montarTextoReferencias(meta.folderKey, 8);
@@ -570,9 +570,16 @@ async function lerPDF(file, maxChars){
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
     texto += content.items.map(it=>it.str).join(' ') + '\n\n';
-    if(texto.length >= maxChars) break;
   }
-  return texto.slice(0, maxChars);
+  if(texto.length <= maxChars) return texto;
+  // Processo maior que o orçamento de caracteres: prioriza a PARTE FINAL do PDF
+  // (sentença/decisão recorrida, recurso e contrarrazões costumam vir depois da
+  // petição inicial e dos atos processuais anteriores no PDF consolidado do e-SAJ),
+  // em vez de cortar a partir do início.
+  let corte = texto.length - maxChars;
+  const proximaQuebra = texto.indexOf('\n\n', corte);
+  if(proximaQuebra !== -1 && proximaQuebra - corte < 2000) corte = proximaQuebra + 2;
+  return texto.slice(corte);
 }
 
 /* ============================================================
