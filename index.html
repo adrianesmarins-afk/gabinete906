@@ -218,7 +218,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
 const TAB_META = {
   apelacao:   { folderKey:'ap', label:'Apelação',                numProcessoLabel:'Apelação Cível',      recorrenteLabel:'Apelante',  recorridoLabel:'Apelado',  temDespacho:false },
   agravo:     { folderKey:'ag', label:'Agravo de Instrumento',    numProcessoLabel:'Agravo de Instrumento', recorrenteLabel:'Agravante', recorridoLabel:'Agravado', temDespacho:true  },
-  embargos:   { folderKey:'em', label:'Embargos de Declaração',   numProcessoLabel:'Embargos de Declaração',recorrenteLabel:'Embargante',recorridoLabel:'Embargado',temDespacho:false },
+  embargos:   { folderKey:'em', label:'Embargos de Declaração',   numProcessoLabel:'Embargos de Declaração',recorrenteLabel:'Embargante',recorridoLabel:'Embargado',temDespacho:false, semRelatorio:true },
   agravoint:  { folderKey:'ai', label:'Agravo Interno',           numProcessoLabel:'Agravo Interno',       recorrenteLabel:'Agravante', recorridoLabel:'Agravado', temDespacho:false },
 };
 // Nem "Suspensão por Repetitivo/IRDR" nem "Decisão Monocrática" são abas próprias.
@@ -306,6 +306,21 @@ Mantenha a mesma estrutura de relatório e a mesma lógica de fundamentação (p
 • "inadmissibilidade_art1015" — Agravo de Instrumento contra decisão que não se enquadra nas hipóteses taxativas do art. 1.015 do CPC, sem justificar a mitigação da taxatividade (Tema 988/STJ). Dispositivo: "Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente agravo de instrumento."
 • "incompetencia" — recurso versa sobre matéria estranha à competência das Câmaras de Direito Privado (incompetência absoluta em razão da matéria, cognoscível de ofício, art. 64, §1º, CPC). Dispositivo: "Ante o exposto, com fundamento no art. 64, §1º, c.c. o art. 932, III, ambos do CPC, **NÃO CONHEÇO** do presente recurso por incompetência absoluta deste órgão julgador em razão da matéria, e determino a redistribuição dos autos à [Câmara/Seção competente]." Neste subtipo, ACRESCENTE como ÚLTIMO parágrafo de "fundamentacao" a determinação processual: "Comunique-se ao Juízo de origem. Após as anotações e baixas necessárias, remetam-se os autos à Presidência/Distribuidor para redistribuição."
 • "outro" — qualquer outra hipótese do art. 932 do CPC (improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, provimento monocrático por contrariedade a entendimento vinculante etc.). Dispositivo no formato: "Ante o exposto, com fundamento no art. 932, [inciso], do CPC, **DECIDO** monocraticamente por [negar seguimento ao / negar provimento ao / dar provimento ao] recurso. Publique-se. Intimem-se." — ajuste o inciso e a fundamentação ao motivo identificado.
+
+--- QUANDO O TIPO DE RECURSO FOR EMBARGOS DE DECLARAÇÃO (estrutura totalmente diferente — leia com atenção) ---
+Embargos de declaração NÃO têm relatório. IGNORE inteiramente a seção "ESTRUTURA DO RELATÓRIO" acima quando o recurso for Embargos de Declaração: retorne "relatorio": [] (array vazio) e vá direto para a fundamentação.
+A fundamentação dos embargos de declaração segue esta sequência, dentro do array "fundamentacao":
+1º parágrafo — "Vistos." seguido de uma frase identificando que se trata de embargos de declaração opostos por [embargante] contra o v. acórdão/voto nº [•], e a síntese objetiva do(s) vício(s) apontado(s) (omissão, contradição, obscuridade ou erro material, art. 1.022 do CPC).
+2º parágrafo — Análise da ADMISSIBILIDADE: verifique e afirme expressamente a tempestividade dos embargos (prazo de 5 dias úteis a contar da intimação da decisão embargada, art. 1.023 do CPC — calcule com base nas datas do processo, se disponíveis) e os demais pressupostos de admissibilidade.
+Parágrafos seguintes — Para CADA alegação de vício suscitada nas razões dos embargos, faça o CONFRONTO direto: (a) identifique com precisão, no texto do v. acórdão/voto embargado (disponível no PDF do processo), a passagem que trata do ponto supostamente omitido/contraditório/obscuro; (b) REPRODUZA essa passagem literalmente, delimitada entre marcadores "@@" no início e no fim (ex: @@trecho copiado do voto embargado@@) — isso faz o trecho aparecer destacado em vermelho no documento final, exatamente como no padrão do gabinete, permitindo conferência rápida; (c) com base nessa comparação, use seu próprio raciocínio jurídico para concluir, para cada alegação, se ela é PROCEDENTE (o vício realmente existe) ou IMPROCEDENTE (o ponto já foi enfrentado, ou não há omissão/contradição/obscuridade real, ou a parte busca apenas rediscutir o mérito já decidido — o que não é função de embargos de declaração).
+Use os DOIS modelos de embargos de declaração fornecidos como referência (um de rejeição total, outro de acolhimento parcial) para reproduzir o padrão de linguagem e de estrutura do Desembargador, especialmente a técnica de citar o trecho do voto embargado entre @@...@@ antes de concluir pela existência ou não do vício.
+O "dispositivo" deve corresponder a EXATAMENTE UM dos quatro resultados possíveis, com a redação correspondente:
+(a) REJEITADOS — nenhuma alegação procede: "Pelo exposto, rejeitam-se os presentes embargos de declaração."
+(b) ACOLHIDOS, COM EFEITOS INFRINGENTES — vício(s) procedente(s) que alteram o resultado do julgamento: "Ante o exposto, voto por conhecer dos embargos de declaração e ACOLHÊ-LOS, com efeitos infringentes, para [síntese precisa da alteração do resultado]."
+(c) ACOLHIDOS EM PARTE — alguns vícios procedem e outros não, ou procedem com efeitos infringentes apenas parciais: "Ante o exposto, voto por conhecer dos embargos de declaração e ACOLHÊ-LOS EM PARTE, [com/sem] efeitos infringentes, para [síntese]."
+(d) ACOLHIDOS SEM EFEITOS INFRINGENTES — há erro material ou omissão real, mas que NÃO altera o resultado do julgamento (só esclarece/corrige): "Ante o exposto, voto por conhecer dos embargos de declaração e ACOLHÊ-LOS, SEM EFEITOS INFRINGENTES, apenas para [sanar a omissão/corrigir o erro material identificado], mantido o resultado do julgamento tal como proferido."
+A "ementa" dos embargos de declaração segue o padrão: "EMBARGOS DE DECLARAÇÃO. [vício(s) alegado(s)]. [Ocorrência/inocorrência]. [Resultado]." em caixa alta, objetiva.
+Nunca acolha embargos de declaração apenas porque a parte discorda do resultado (rediscussão de mérito não é vício sanável por embargos) — analise exclusivamente se há, de fato, omissão, contradição, obscuridade ou erro material nos termos do art. 1.022 do CPC.
 `;
 
 /* ============================================================
@@ -452,6 +467,20 @@ async function salvarConfig(){
   await carregarBase();
 }
 
+async function listarTodosArquivos(fid){
+  let arquivos = [];
+  let pageToken = '';
+  do{
+    const url = `https://www.googleapis.com/drive/v3/files?q='${fid}'+in+parents+and+mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'+and+trashed=false&fields=nextPageToken,files(id,name,modifiedTime)&orderBy=modifiedTime+desc&pageSize=1000&key=${S.gkey}${pageToken ? '&pageToken='+pageToken : ''}`;
+    const r = await fetch(url);
+    if(!r.ok) break;
+    const d = await r.json();
+    arquivos = arquivos.concat(d.files || []);
+    pageToken = d.nextPageToken || '';
+  } while(pageToken);
+  return arquivos;
+}
+
 async function carregarBase(){
   if(!S.gkey){ setStatus(false,'Configure a API Key do Google'); return; }
   setStatus(false,'Carregando base de referência...');
@@ -461,11 +490,7 @@ async function carregarBase(){
 
   for(const [k, fid] of Object.entries(S.folders)){
     try{
-      const url = `https://www.googleapis.com/drive/v3/files?q='${fid}'+in+parents+and+mimeType='application/vnd.openxmlformats-officedocument.wordprocessingml.document'+and+trashed=false&fields=files(id,name,modifiedTime)&orderBy=modifiedTime+desc&pageSize=50&key=${S.gkey}`;
-      const r = await fetch(url);
-      if(!r.ok) continue;
-      const d = await r.json();
-      S.arquivos[k] = d.files || [];
+      S.arquivos[k] = await listarTodosArquivos(fid);
       counters[k] = S.arquivos[k].length;
       total += S.arquivos[k].length;
     }catch(e){ /* ignora pasta individual com erro */ }
@@ -717,7 +742,11 @@ function buildTriagemHTML(triagem, meta){
    ============================================================ */
 function montarPromptFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono){
   let tipoBloco;
-  if(triagem.materia_sobrestada){
+  if(meta.semRelatorio){
+    tipoBloco = `TIPO DE SAÍDA EXIGIDA: EMBARGOS DE DECLARAÇÃO — siga rigorosamente o bloco "QUANDO O TIPO DE RECURSO FOR EMBARGOS DE DECLARAÇÃO" das regras acima. Retorne "relatorio": [] (vazio). Use os dois modelos de embargos fornecidos abaixo como referência de estrutura e linguagem (um de rejeição, outro de acolhimento parcial) — a pasta de referência deste gabinete contém apenas esses dois exemplos, propositalmente, para servir de padrão de estilo. O texto do v. acórdão/voto embargado está no PDF do processo fornecido mais abaixo — é dali que você deve extrair, literalmente, os trechos a citar entre @@...@@. Retorne "despacho_bullets": null.
+MODELOS DE EMBARGOS DE DECLARAÇÃO DE REFERÊNCIA:
+${textoRefs || '(nenhum modelo encontrado na pasta de referência — use apenas as regras acima)'}`;
+  } else if(triagem.materia_sobrestada){
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DESPACHO DE SOBRESTAMENTO.
 A triagem já identificou que a matéria está sobrestada (tema: ${triagem.tema_sobrestado}; elemento de correspondência: ${triagem.elemento_correspondencia||'—'}). Gere SOMENTE "despacho_bullets" com o despacho de sobrestamento, seguindo a estrutura e o tom do MODELO DE DESPACHO DE SOBRESTAMENTO abaixo. Deixe "relatorio" e "fundamentacao" vazios ([]) e "dispositivo" vazio ("").
 LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, NÃO inclua esses números, NÃO inclua a frase final "É o que se decide..." e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona essas três coisas automaticamente.
@@ -795,15 +824,19 @@ function mostrarSemChave(meta){
 /* ============================================================
    RENDERIZAÇÃO DO RESULTADO
    ============================================================ */
-function stripBold(s){ return (s||'').replace(/\*\*/g,''); }
+function stripBold(s){ return (s||'').replace(/\*\*/g,'').replace(/@@/g,''); }
 
 function previewTexto(d, meta){
   const tituloTop = d.cabe_monocratica ? 'DECISÃO MONOCRÁTICA Nº [A DEFINIR]' : 'VOTO Nº [A DEFINIR]';
   let t = `${tituloTop}\n${meta.numProcessoLabel.toUpperCase()} Nº ${d.numero_processo}\nCOMARCA: ${d.comarca}\n${meta.recorrenteLabel.toUpperCase()}: ${d.recorrente_nome}\n${meta.recorridoLabel.toUpperCase()}: ${d.recorrido_nome}\n\n${d.ementa}\n\n`;
-  if(d.cabe_monocratica) t += 'Vistos.\n\n';
-  (d.relatorio||[]).forEach(p=> t += p + '\n\n');
-  t += 'É o Relatório.\n\n';
-  (d.fundamentacao||[]).forEach(p=> t += p + '\n\n');
+  if(meta.semRelatorio){
+    (d.fundamentacao||[]).forEach(p=> t += stripBold(p) + '\n\n');
+  } else {
+    if(d.cabe_monocratica) t += 'Vistos.\n\n';
+    (d.relatorio||[]).forEach(p=> t += p + '\n\n');
+    t += 'É o Relatório.\n\n';
+    (d.fundamentacao||[]).forEach(p=> t += p + '\n\n');
+  }
   t += stripBold(d.dispositivo||'') + '\n\nDÉCIO RODRIGUES\nRelator';
   return t;
 }
@@ -957,6 +990,27 @@ function paraMonoEmenta(text){
     children: [ new TextRun({ text }) ],
   });
 }
+function runsComVermelho(text){
+  const parts = (text||'').split('@@');
+  const runs = parts.filter(p=>p.length).map((part,i)=> new TextRun({ text: part, color: i%2===1 ? 'FF0000' : undefined }));
+  return runs.length ? runs : [ new TextRun({ text: text||'' }) ];
+}
+function paraEDEmenta(text){
+  return new Paragraph({
+    alignment: AlignmentType.JUSTIFIED,
+    indent: { left: 1701 },
+    spacing: { before:120, after:240, line:360, lineRule: LineRuleType.AUTO },
+    children: [ new TextRun({ text, bold:true }) ],
+  });
+}
+function paraEDCorpo(text, spacingBefore){
+  return new Paragraph({
+    alignment: AlignmentType.JUSTIFIED,
+    indent: { firstLine: 2155 },
+    spacing: { before: spacingBefore||60, after:60, line:276, lineRule: LineRuleType.AUTO },
+    children: runsComVermelho(text),
+  });
+}
 function paraMonoCorpo(text, spacingBefore){
   return new Paragraph({
     alignment: AlignmentType.JUSTIFIED,
@@ -1052,6 +1106,14 @@ async function exportarVoto(){
     children.push(paraVazio());
     children.push(paraMonoAssinatura('DÉCIO RODRIGUES'));
     children.push(paraMonoAssinatura('Relator'));
+  } else if(meta.semRelatorio){
+    children.push(paraEDEmenta(d.ementa||''));
+    children.push(paraVazio());
+    (d.fundamentacao||[]).forEach(p=> children.push(paraEDCorpo(p)));
+    children.push(paraEDCorpo(d.dispositivo||'', 120));
+    children.push(paraVazio());
+    children.push(paraAssinatura('DÉCIO RODRIGUES'));
+    children.push(paraAssinatura('Relator'));
   } else {
     children.push(paraEmenta(d.ementa||''));
     children.push(paraVazio());
@@ -1068,7 +1130,7 @@ async function exportarVoto(){
     styles: { default: { document: { run: { font:'Times New Roman', size:32 } } } },
     sections: [{ properties:{}, children }],
   });
-  const prefixo = mono ? 'DecisaoMonocratica' : `Voto_${meta.label.replace(/[^a-zA-Z0-9]/g,'_')}`;
+  const prefixo = mono ? 'DecisaoMonocratica' : meta.semRelatorio ? 'EmbargosDeclaracao' : `Voto_${meta.label.replace(/[^a-zA-Z0-9]/g,'_')}`;
   baixarDoc(doc, `${prefixo}_${(d.numero_processo||'processo').replace(/[^a-zA-Z0-9]/g,'_')}.docx`);
 }
 
