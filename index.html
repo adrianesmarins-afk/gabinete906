@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js" onerror="window._docxLoadError=true"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="window._pdfjsLoadError=true"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" onerror="window._xlsxLoadError=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" onerror="window._tesseractLoadError=true"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
 
 <style>
@@ -620,7 +621,9 @@ async function handleFile(files){
 
   try{
     setProgress(8, lista.length>1 ? `Lendo os ${lista.length} PDFs do processo...` : 'Lendo o PDF do processo...');
-    const pdfText = await lerPDFs(lista, 350000);
+    const pdfText = await lerPDFs(lista, 350000, (pagina, total)=>{
+      setProgress(10, `Aplicando reconhecimento de texto (OCR) em página escaneada ${pagina} de ${total}...`);
+    });
 
     setProgress(20, 'Carregando documentos de referência da base...');
     const textoRefs = await montarTextoReferencias(meta.folderKey, 8);
@@ -681,15 +684,54 @@ async function garantirPdfjs(){
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
-async function extrairTextoPDF(file){
+/* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
+const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
+const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
+let _tesseractWorker = null;
+
+async function garantirTesseractWorker(){
+  if(_tesseractWorker) return _tesseractWorker;
+  if(typeof Tesseract === 'undefined'){
+    await tentarCarregarScript('https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js');
+  }
+  if(typeof Tesseract === 'undefined'){
+    throw new Error('Biblioteca de OCR (Tesseract.js) não carregou.');
+  }
+  _tesseractWorker = await Tesseract.createWorker('por');
+  return _tesseractWorker;
+}
+
+async function ocrPagina(page){
+  const viewport = page.getViewport({ scale: 2.0 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  const worker = await garantirTesseractWorker();
+  const { data } = await worker.recognize(canvas);
+  return (data && data.text) ? data.text.trim() : '';
+}
+
+async function extrairTextoPDF(file, onProgresso){
   await garantirPdfjs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({data: buf}).promise;
   let texto = '';
+  let paginasOcr = 0;
   for(let i=1; i<=pdf.numPages; i++){
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    texto += content.items.map(it=>it.str).join(' ') + '\n\n';
+    let textoPagina = content.items.map(it=>it.str).join(' ').trim();
+    if(textoPagina.length < OCR_LIMIAR_CHARS && paginasOcr < OCR_MAX_PAGINAS){
+      try{
+        if(onProgresso) onProgresso(i, pdf.numPages);
+        const textoOcr = await ocrPagina(page);
+        if(textoOcr.length > textoPagina.length) textoPagina = textoOcr;
+        paginasOcr++;
+      }catch(e){ /* falhou o OCR dessa página — segue com o que foi possível extrair (pode ficar vazio) */ }
+    }
+    texto += textoPagina + '\n\n';
   }
   return texto;
 }
@@ -705,10 +747,10 @@ function aplicarOrcamentoTexto(texto, maxChars){
   return texto.slice(corte);
 }
 
-async function lerPDFs(files, maxChars){
+async function lerPDFs(files, maxChars, onProgresso){
   const textos = [];
   for(const f of files){
-    textos.push({ nome: f.name, texto: await extrairTextoPDF(f) });
+    textos.push({ nome: f.name, texto: await extrairTextoPDF(f, onProgresso) });
   }
   if(textos.length === 1){
     return aplicarOrcamentoTexto(textos[0].texto, maxChars);
