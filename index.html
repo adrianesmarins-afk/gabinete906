@@ -186,30 +186,67 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
 <!-- Modal Config -->
 <div id="modal" class="mo">
   <div class="mb">
-    <h2>⚙️ Configuração — Minutador de Votos Automático</h2>
-    <p>Cole as chaves de API e os IDs das pastas do Google Drive (uma pasta por tipo de documento — cada pasta é a base de votos/despachos anteriores daquele tipo).</p>
 
-    <label>API Key do Google Cloud</label>
-    <input id="i-gkey" type="text" placeholder="AIzaSy..."/>
-
-    <label>API Key da Anthropic (obrigatória para gerar os votos com IA)</label>
-    <input id="i-akey" type="text" placeholder="sk-ant-..."/>
-
-    <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">IDs das pastas de referência (Google Drive)</p>
-    <div class="fold-grid">
-      <div><label>Apelações</label><input id="f-ap" type="text" placeholder="ID da pasta"/><div style="font-size:10.5px;color:var(--tx2);margin-top:2px">já vinculada da versão anterior</div></div>
-      <div><label>Agravos de Instrumento</label><input id="f-ag" type="text" placeholder="ID da pasta"/></div>
-      <div style="grid-column:1/-1"><label>Embargos de Declaração + Agravo Interno <small style="font-weight:400">(pasta única — poucos modelos: 1 de rejeição de ED, 1 de acolhimento de ED, e o template de Agravo Interno do Dr. Décio)</small></label><input id="f-em" type="text" placeholder="ID da pasta"/></div>
-      <div><label>Modelos de Decisão Monocrática <small style="font-weight:400">(opcional — os 3 modelos fixos já estão no site; use só p/ adicionar mais exemplos)</small></label><input id="f-mo" type="text" placeholder="ID da pasta (opcional)"/></div>
-      <div><label>Despachos de Suspensão Repetitivo/IRDR <small style="font-weight:400">(opcional — idem)</small></label><input id="f-su" type="text" placeholder="ID da pasta (opcional)"/></div>
-      <div style="grid-column:1/-1"><label>Manual Dr. Décio e repositórios nova competência <small style="font-weight:400">(material de estudo — docx e xlsx — usado como pano de fundo em todas as gerações)</small></label><input id="f-dc" type="text" placeholder="ID da pasta"/></div>
+    <!-- Tela de bloqueio por PIN -->
+    <div id="lock-screen">
+      <h2>🔒 Configuração protegida</h2>
+      <p id="lock-msg">Digite o PIN para acessar as configurações.</p>
+      <label id="lock-label">PIN</label>
+      <input id="i-pin" type="password" inputmode="numeric" placeholder="Mínimo 4 dígitos"/>
+      <div id="lock-confirm-wrap" style="display:none">
+        <label>Confirme o PIN</label>
+        <input id="i-pin2" type="password" inputmode="numeric" placeholder="Repita o PIN"/>
+      </div>
+      <p id="lock-err" style="font-size:12px;color:#c0392b;margin-top:6px;display:none">PIN incorreto. Tente de novo.</p>
+      <p style="font-size:10.5px;color:var(--tx2);margin-top:10px">⚠️ Isto é uma trava de conveniência (evita que alguém olhando a tela ou compartilhando ela veja/mexa nas chaves por acidente) — não é segurança real contra alguém com conhecimento técnico, já que este site não tem servidor. Não reutilize uma senha importante aqui.</p>
+      <div class="mbtns">
+        <button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
+        <button type="button" class="btn pr" onclick="tentarDesbloquear()">Entrar</button>
+      </div>
     </div>
 
-    <p style="font-size:11px;color:#E65100;margin-top:12px">🔒 Tudo fica salvo apenas no seu navegador. Nunca é enviado a terceiros.</p>
-    <div class="mbtns">
-      <button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
-      <button type="button" class="btn pr" onclick="salvarConfig()">Salvar e conectar</button>
+    <!-- Campos de configuração (só aparecem após o PIN) -->
+    <div id="config-fields" style="display:none">
+      <h2>⚙️ Configuração — Minutador de Votos Automático</h2>
+      <p>Cole as chaves de API e os IDs das pastas do Google Drive (uma pasta por tipo de documento — cada pasta é a base de votos/despachos anteriores daquele tipo).</p>
+
+      <label>API Key do Google Cloud</label>
+      <div style="display:flex;gap:6px">
+        <input id="i-gkey" type="password" placeholder="AIzaSy..." style="flex:1"/>
+        <button type="button" class="btn" onclick="alternarVisibilidade('i-gkey')" title="Mostrar/ocultar">👁</button>
+      </div>
+
+      <label>API Key da Anthropic (obrigatória para gerar os votos com IA)</label>
+      <div style="display:flex;gap:6px">
+        <input id="i-akey" type="password" placeholder="sk-ant-..." style="flex:1"/>
+        <button type="button" class="btn" onclick="alternarVisibilidade('i-akey')" title="Mostrar/ocultar">👁</button>
+      </div>
+
+      <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">IDs das pastas de referência (Google Drive)</p>
+      <div class="fold-grid">
+        <div><label>Apelações</label><input id="f-ap" type="text" placeholder="ID da pasta"/><div style="font-size:10.5px;color:var(--tx2);margin-top:2px">já vinculada da versão anterior</div></div>
+        <div><label>Agravos de Instrumento</label><input id="f-ag" type="text" placeholder="ID da pasta"/></div>
+        <div style="grid-column:1/-1"><label>Embargos de Declaração + Agravo Interno <small style="font-weight:400">(pasta única — poucos modelos: 1 de rejeição de ED, 1 de acolhimento de ED, e o template de Agravo Interno do Dr. Décio)</small></label><input id="f-em" type="text" placeholder="ID da pasta"/></div>
+        <div><label>Modelos de Decisão Monocrática <small style="font-weight:400">(opcional — os 3 modelos fixos já estão no site; use só p/ adicionar mais exemplos)</small></label><input id="f-mo" type="text" placeholder="ID da pasta (opcional)"/></div>
+        <div><label>Despachos de Suspensão Repetitivo/IRDR <small style="font-weight:400">(opcional — idem)</small></label><input id="f-su" type="text" placeholder="ID da pasta (opcional)"/></div>
+        <div style="grid-column:1/-1"><label>Manual Dr. Décio e repositórios nova competência <small style="font-weight:400">(material de estudo — docx e xlsx — usado como pano de fundo em todas as gerações)</small></label><input id="f-dc" type="text" placeholder="ID da pasta"/></div>
+      </div>
+
+      <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">Privacidade</p>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+        <input type="checkbox" id="i-pseudo" style="width:auto"/>
+        Pseudonimizar nomes e dados pessoais antes de enviar à IA (recomendado — ver explicação abaixo)
+      </label>
+      <p style="font-size:10.5px;color:var(--tx2);margin-top:3px">CPF, RG, CNPJ, e-mail, telefone e CEP são sempre ocultados automaticamente, independente desta opção. Esta opção adicional troca nomes de pessoas por códigos (ex: "PESSOA_1") antes do envio, e devolve os nomes reais só no documento final — exige uma chamada extra à IA, levemente mais lento e com custo marginal maior.</p>
+
+      <p style="font-size:11px;color:#E65100;margin-top:12px">🔒 Tudo fica salvo apenas no seu navegador. Nunca é enviado a terceiros.</p>
+      <div class="mbtns">
+        <button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
+        <button type="button" class="btn" onclick="trocarPin()">Trocar PIN</button>
+        <button type="button" class="btn pr" onclick="salvarConfig()">Salvar e conectar</button>
+      </div>
     </div>
+
   </div>
 </div>
 
@@ -519,6 +556,7 @@ function load(){
   S.gkey = localStorage.getItem('gk')||'';
   S.akey = localStorage.getItem('ak')||'';
   S.folders = JSON.parse(localStorage.getItem('folds')||'{}');
+  S.pseudonimizar = localStorage.getItem('pseudo')==='1';
   if(!S.folders.ap) S.folders.ap = APELACOES_FOLDER_PADRAO;
 }
 
@@ -532,22 +570,84 @@ function setTab(t, el){
 document.getElementById('bn-txt').textContent = BN_TXT.apelacao + SUSP_NOTE;
 
 /* ============================================================
-   MODAL / CONFIGURAÇÃO
+   MODAL / CONFIGURAÇÃO — com trava por PIN (conveniência, não
+   segurança criptográfica real: isto é um site estático, sem
+   servidor, então qualquer pessoa com acesso ao código do
+   navegador pode contornar. Serve para evitar exposição casual
+   das chaves numa tela compartilhada.)
    ============================================================ */
+async function hashPin(pin){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('mva-salt-906:'+pin));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+let _modoTrocaPin = false;
+
 function abrirModal(){
   load();
+  document.getElementById('config-fields').style.display='none';
+  document.getElementById('lock-screen').style.display='block';
+  document.getElementById('i-pin').value='';
+  document.getElementById('i-pin2').value='';
+  document.getElementById('lock-err').style.display='none';
+  _modoTrocaPin = false;
+  const temPin = !!localStorage.getItem('pinHash');
+  if(temPin){
+    document.getElementById('lock-msg').textContent = 'Digite o PIN para acessar as configurações.';
+    document.getElementById('lock-confirm-wrap').style.display='none';
+  } else {
+    document.getElementById('lock-msg').textContent = 'Primeiro acesso: crie um PIN (mín. 4 dígitos) para proteger as configurações daqui pra frente.';
+    document.getElementById('lock-confirm-wrap').style.display='block';
+  }
+  document.getElementById('modal').style.display='block';
+}
+function fecharModal(){ document.getElementById('modal').style.display='none'; }
+
+async function tentarDesbloquear(){
+  const pin = document.getElementById('i-pin').value.trim();
+  if(pin.length < 4){ document.getElementById('lock-err').textContent='PIN precisa ter pelo menos 4 dígitos.'; document.getElementById('lock-err').style.display='block'; return; }
+  const temPin = !!localStorage.getItem('pinHash');
+  if(!temPin || _modoTrocaPin){
+    const pin2 = document.getElementById('i-pin2').value.trim();
+    if(pin !== pin2){ document.getElementById('lock-err').textContent='Os dois PINs não coincidem.'; document.getElementById('lock-err').style.display='block'; return; }
+    localStorage.setItem('pinHash', await hashPin(pin));
+  } else {
+    const hash = await hashPin(pin);
+    if(hash !== localStorage.getItem('pinHash')){
+      document.getElementById('lock-err').textContent='PIN incorreto. Tente de novo.';
+      document.getElementById('lock-err').style.display='block';
+      return;
+    }
+  }
+  document.getElementById('lock-screen').style.display='none';
+  document.getElementById('config-fields').style.display='block';
   document.getElementById('i-gkey').value = S.gkey;
   document.getElementById('i-akey').value = S.akey;
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
     document.getElementById('f-'+k).value = S.folders[k]||'';
   });
-  document.getElementById('modal').style.display='block';
+  document.getElementById('i-pseudo').checked = !!S.pseudonimizar;
 }
-function fecharModal(){ document.getElementById('modal').style.display='none'; }
+
+function trocarPin(){
+  _modoTrocaPin = true;
+  document.getElementById('config-fields').style.display='none';
+  document.getElementById('lock-screen').style.display='block';
+  document.getElementById('lock-msg').textContent = 'Digite o novo PIN.';
+  document.getElementById('lock-confirm-wrap').style.display='block';
+  document.getElementById('i-pin').value=''; document.getElementById('i-pin2').value='';
+  document.getElementById('lock-err').style.display='none';
+}
+
+function alternarVisibilidade(id){
+  const el = document.getElementById(id);
+  el.type = el.type==='password' ? 'text' : 'password';
+}
 
 async function salvarConfig(){
   S.gkey = document.getElementById('i-gkey').value.trim();
   S.akey = document.getElementById('i-akey').value.trim();
+  S.pseudonimizar = document.getElementById('i-pseudo').checked;
   S.folders = {};
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
     const v = document.getElementById('f-'+k).value.trim();
@@ -556,6 +656,7 @@ async function salvarConfig(){
   localStorage.setItem('gk', S.gkey);
   localStorage.setItem('ak', S.akey);
   localStorage.setItem('folds', JSON.stringify(S.folders));
+  localStorage.setItem('pseudo', S.pseudonimizar ? '1' : '0');
   fecharModal();
   await carregarBase();
 }
@@ -625,6 +726,19 @@ async function handleFile(files){
       setProgress(10, `Aplicando reconhecimento de texto (OCR) em página escaneada ${pagina} de ${total}...`);
     });
 
+    setProgress(16, 'Ocultando dados estruturados (CPF, CNPJ, e-mail, telefone)...');
+    let pdfTextSeguro = redigirDadosEstruturados(pdfText);
+    let mapaNomes = null;
+    if(S.pseudonimizar && S.akey){
+      setProgress(18, 'Identificando nomes para pseudonimizar...');
+      try{
+        const nomes = await extrairNomesPessoais(pdfTextSeguro);
+        const pseudo = pseudonimizarTexto(pdfTextSeguro, nomes);
+        pdfTextSeguro = pseudo.texto;
+        mapaNomes = pseudo.mapa;
+      }catch(e){ /* se a pseudonimização falhar, segue sem ela, com os dados estruturados já ocultos */ }
+    }
+
     setProgress(20, 'Carregando documentos de referência da base...');
     const textoRefs = await montarTextoReferencias(meta.folderKey, 8);
     const textoSusp = await montarTextoReferencias('su', 5);
@@ -634,19 +748,23 @@ async function handleFile(files){
     if(!S.akey){ mostrarSemChave(meta); return; }
 
     setProgress(38, 'Fazendo a triagem do processo...');
-    const triagem = await realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual);
-    S.triagem = triagem;
-    exibirTriagem(triagem, meta);
+    const triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, textoManual);
+    const triagemExibicao = mapaNomes ? reverterPseudonimizacao(triagemPseudo, mapaNomes) : triagemPseudo;
+    S.triagem = triagemExibicao;
+    exibirTriagem(triagemExibicao, meta);
 
-    const etapaFinal = triagem.materia_sobrestada
+    const etapaFinal = triagemPseudo.materia_sobrestada
       ? 'Redigindo despacho de sobrestamento...'
-      : (triagem.cabe_monocratica ? 'Redigindo decisão monocrática...' : 'Redigindo voto para julgamento colegiado...');
+      : (triagemPseudo.cabe_monocratica ? 'Redigindo decisão monocrática...' : 'Redigindo voto para julgamento colegiado...');
     setProgress(65, etapaFinal);
 
-    const finalJson = await gerarDocumentoFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono, textoManual);
-    S.doc = Object.assign({}, triagem, finalJson);
+    // a geração final recebe a triagem AINDA pseudonimizada (mesmo texto que ela já viu);
+    // só depois de pronto é que os nomes reais voltam, para exibição e exportação
+    let finalJson = await gerarDocumentoFinal(meta, triagemPseudo, pdfTextSeguro, textoRefs, textoSusp, textoMono, textoManual);
+    if(mapaNomes) finalJson = reverterPseudonimizacao(finalJson, mapaNomes);
+    S.doc = Object.assign({}, triagemExibicao, finalJson);
     setProgress(100, 'Concluído!');
-    renderResultado(meta, true, triagem);
+    renderResultado(meta, true, triagemExibicao);
   }catch(e){
     document.getElementById('pw').style.display='none';
     alert('Erro ao processar o documento: ' + e.message + '\n\nAbra o Console do navegador (F12) para mais detalhes.');
@@ -823,6 +941,65 @@ async function montarTextoReferencias(folderKey, limite){
 /* ============================================================
    CHAMADA À API ANTHROPIC (helper reutilizável)
    ============================================================ */
+/* ============================================================
+   PRIVACIDADE — redação de dados estruturados (sempre ativa) e
+   pseudonimização de nomes (opcional, ver checkbox em Configurar)
+   ============================================================ */
+function redigirDadosEstruturados(texto){
+  return (texto||'')
+    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, '[CPF OCULTADO]')
+    .replace(/\b\d{2}\.?\d{3}\.?\d{3}\/\d{4}-?\d{2}\b/g, '[CNPJ OCULTADO]')
+    .replace(/\b[\w.+-]+@[\w-]+\.[a-zA-Z.]{2,}\b/g, '[E-MAIL OCULTADO]')
+    .replace(/\(\d{2}\)\s?\d{4,5}-?\d{4}\b/g, '[TELEFONE OCULTADO]');
+}
+
+async function extrairNomesPessoais(texto){
+  const prompt = `Leia o texto de um processo judicial abaixo e identifique todos os NOMES COMPLETOS DE PESSOAS FÍSICAS que aparecem (partes, testemunhas, filhos, familiares mencionados, procuradores). NÃO inclua nomes de empresas, bancos, instituições, varas, comarcas ou advogados identificados só pela OAB. Responda SOMENTE com um JSON: {"nomes": ["Nome Completo 1", "Nome Completo 2"]}. Se não encontrar nenhum, responda {"nomes": []}.
+
+TEXTO:
+${texto.slice(0, 60000)}`;
+  const r = await chamarAnthropic(prompt, 800);
+  return Array.isArray(r.nomes) ? r.nomes.filter(n=>typeof n==='string' && n.trim().length>3) : [];
+}
+
+function pseudonimizarTexto(texto, nomes){
+  const mapa = {};
+  let out = texto;
+  // nomes mais longos primeiro, para não substituir só um pedaço de um nome maior
+  const ordenados = [...new Set(nomes)].sort((a,b)=>b.length-a.length);
+  ordenados.forEach((nome, i)=>{
+    const placeholder = `PESSOA_${i+1}`;
+    mapa[placeholder] = nome;
+    const escapado = nome.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    out = out.replace(new RegExp('\\b'+escapado+'\\b', 'gi'), placeholder);
+    // também tenta casar só o primeiro nome + sobrenome (reduz perda quando o texto cita de forma abreviada)
+    const partes = nome.split(/\s+/);
+    if(partes.length > 2){
+      const curto = partes[0] + ' ' + partes[partes.length-1];
+      const curtoEsc = curto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      out = out.replace(new RegExp('\\b'+curtoEsc+'\\b', 'gi'), placeholder);
+    }
+  });
+  return { texto: out, mapa };
+}
+
+function reverterPseudonimizacao(valor, mapa){
+  if(typeof valor === 'string'){
+    let out = valor;
+    Object.keys(mapa).forEach(placeholder=>{
+      out = out.replace(new RegExp(placeholder, 'g'), mapa[placeholder]);
+    });
+    return out;
+  }
+  if(Array.isArray(valor)) return valor.map(v=>reverterPseudonimizacao(v, mapa));
+  if(valor && typeof valor === 'object'){
+    const out = {};
+    Object.keys(valor).forEach(k=>{ out[k] = reverterPseudonimizacao(valor[k], mapa); });
+    return out;
+  }
+  return valor;
+}
+
 async function chamarAnthropic(prompt, maxTokens){
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
