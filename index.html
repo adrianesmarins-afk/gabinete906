@@ -317,8 +317,8 @@ Ao usar um documento de referência, ADAPTE o texto ao caso concreto (nomes, val
 NÍVEL DE CONCRETUDE EXIGIDO: a fundamentação não pode ser só a tese jurídica abstrata (princípios, doutrina, jurisprudência genérica) — em CADA parágrafo, amarre a tese aos dados concretos deste processo específico: cite o número e a data do contrato quando houver, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas mencionados nos autos (extratos, laudos, termos, print de mensagens, protocolos de atendimento), e as alegações específicas de cada parte (não só "o autor alega dano moral", mas o que ele concretamente narrou ter sofrido; não só "o réu impugna", mas qual documento ou argumento específico ele apresentou em contestação/contrarrazões). Uma fundamentação que poderia ser copiada e colada em qualquer outro processo do mesmo tema, sem alterar nada além do nome das partes, está errada — o objetivo é o oposto: mostrar que a tese jurídica foi aplicada a ESTE caso, com seus dados próprios.
 DICA DE PADRÃO: casos de ações revisionais, declaratórias de inexistência de débito e indenizatórias contra bancos e instituições financeiras, ajuizadas em massa pelos mesmos advogados com teses e documentos semelhantes, tendem a se repetir — priorize como referência votos que tratem de casos dessa natureza quando o caso em análise for semelhante. Mesmo nesses casos "quase repetidos", a concretude exigida acima não é dispensada: os valores, datas e documentos deste processo específico continuam obrigatórios.
 
---- PARÁGRAFO DE CONCLUSÃO DA FUNDAMENTAÇÃO (obrigatório, é o ÚLTIMO item do array "fundamentacao", antes do "dispositivo") ---
-Depois de toda a análise de mérito, inclua um parágrafo final especificando CONCRETAMENTE o que decorre da fundamentação quanto à sentença/decisão recorrida — não apenas o resultado quanto ao recurso, mas o efeito prático sobre o julgado de origem. Exemplos de formato: "Reforma-se a sentença para julgar procedente o pedido de repetição do indébito, no valor de R$ [x]..."; "Mantém-se a sentença tal como proferida."; "Cassa-se a sentença para determinar [...]"; "Julga-se procedente a ação declaratória de inexistência de débito quanto ao contrato nº [x], mantida a improcedência quanto aos demais pedidos." Esse parágrafo é DIFERENTE do dispositivo (ver abaixo) — aqui você explica o que muda ou se mantém no mérito; no dispositivo você só vota sobre o recurso.
+--- PARÁGRAFO DE CONCLUSÃO DA FUNDAMENTAÇÃO — PENÚLTIMO PARÁGRAFO DO VOTO (obrigatório, é o ÚLTIMO item do array "fundamentacao", logo antes do "dispositivo") ---
+Depois de toda a análise de mérito, inclua um parágrafo final especificando CONCRETAMENTE tudo o que decorre da fundamentação quanto à sentença/decisão recorrida — o resultado geral (procedência, improcedência, procedência parcial, reforma, manutenção, cassação etc.) E os consectários legais (juros, correção monetária, honorários sucumbenciais, inclusive a majoração de honorários recursais quando cabível) já definidos e quantificados nesse mesmo parágrafo. É AQUI, e só aqui, que entram essas determinações — nunca no dispositivo. Exemplos de formato: "Reforma-se a sentença para julgar procedente o pedido de repetição do indébito, no valor de R$ [x], corrigido monetariamente pela tabela do TJSP desde o desembolso e acrescido de juros de mora de 1% ao mês desde a citação, majorados os honorários advocatícios para 20% sobre o valor da condenação, nos termos do art. 85, §11, do CPC."; "Mantém-se a sentença tal como proferida, inclusive quanto aos consectários legais ali fixados."; "Cassa-se a sentença para determinar [...]". Esse parágrafo é DIFERENTE do dispositivo (ver abaixo) — aqui você explica tudo o que muda ou se mantém no mérito e os consectários; no dispositivo você só vota sobre o recurso.
 
 --- QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA ---
 Antes de redigir a fundamentação, avalie honestamente se algum dos documentos de referência fornecidos realmente trata do tema principal (ou de tema suficientemente próximo) do processo em análise. Se NENHUM documento de referência for aplicável:
@@ -350,7 +350,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "ementa": "string - resumo objetivo do tema e do resultado, em caixa alta, no padrão TJSP. Se materia_sobrestada=true, use algo como 'PROCESSO SOBRESTADO — TEMA [X] DO [STJ/STF/IRDR Y].'",
   "relatorio": ["parágrafo 1", "parágrafo 2", "parágrafo 3", "parágrafo 4 (apenas se Agravo de Instrumento, senão omita este item)"],
   "fundamentacao": ["parágrafo 1", "parágrafo 2", "..."],
-  "dispositivo": "string - formato depende do tipo de saída indicado (colegiado/monocrático), ver instrução específica abaixo. Marque a expressão-verbo decisória entre **dois asteriscos** (ex: **NÃO CONHEÇO** do presente recurso...) para que seja formatada em negrito no Word — use ** apenas nessa expressão curta, não no parágrafo inteiro. REGRA ESTRITA para julgamento colegiado: o dispositivo deve conter SOMENTE o voto quanto ao(s) recurso(s) (negar/dar/dar parcial provimento) — NUNCA repita aqui o que já foi dito no parágrafo de conclusão da fundamentação (reforma-se/mantém-se a sentença etc.). Se houver dois recursos julgados em conjunto (ex: recurso do réu e recurso do autor, ou principal e adesivo), vote sobre CADA UM separadamente na mesma frase: \"Ante o exposto, voto por negar provimento ao recurso do réu e dar parcial provimento ao recurso do autor.\" (ajuste os verbos conforme o resultado de cada um).\",
+  "dispositivo": "string - formato depende do tipo de saída indicado (colegiado/monocrático), ver instrução específica abaixo. Marque a expressão-verbo decisória entre **dois asteriscos** (ex: **NÃO CONHEÇO** do presente recurso...) para que seja formatada em negrito no Word — use ** apenas nessa expressão curta, não no parágrafo inteiro. REGRA ESTRITA para julgamento colegiado: o dispositivo deve conter SOMENTE o voto quanto ao(s) recurso(s) — se foram providos, improvidos ou parcialmente providos — e NADA MAIS. NÃO mencione aqui resultado de mérito (procedência/improcedência), reforma/manutenção da sentença, valores, nem consectários legais — tudo isso já foi dito no parágrafo de conclusão da fundamentação (penúltimo parágrafo). Se houver dois recursos julgados em conjunto (ex: recurso do réu e recurso do autor, ou principal e adesivo), vote sobre CADA UM separadamente na mesma frase, só quanto ao provimento: \"Ante o exposto, voto por negar provimento ao recurso do réu e dar parcial provimento ao recurso do autor.\" (ajuste os verbos conforme o resultado de cada um, sem acrescentar mais nada).\",
   "despacho_bullets": ["Vistos.", "..."]
 }
 Regra ESTRITA para "despacho_bullets": cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NÃO inclua no array a frase final de fechamento ("É o que se decide...") nem a assinatura ("DÉCIO RODRIGUES" / "Relator") — essas duas partes já são adicionadas automaticamente pelo site, fora do array. Incluí-las no array causaria numeração e conteúdo duplicados no documento final.
@@ -478,7 +478,6 @@ DESPACHO — para processos (ação de origem) ajuizados A PARTIR DE 03/09/2026
 4. Presentes o fumus boni iuris e o periculum in mora. O agravante é pessoa natural que aufere renda mensal inferior a R$ 5.000,00, circunstância compatível com a presunção de insuficiência de recursos fixada pelo Supremo Tribunal Federal no julgamento da ADC 80 (Plenário, j. 03.09.2026, Rel. p/ acórdão Min. Gilmar Mendes), critério de observância OBRIGATÓRIA ao presente feito, ajuizado em data posterior ao marco temporal fixado na modulação de efeitos ali determinada (art. 927, I, do CPC), sem que se verifiquem, neste juízo de cognição sumária, elementos concretos de patrimônio ou renda incompatíveis com tal presunção. A subsistência da exigência de recolhimento do preparo, sob pena de extinção do feito, é apta a causar dano de difícil ou impossível reparação, consistente na perda do direito de recorrer.
 5. Defiro o efeito suspensivo ao recurso, para o fim de suspender a exigibilidade do recolhimento do preparo recursal, bem como os demais efeitos da decisão agravada, até o julgamento definitivo pelo Colegiado.
 6. Dispensada a intimação da parte agravada para apresentação de contraminuta, ante a ausência de advogado constituído nos autos de origem (art. 1.019, II, do CPC) [ajustar se houver advogado constituído].
-7. É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.
 DÉCIO RODRIGUES / Relator`;
 
 const MODELO_DESPACHO_GRATUIDADE_PRE_ADC80 = `AGRAVO DE INSTRUMENTO Nº: [•]
@@ -492,7 +491,6 @@ DESPACHO — para processos (ação de origem) ajuizados ANTES DE 03/09/2026
 4. Presentes o fumus boni iuris e o periculum in mora. O agravante é pessoa natural que aufere renda mensal inferior a R$ 5.000,00, circunstância compatível com a presunção de insuficiência de recursos do art. 99, §3º, do CPC, não infirmada por elementos concretos de patrimônio ou renda incompatíveis, neste juízo de cognição sumária. Observo que a ação foi ajuizada em data anterior a 03.09.2026, de modo que não vincula formalmente o feito o critério objetivo fixado pelo Supremo Tribunal Federal no julgamento da ADC 80 (Plenário, Rel. p/ acórdão Min. Gilmar Mendes), cuja modulação de efeitos ex nunc restringe a aplicação obrigatória aos processos ajuizados a partir dessa data; tal critério é aqui referido apenas como reforço persuasivo, por convergir com a conclusão já alcançada pela regra geral do CPC. A subsistência da exigência de recolhimento do preparo, sob pena de extinção do feito, é apta a causar dano de difícil ou impossível reparação, consistente na perda do direito de recorrer.
 5. Defiro o efeito suspensivo ao recurso, para o fim de suspender a exigibilidade do recolhimento do preparo recursal, bem como os demais efeitos da decisão agravada, até o julgamento definitivo pelo Colegiado.
 6. Dispensada a intimação da parte agravada para apresentação de contraminuta, ante a ausência de advogado constituído nos autos de origem (art. 1.019, II, do CPC) [ajustar se houver advogado constituído].
-7. É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.
 DÉCIO RODRIGUES / Relator`;
 
 const MODELO_DESPACHO_FUMUS_PERICULUM_GENERICO = `DESPACHO
@@ -510,7 +508,6 @@ Agravada: [•]
 7. Concedo/Indefiro o efeito suspensivo/ativo requerido, para [síntese do que é suspenso/determinado], até o julgamento definitivo do presente recurso pelo Colegiado.
 8. Oficie-se ao juízo de origem, comunicando a presente decisão [se aplicável].
 9. Intime-se a parte agravada para contraminuta no prazo legal (art. 1.019, II, do CPC).
-10. É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.
 DÉCIO RODRIGUES / Relator`;
 
 /* ============================================================
@@ -1259,10 +1256,10 @@ function previewDespacho(d, meta){
   let t = `VOTO Nº [A DEFINIR]\n${meta.numProcessoLabel.toUpperCase()} Nº ${d.numero_processo}\nCOMARCA: ${d.comarca}\n${meta.recorrenteLabel.toUpperCase()}: ${d.recorrente_nome}\n${meta.recorridoLabel.toUpperCase()}: ${d.recorrido_nome}\n\nDESPACHO\n\n`;
   const bullets = d.despacho_bullets||[];
   bullets.forEach((b,i)=> t += `${i+1}. ` + b + '\n\n');
-  t += (d.materia_sobrestada
-    ? 'É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.'
-    : 'É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.');
-  t += '\n\nDÉCIO RODRIGUES\nRelator';
+  if(d.materia_sobrestada){
+    t += 'É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.\n\n';
+  }
+  t += 'DÉCIO RODRIGUES\nRelator';
   return t;
 }
 
@@ -1564,12 +1561,9 @@ async function exportarDespacho(){
   children.push(paraDespachoTitulo());
   children.push(paraVazio());
   const bullets = d.despacho_bullets||[];
+  bullets.forEach((b,i)=> children.push(paraItemNumerado(b, i+1)));
   if(sobrestado){
-    bullets.forEach((b,i)=> children.push(paraItemNumerado(b, i+1)));
     children.push(paraDespachoFechamento('É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.'));
-  } else {
-    bullets.forEach((b,i)=> children.push(paraItemNumerado(b, i+1)));
-    children.push(paraDespachoFechamento('É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.'));
   }
   children.push(paraVazio());
   children.push(paraAssinatura('DÉCIO RODRIGUES'));
