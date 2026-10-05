@@ -354,7 +354,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "dispositivo": "string - formato depende do tipo de saída indicado (colegiado/monocrático), ver instrução específica abaixo. Marque a expressão-verbo decisória entre **dois asteriscos** (ex: **NÃO CONHEÇO** do presente recurso...) para que seja formatada em negrito no Word — use ** apenas nessa expressão curta, não no parágrafo inteiro. REGRA ESTRITA para julgamento colegiado: o dispositivo deve conter SOMENTE o voto quanto ao(s) recurso(s) — se foram providos, improvidos ou parcialmente providos — e NADA MAIS. NÃO mencione aqui resultado de mérito (procedência/improcedência), reforma/manutenção da sentença, valores, nem consectários legais — tudo isso já foi dito no parágrafo de conclusão da fundamentação (penúltimo parágrafo). Se houver dois recursos julgados em conjunto (ex: recurso do réu e recurso do autor, ou principal e adesivo), vote sobre CADA UM separadamente na mesma frase, só quanto ao provimento: \"Ante o exposto, voto por negar provimento ao recurso do réu e dar parcial provimento ao recurso do autor.\" (ajuste os verbos conforme o resultado de cada um, sem acrescentar mais nada).\",
   "despacho_bullets": ["Vistos.", "..."]
 }
-Regra ESTRITA para "despacho_bullets": cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NUNCA inclua no array a frase "É o que se decide em ... O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa" (em nenhuma variante) nem a assinatura ("DÉCIO RODRIGUES" / "Relator"). A assinatura é adicionada pelo site; a frase do Colegiado é adicionada pelo site uma única vez e apenas nos despachos de efeito suspensivo/ativo — nos despachos de sobrestamento ela NUNCA aparece, porque o Colegiado não decide nada ali. Incluí-las no array causaria duplicidade no documento final.
+Regra ESTRITA para "despacho_bullets": o PRIMEIRO item do array é sempre "Vistos." — NUNCA inclua no array o cabeçalho do documento (número do processo, comarca, nome das partes, tipo de recurso) nem a palavra "DESPACHO": o site monta o cabeçalho e o título sozinho, e repetir esses dados no array os faria aparecer duplicados e numerados dentro do texto. Cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NUNCA inclua no array a frase "É o que se decide em ... O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa" (em nenhuma variante) nem a assinatura ("DÉCIO RODRIGUES" / "Relator"). A assinatura é adicionada pelo site; a frase do Colegiado é adicionada pelo site uma única vez e apenas nos despachos de efeito suspensivo/ativo — nos despachos de sobrestamento ela NUNCA aparece, porque o Colegiado não decide nada ali. Incluí-las no array causaria duplicidade no documento final.
 O campo "despacho_bullets" tem DOIS usos possíveis (nunca os dois ao mesmo tempo):
 (a) Se materia_sobrestada=true: despacho de sobrestamento, para QUALQUER tipo de recurso.
 (b) Se materia_sobrestada=false E cabe_monocratica=false E o tipo de recurso for Agravo de Instrumento: despacho decidindo o efeito suspensivo/ativo, com item final intimando a parte agravada para responder no prazo legal.
@@ -446,11 +446,7 @@ Ante o exposto, com fundamento no art. 64, §1º, c.c. o art. 932, III, ambos do
 Comunique-se ao Juízo de origem. Após as anotações e baixas necessárias, remetam-se os autos à Presidência/Distribuidor para redistribuição.
 DÉCIO RODRIGUES / Relator`;
 
-const MODELO_DESPACHO_SOBRESTAMENTO = `[AGRAVO DE INSTRUMENTO / APELAÇÃO] Nº [•]
-COMARCA DE [•]
-AGRAVANTE/APELANTE: [•]
-AGRAVADO/APELADO: [•]
-DESPACHO
+const MODELO_DESPACHO_SOBRESTAMENTO = `[CABEÇALHO DO DOCUMENTO — NÃO reproduza no array despacho_bullets: o site monta número do processo, comarca, partes e a palavra DESPACHO sozinho. O primeiro item do array é "Vistos."]
 1. Vistos.
 2. Trata-se de [agravo de instrumento/apelação] interposto por [AGRAVANTE/APELANTE], no qual se discute [síntese objetiva da questão de direito].
 3. Ocorre que o [STJ/STF/TJSP] determinou, em [data], a suspensão nacional/estadual de todos os processos pendentes que versem sobre a mesma questão, até o julgamento do Tema [nº].
@@ -467,11 +463,8 @@ DÉCIO RODRIGUES / Relator`;
    voto (ver REGRAS_GERAIS), usando estes modelos apenas como padrão
    de estrutura e linguagem — nunca como fonte independente de busca.
    ============================================================ */
-const MODELO_DESPACHO_GRATUIDADE_POS_ADC80 = `AGRAVO DE INSTRUMENTO Nº: [•]
-COMARCA DE: [•]
-AGRAVANTE: [•]
-AGRAVADO: [•]
-DESPACHO — para processos (ação de origem) ajuizados A PARTIR DE 03/09/2026
+const MODELO_DESPACHO_GRATUIDADE_POS_ADC80 = `[CABEÇALHO DO DOCUMENTO — NÃO reproduza no array despacho_bullets: o site monta número do processo, comarca, partes e a palavra DESPACHO sozinho. O primeiro item do array é "Vistos."]
+[Modelo para processos cuja ação de origem foi ajuizada A PARTIR DE 03/09/2026 — esta linha não faz parte do despacho]
 1. Vistos.
 2. Recebo o recurso, eis que presentes os pressupostos de admissibilidade.
 3. Cuida-se de agravo de instrumento interposto contra decisão que indeferiu o pedido de gratuidade de justiça formulado pelo agravante e determinou o recolhimento do preparo recursal, sob pena de extinção do processo sem resolução do mérito.
@@ -480,11 +473,8 @@ DESPACHO — para processos (ação de origem) ajuizados A PARTIR DE 03/09/2026
 6. Dispensada a intimação da parte agravada para apresentação de contraminuta, ante a ausência de advogado constituído nos autos de origem (art. 1.019, II, do CPC) [ajustar se houver advogado constituído].
 DÉCIO RODRIGUES / Relator`;
 
-const MODELO_DESPACHO_GRATUIDADE_PRE_ADC80 = `AGRAVO DE INSTRUMENTO Nº: [•]
-COMARCA DE: [•]
-AGRAVANTE: [•]
-AGRAVADO: [•]
-DESPACHO — para processos (ação de origem) ajuizados ANTES DE 03/09/2026
+const MODELO_DESPACHO_GRATUIDADE_PRE_ADC80 = `[CABEÇALHO DO DOCUMENTO — NÃO reproduza no array despacho_bullets: o site monta número do processo, comarca, partes e a palavra DESPACHO sozinho. O primeiro item do array é "Vistos."]
+[Modelo para processos cuja ação de origem foi ajuizada ANTES DE 03/09/2026 — esta linha não faz parte do despacho]
 1. Vistos.
 2. Recebo o recurso, eis que presentes os pressupostos de admissibilidade.
 3. Cuida-se de agravo de instrumento interposto contra decisão que indeferiu o pedido de gratuidade de justiça formulado pelo agravante e determinou o recolhimento do preparo recursal, sob pena de extinção do processo sem resolução do mérito.
@@ -493,12 +483,7 @@ DESPACHO — para processos (ação de origem) ajuizados ANTES DE 03/09/2026
 6. Dispensada a intimação da parte agravada para apresentação de contraminuta, ante a ausência de advogado constituído nos autos de origem (art. 1.019, II, do CPC) [ajustar se houver advogado constituído].
 DÉCIO RODRIGUES / Relator`;
 
-const MODELO_DESPACHO_FUMUS_PERICULUM_GENERICO = `DESPACHO
-Voto nº [•]
-Agravo de Instrumento nº [•]
-Comarca: [•]
-Agravante(s): [•]
-Agravada: [•]
+const MODELO_DESPACHO_FUMUS_PERICULUM_GENERICO = `[CABEÇALHO DO DOCUMENTO — NÃO reproduza no array despacho_bullets: o site monta número do processo, comarca, partes e a palavra DESPACHO sozinho. O primeiro item do array é "Vistos."]
 1. Vistos.
 2. Recebo o recurso, eis que presentes seus pressupostos de admissibilidade.
 3. Trata-se de Agravo de Instrumento interposto em face da decisão que [síntese objetiva da decisão agravada].
@@ -1163,7 +1148,7 @@ ${textoRefs || '(nenhum modelo encontrado na pasta de referência — use apenas
   } else if(triagem.materia_sobrestada){
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DESPACHO DE SOBRESTAMENTO.
 A triagem já identificou que a matéria está sobrestada (tema: ${triagem.tema_sobrestado}; elemento de correspondência: ${triagem.elemento_correspondencia||'—'}). Gere SOMENTE "despacho_bullets" com o despacho de sobrestamento, seguindo a estrutura e o tom do MODELO DE DESPACHO DE SOBRESTAMENTO abaixo. Deixe "relatorio" e "fundamentacao" vazios ([]) e "dispositivo" vazio ("").
-LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, NÃO inclua esses números, NÃO inclua nenhuma frase final do tipo "É o que se decide... O Colegiado, evidentemente, dará a palavra final..." (despacho de sobrestamento NÃO leva essa frase, porque o Colegiado não decide nada aí) e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona a numeração e a assinatura automaticamente.
+LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, comece direto em "Vistos." (sem cabeçalho, sem número do processo, sem comarca, sem partes, sem a palavra DESPACHO — o site monta isso), NÃO inclua esses números, NÃO inclua nenhuma frase final do tipo "É o que se decide... O Colegiado, evidentemente, dará a palavra final..." (despacho de sobrestamento NÃO leva essa frase, porque o Colegiado não decide nada aí) e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona a numeração e a assinatura automaticamente.
 MODELO DE DESPACHO DE SOBRESTAMENTO (referência estrutural — adapte ao caso concreto e ao tema realmente identificado):
 ${MODELO_DESPACHO_SOBRESTAMENTO}`;
   } else if(triagem.cabe_monocratica){
@@ -1319,6 +1304,27 @@ function previewTexto(d, meta){
 // efeito suspensivo/ativo (admissibilidade). Nos despachos de sobrestamento NUNCA aparece.
 const FRASE_DESPACHO_URGENCIA = 'É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.';
 
+// Limpeza defensiva dos itens do despacho gerados pela IA: tira numeração própria, cabeçalho repetido
+// (processo, comarca, partes, "DESPACHO"), assinatura e a frase do Colegiado. O que sobra começa em "Vistos.".
+function limparItensDespacho(itens){
+  if(!Array.isArray(itens)) return itens;
+  let lista = itens.map(it=> String(it).replace(/^\s*\d+[.)]\s+/, '').trim()).filter(Boolean);
+  // se há "Vistos." depois de linhas de cabeçalho, descarta tudo o que vem antes dele
+  const iVistos = lista.findIndex(it=> /^vistos\.?$/i.test(it));
+  if(iVistos > 0) lista = lista.slice(iVistos);
+  const cabecalho = [
+    /^(apelação cível|apelacao civel|agravo de instrumento|agravo interno|embargos de declaração)\s*n[ºo°.]/i,
+    /^voto\s*n[ºo°.]/i,
+    /^comarca\b/i,
+    /^(apelante|apelado|agravante|agravado|embargante|embargado|recorrente|recorrido)(\(s\)|s)?\s*:/i,
+    /^despacho\.?$/i,
+    /^décio rodrigues(\s*\/\s*relator)?\.?$/i,
+    /^relator\.?$/i,
+  ];
+  lista = lista.filter(it=> !(it.length < 220 && cabecalho.some(re=>re.test(it))));
+  return limparFraseColegiado(lista);
+}
+
 // Remove, dos itens gerados pela IA, qualquer ocorrência da frase do Colegiado (qualquer variante),
 // para que ela só entre pelo código, no máximo uma vez, e só onde for permitido.
 function limparFraseColegiado(itens){
@@ -1333,7 +1339,7 @@ function limparFraseColegiado(itens){
 
 function previewDespacho(d, meta){
   let t = `VOTO Nº [A DEFINIR]\n${meta.numProcessoLabel.toUpperCase()} Nº ${d.numero_processo}\nCOMARCA: ${d.comarca}\n${meta.recorrenteLabel.toUpperCase()}: ${d.recorrente_nome}\n${meta.recorridoLabel.toUpperCase()}: ${d.recorrido_nome}\n\nDESPACHO\n\n`;
-  const bullets = limparFraseColegiado(d.despacho_bullets||[]);
+  const bullets = limparItensDespacho(d.despacho_bullets||[]);
   // despacho de efeito suspensivo/ativo: a frase entra UMA vez, como último item numerado;
   // despacho de sobrestamento: a frase NUNCA aparece
   const itens = d.materia_sobrestada ? bullets : [...bullets, FRASE_DESPACHO_URGENCIA];
@@ -1687,7 +1693,7 @@ async function exportarDespacho(){
   children.push(paraVazio()); children.push(paraVazio());
   children.push(paraDespachoTitulo());
   children.push(paraVazio());
-  const bullets = limparFraseColegiado(d.despacho_bullets||[]);
+  const bullets = limparItensDespacho(d.despacho_bullets||[]);
   // efeito suspensivo/ativo: a frase entra UMA vez, como último item numerado;
   // sobrestamento: a frase NUNCA aparece (o Colegiado não decide nada ali)
   const itens = sobrestado ? bullets : [...bullets, FRASE_DESPACHO_URGENCIA];
