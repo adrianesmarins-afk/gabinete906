@@ -1084,6 +1084,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "materia_sobrestada": true ou false,
   "tema_sobrestado": "string (qual Tema/IRDR, exatamente como na lista oficial) ou vazio",
   "elemento_correspondencia": "string curta citando TEXTUALMENTE do processo o elemento que confirma a correspondência exata com o tema sobrestado (ex: 'contrato de cartão de crédito consignado RMC nº X') — obrigatório preencher se materia_sobrestada=true; deixe vazio se materia_sobrestada=false",
+  "fonte_sobrestamento": "string curta — de qual fonte FORNECIDA a você veio a identificação do sobrestamento: 'lista oficial embutida', ou o NOME do arquivo de planilha/documento da pasta de material de estudo, ou 'despacho anterior do gabinete' — obrigatório se materia_sobrestada=true; vazio se materia_sobrestada=false",
   "competencia_confirmada": true ou false — a 21ª Câmara de Direito Privado é competente? Verifique: (a) se a matéria é de Família/Sucessões, Direito Empresarial especializado, ou estranha ao Direito Privado (ver regras de competência acima); (b) se há sinal, no texto do processo, de decisão anterior do MESMO processo já julgada por OUTRO Relator/Câmara (gera prevenção daquele, não deste gabinete). Se qualquer uma dessas ocorrer, responda false,
   "motivo_incompetencia": "string curta explicando para onde deveria ir (Câmara de Família e Sucessões / Câmara Reservada de Direito Empresarial / Seção de Direito Público / outro Relator ou Câmara por prevenção) ou vazio se competencia_confirmada=true",
   "cabe_monocratica": true ou false,
@@ -1278,6 +1279,49 @@ function previewDespacho(d, meta){
   return t;
 }
 
+// Localiza, na lista embutida (planilha de 08/09/2026), a(s) entrada(s) correspondente(s) ao tema que a triagem apontou
+function entradasListaSuspensos(temaTexto){
+  if(!temaTexto) return [];
+  const t = String(temaTexto).toLowerCase();
+  return TEMAS_SUSPENSOS.filter(e=>{
+    const nome = e.tema.toLowerCase();
+    if(t.includes(nome)) return true;
+    const num = (nome.match(/\d[\d.]*/)||[''])[0].replace(/\.$/,'');
+    if(!num) return false;
+    const re = new RegExp('(^|[^\\d.])' + num.replace(/\./g,'\\.') + '(?![\\d])');
+    return re.test(t);
+  });
+}
+
+function buildFonteSobrestamentoHTML(d){
+  const linhas = [];
+  linhas.push(['ti-ban', `Tema identificado: <strong>${esc(d.tema_sobrestado||'—')}</strong>`]);
+  linhas.push(['ti-source-code', `Fonte da identificação: ${esc(d.fonte_sobrestamento||'não informada pela triagem — confira na lista abaixo')}`]);
+  linhas.push(['ti-quote', `Trecho do processo que confirma a correspondência: “${esc(d.elemento_correspondencia||'—')}”`]);
+
+  const achadas = entradasListaSuspensos(d.tema_sobrestado);
+  if(achadas.length){
+    achadas.forEach(e=>{
+      linhas.push(['ti-list-details', `Lista embutida (planilha de 08/09/2026) — <strong>${esc(e.tema)}</strong> (${esc(e.tribunal)}): ${esc(e.especif)}`]);
+    });
+  } else {
+    linhas.push(['ti-alert-triangle', 'Este tema <strong>não foi localizado</strong> na lista embutida — se a identificação veio de planilha da pasta Manual ou de despacho anterior, confirme o tema, o órgão e a data na fonte oficial.']);
+  }
+
+  const manual = (S.arquivos['dc']||[]).slice(0,6).map(a=>a.name);
+  linhas.push(['ti-folder', manual.length
+    ? `Arquivos da pasta Manual fornecidos à IA nesta análise (os 6 mais recentes): ${esc(manual.join('; '))}`
+    : 'Pasta Manual: nenhum arquivo foi fornecido à IA nesta análise.']);
+  linhas.push(['ti-file-description', 'Modelo usado para redigir o despacho: modelo de despacho de sobrestamento do gabinete (embutido no sistema)']);
+
+  let html = `<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-scale"></i> Fonte do sobrestamento</div>`;
+  linhas.forEach(l=>{
+    html += `<div class="ri"><i class="ti ${l[0]}" style="color:var(--blue)"></i><span>${l[1]}</span></div>`;
+  });
+  html += `<p style="font-size:12px;color:var(--tx2);margin-top:10px">Confira o número do tema, o órgão e a <strong>data da suspensão</strong> na fonte oficial antes de assinar — quando a data não consta nas fontes fornecidas, a IA pode tê-la escrito por conta própria.</p></div>`;
+  return html;
+}
+
 function renderResultado(meta, comIA, triagem){
   const d = S.doc;
   const badge = comIA ? '<span class="badge ia">IA</span>' : '<span class="badge or">Configure API</span>';
@@ -1327,7 +1371,12 @@ function renderResultado(meta, comIA, triagem){
     </div>`;
   }
 
-  const refs = (S.arquivos[meta.folderKey]||[]).slice(0,5);
+  if(comIA && d.materia_sobrestada){
+    // despacho de sobrestamento: os votos da pasta de recursos NÃO são a base do texto —
+    // mostra-se a fonte real da identificação do sobrestamento
+    html += buildFonteSobrestamentoHTML(d);
+  }
+  const refs = d.materia_sobrestada ? [] : (S.arquivos[meta.folderKey]||[]).slice(0,5);
   if(refs.length){
     html += `<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-history"></i> Documentos de referência usados <small style="color:var(--tx2);font-weight:400">(mais recentes primeiro)</small></div>`;
     refs.forEach(r=>{
