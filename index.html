@@ -353,7 +353,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "dispositivo": "string - formato depende do tipo de saída indicado (colegiado/monocrático), ver instrução específica abaixo. Marque a expressão-verbo decisória entre **dois asteriscos** (ex: **NÃO CONHEÇO** do presente recurso...) para que seja formatada em negrito no Word — use ** apenas nessa expressão curta, não no parágrafo inteiro. REGRA ESTRITA para julgamento colegiado: o dispositivo deve conter SOMENTE o voto quanto ao(s) recurso(s) — se foram providos, improvidos ou parcialmente providos — e NADA MAIS. NÃO mencione aqui resultado de mérito (procedência/improcedência), reforma/manutenção da sentença, valores, nem consectários legais — tudo isso já foi dito no parágrafo de conclusão da fundamentação (penúltimo parágrafo). Se houver dois recursos julgados em conjunto (ex: recurso do réu e recurso do autor, ou principal e adesivo), vote sobre CADA UM separadamente na mesma frase, só quanto ao provimento: \"Ante o exposto, voto por negar provimento ao recurso do réu e dar parcial provimento ao recurso do autor.\" (ajuste os verbos conforme o resultado de cada um, sem acrescentar mais nada).\",
   "despacho_bullets": ["Vistos.", "..."]
 }
-Regra ESTRITA para "despacho_bullets": cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NÃO inclua no array a frase final de fechamento ("É o que se decide...") nem a assinatura ("DÉCIO RODRIGUES" / "Relator") — essas duas partes já são adicionadas automaticamente pelo site, fora do array. Incluí-las no array causaria numeração e conteúdo duplicados no documento final.
+Regra ESTRITA para "despacho_bullets": cada item do array deve conter SOMENTE o texto daquele item — SEM número, SEM travessão ou qualquer marcador no início (o site adiciona automaticamente a numeração "1. 2. 3..." ou o travessão "-", conforme o caso). NUNCA inclua no array a frase "É o que se decide em ... O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa" (em nenhuma variante) nem a assinatura ("DÉCIO RODRIGUES" / "Relator"). A assinatura é adicionada pelo site; a frase do Colegiado é adicionada pelo site uma única vez e apenas nos despachos de efeito suspensivo/ativo — nos despachos de sobrestamento ela NUNCA aparece, porque o Colegiado não decide nada ali. Incluí-las no array causaria duplicidade no documento final.
 O campo "despacho_bullets" tem DOIS usos possíveis (nunca os dois ao mesmo tempo):
 (a) Se materia_sobrestada=true: despacho de sobrestamento, para QUALQUER tipo de recurso.
 (b) Se materia_sobrestada=false E cabe_monocratica=false E o tipo de recurso for Agravo de Instrumento: despacho decidindo o efeito suspensivo/ativo, com item final intimando a parte agravada para responder no prazo legal.
@@ -457,7 +457,6 @@ DESPACHO
 5. Ante o exposto, com fundamento no art. 1.037, II, do CPC (ou art. 982, I, no caso de IRDR), determino o SOBRESTAMENTO do presente recurso até o julgamento definitivo do Tema [nº].
 6. Aguarde-se em cartório, com baixa na pauta, cabendo à Secretaria certificar o trânsito em julgado da decisão de afetação e comunicar a este Gabinete o julgamento do tema, ou eventual cessação da suspensão, para prosseguimento do feito.
 7. Intimem-se.
-É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.
 DÉCIO RODRIGUES / Relator`;
 
 /* ============================================================
@@ -1151,7 +1150,7 @@ ${textoRefs || '(nenhum modelo encontrado na pasta de referência — use apenas
   } else if(triagem.materia_sobrestada){
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DESPACHO DE SOBRESTAMENTO.
 A triagem já identificou que a matéria está sobrestada (tema: ${triagem.tema_sobrestado}; elemento de correspondência: ${triagem.elemento_correspondencia||'—'}). Gere SOMENTE "despacho_bullets" com o despacho de sobrestamento, seguindo a estrutura e o tom do MODELO DE DESPACHO DE SOBRESTAMENTO abaixo. Deixe "relatorio" e "fundamentacao" vazios ([]) e "dispositivo" vazio ("").
-LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, NÃO inclua esses números, NÃO inclua a frase final "É o que se decide..." e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona essas três coisas automaticamente.
+LEMBRETE: o modelo abaixo tem números (1., 2., 3...) só para você entender a ordem dos itens — no array "despacho_bullets" que você vai retornar, NÃO inclua esses números, NÃO inclua nenhuma frase final do tipo "É o que se decide... O Colegiado, evidentemente, dará a palavra final..." (despacho de sobrestamento NÃO leva essa frase, porque o Colegiado não decide nada aí) e NÃO inclua a assinatura "DÉCIO RODRIGUES / Relator" — o site adiciona a numeração e a assinatura automaticamente.
 MODELO DE DESPACHO DE SOBRESTAMENTO (referência estrutural — adapte ao caso concreto e ao tema realmente identificado):
 ${MODELO_DESPACHO_SOBRESTAMENTO}`;
   } else if(triagem.cabe_monocratica){
@@ -1252,13 +1251,29 @@ function previewTexto(d, meta){
   return t;
 }
 
+// Frase que aparece UMA ÚNICA VEZ, como último item numerado, apenas nos despachos de
+// efeito suspensivo/ativo (admissibilidade). Nos despachos de sobrestamento NUNCA aparece.
+const FRASE_DESPACHO_URGENCIA = 'É o que se decide em foro de tutela de urgência. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.';
+
+// Remove, dos itens gerados pela IA, qualquer ocorrência da frase do Colegiado (qualquer variante),
+// para que ela só entre pelo código, no máximo uma vez, e só onde for permitido.
+function limparFraseColegiado(itens){
+  if(!Array.isArray(itens)) return itens;
+  return itens
+    .map(it=> String(it)
+      .replace(/É o que se decide em [^.]*\.\s*O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa\.?/gi, '')
+      .replace(/O Colegiado, evidentemente, dará a palavra final[^.]*\.?/gi, '')
+      .trim())
+    .filter(it=> it.length > 0);
+}
+
 function previewDespacho(d, meta){
   let t = `VOTO Nº [A DEFINIR]\n${meta.numProcessoLabel.toUpperCase()} Nº ${d.numero_processo}\nCOMARCA: ${d.comarca}\n${meta.recorrenteLabel.toUpperCase()}: ${d.recorrente_nome}\n${meta.recorridoLabel.toUpperCase()}: ${d.recorrido_nome}\n\nDESPACHO\n\n`;
-  const bullets = d.despacho_bullets||[];
-  bullets.forEach((b,i)=> t += `${i+1}. ` + b + '\n\n');
-  if(d.materia_sobrestada){
-    t += 'É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.\n\n';
-  }
+  const bullets = limparFraseColegiado(d.despacho_bullets||[]);
+  // despacho de efeito suspensivo/ativo: a frase entra UMA vez, como último item numerado;
+  // despacho de sobrestamento: a frase NUNCA aparece
+  const itens = d.materia_sobrestada ? bullets : [...bullets, FRASE_DESPACHO_URGENCIA];
+  itens.forEach((b,i)=> t += `${i+1}. ` + b + '\n\n');
   t += 'DÉCIO RODRIGUES\nRelator';
   return t;
 }
@@ -1560,11 +1575,11 @@ async function exportarDespacho(){
   children.push(paraVazio()); children.push(paraVazio());
   children.push(paraDespachoTitulo());
   children.push(paraVazio());
-  const bullets = d.despacho_bullets||[];
-  bullets.forEach((b,i)=> children.push(paraItemNumerado(b, i+1)));
-  if(sobrestado){
-    children.push(paraDespachoFechamento('É o que se decide em juízo de cognição sumária. O Colegiado, evidentemente, dará a palavra final, que poderá ser diversa.'));
-  }
+  const bullets = limparFraseColegiado(d.despacho_bullets||[]);
+  // efeito suspensivo/ativo: a frase entra UMA vez, como último item numerado;
+  // sobrestamento: a frase NUNCA aparece (o Colegiado não decide nada ali)
+  const itens = sobrestado ? bullets : [...bullets, FRASE_DESPACHO_URGENCIA];
+  itens.forEach((b,i)=> children.push(paraItemNumerado(b, i+1)));
   children.push(paraVazio());
   children.push(paraAssinatura('DÉCIO RODRIGUES'));
   children.push(paraAssinatura('Relator'));
