@@ -823,7 +823,8 @@ async function ocrPagina(page){
   return (data && data.text) ? data.text.trim() : '';
 }
 
-async function extrairTextoPDF(file, onProgresso){
+async function extrairTextoPDF(file, onProgresso, rotulo){
+  rotulo = rotulo || '';
   await garantirPdfjs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({data: buf}).promise;
@@ -841,7 +842,8 @@ async function extrairTextoPDF(file, onProgresso){
         paginasOcr++;
       }catch(e){ /* falhou o OCR dessa página — segue com o que foi possível extrair (pode ficar vazio) */ }
     }
-    texto += textoPagina + '\n\n';
+    // marcador de página: permite localizar e citar as páginas da decisão, do recurso, das intimações etc.
+    texto += `[[${rotulo}PÁG. ${i}]]\n` + textoPagina + '\n\n';
   }
   return texto;
 }
@@ -859,8 +861,9 @@ function aplicarOrcamentoTexto(texto, maxChars){
 
 async function lerPDFs(files, maxChars, onProgresso){
   const textos = [];
-  for(const f of files){
-    textos.push({ nome: f.name, texto: await extrairTextoPDF(f, onProgresso) });
+  for(let k=0; k<files.length; k++){
+    const rot = files.length > 1 ? `DOC ${k+1} · ` : '';
+    textos.push({ nome: files[k].name, texto: await extrairTextoPDF(files[k], onProgresso, rot) });
   }
   if(textos.length === 1){
     return aplicarOrcamentoTexto(textos[0].texto, maxChars);
@@ -949,7 +952,7 @@ async function extrairNomesPessoais(texto){
   const prompt = `Leia o texto de um processo judicial abaixo e identifique todos os NOMES COMPLETOS DE PESSOAS FÍSICAS que aparecem (partes, testemunhas, filhos, familiares mencionados, procuradores). NÃO inclua nomes de empresas, bancos, instituições, varas, comarcas ou advogados identificados só pela OAB. Responda SOMENTE com um JSON: {"nomes": ["Nome Completo 1", "Nome Completo 2"]}. Se não encontrar nenhum, responda {"nomes": []}.
 
 TEXTO:
-${texto.slice(0, 60000)}`;
+${trechoParaTriagem(texto, 80000)}`;
   const r = await chamarAnthropic(prompt, 800);
   return Array.isArray(r.nomes) ? r.nomes.filter(n=>typeof n==='string' && n.trim().length>3) : [];
 }
@@ -1033,6 +1036,92 @@ async function chamarAnthropic(prompt, maxTokens){
 /* ============================================================
    FASE 1 — TRIAGEM (rápida, visível ao usuário)
    ============================================================ */
+// ---------------------------------------------------------------------------------------------
+// SELEÇÃO DE PÁGINAS PARA A TRIAGEM
+// A triagem precisa enxergar (1) a DECISÃO RECORRIDA, (2) o RECURSO efetivamente interposto e
+// (3) as páginas de intimação/prazo/preparo, para aferir tempestividade e via recursal. Como o PDF pode ter
+// centenas de páginas, o site pontua cada página por sinais textuais e envia à triagem as mais relevantes
+// (mais a capa e o final), sempre identificadas pelo número da página.
+// ---------------------------------------------------------------------------------------------
+// [expressão, peso]: sinais fortes (dispositivo, "julgo procedente"...) pesam mais que palavras soltas ("sentença")
+const PADROES_TRIAGEM = {
+  decisao: [
+    [/julgo\s+(?:procedentes?|improcedentes?|parcialmente)/i, 4], [/(?:julgo|declaro)\s+extint/i, 4],
+    [/publique-se.{0,40}registre-se.{0,40}intime-se/i, 4], [/\bSENTENÇA\b/, 3],
+    [/ante\s+o\s+exposto/i, 2], [/diante\s+do\s+exposto/i, 2], [/isto\s+posto/i, 2], [/\bhomologo\b/i, 2],
+    [/\bdispositivo\b/i, 2], [/\bDECISÃO\b/, 2],
+    [/\bsentença\b/i, 1], [/decisão\s+interlocutória/i, 1], [/\b(?:defiro|indefiro)\b/i, 1],
+  ],
+  recurso: [
+    [/raz[õo]es\s+(?:de\s+)?(?:apela[çc][ãa]o|recurs)/i, 4], [/\bRAZÕES\b/, 3], [/\binterp(?:õe|or|osto|osição)\b/i, 2],
+    [/\bapelante\b/i, 2], [/\bagravante\b/i, 2], [/egr[ée]gio\s+tribunal/i, 2], [/contrarraz[õo]es|contraminuta/i, 2],
+    [/requer.{0,80}provimento/i, 2], [/embargos\s+de\s+declara[çc][ãa]o/i, 2], [/agravo\s+interno/i, 2],
+    [/\bapela[çc][ãa]o\b/i, 1], [/agravo\s+de\s+instrumento/i, 1], [/reforma\s+da\s+sentença/i, 1],
+  ],
+  prazo: [
+    [/disponibiliza[çc][ãa]o/i, 2], [/intima[çc][ãa]o/i, 2], [/tempestiv/i, 2], [/\bpreparo\b/i, 2], [/\bguia\b/i, 2],
+    [/decurso\s+de\s+prazo/i, 2], [/publica[çc][ãa]o/i, 1], [/certid[ãa]o/i, 1], [/gratuidade/i, 1], [/protocol/i, 1],
+    [/prazo\s+(?:de|para)/i, 1],
+  ],
+};
+
+function dividirEmPaginas(texto){
+  const re = /\[\[(?:DOC \d+ · )?PÁG\. \d+\]\]/g;
+  const marcas = [];
+  let m;
+  while((m = re.exec(texto)) !== null){ marcas.push({ idx: m.index, fim: re.lastIndex, rotulo: m[0] }); }
+  if(!marcas.length) return null;
+  return marcas.map((mk, i)=>({
+    rotulo: mk.rotulo,
+    texto: texto.slice(mk.fim, i+1 < marcas.length ? marcas[i+1].idx : texto.length).trim()
+  }));
+}
+
+function recorteInicioFim(t, orcamento){   // plano B, se o texto não tiver marcadores de página
+  if(t.length <= orcamento) return t;
+  const ini = Math.floor(orcamento * 0.2), fim = orcamento - ini;
+  return t.slice(0, ini) + '\n\n[... trecho intermediário omitido nesta etapa de triagem ...]\n\n' + t.slice(-fim);
+}
+
+function trechoParaTriagem(texto, orcamento){
+  orcamento = orcamento || 100000;
+  if(texto.length <= orcamento) return texto;
+  const paginas = dividirEmPaginas(texto);
+  if(!paginas || paginas.length < 8) return recorteInicioFim(texto, orcamento);
+
+  const pontuar = (t, pares)=> pares.reduce((s, [re, peso])=> s + (re.test(t) ? peso : 0), 0);   // soma dos pesos dos sinais DISTINTOS
+  const topo = (cat, n)=> paginas
+    .map((p, i)=>({ i, s: pontuar(p.texto, PADROES_TRIAGEM[cat]) }))
+    .filter(x=> x.s >= 1)
+    .sort((x, y)=> (y.s - x.s) || (y.i - x.i))        // maior pontuação; empate: página mais adiante
+    .slice(0, n).map(x=> x.i);
+
+  const escolhidas = new Set();
+  let usado = 0;
+  const tentar = (i)=>{
+    if(i < 0 || i >= paginas.length || escolhidas.has(i)) return;
+    const t = paginas[i].texto.length + paginas[i].rotulo.length + 4;
+    if(usado + t > orcamento) return;
+    escolhidas.add(i); usado += t;
+  };
+
+  // ordem de prioridade: decisão recorrida > recurso > intimações/prazos/preparo > capa > final
+  topo('decisao', 5).forEach(i=>{ tentar(i); tentar(i-1); tentar(i+1); });   // a decisão ocupa várias páginas: traz as vizinhas
+  topo('recurso', 6).forEach(i=>{ tentar(i); tentar(i+1); });
+  topo('prazo', 8).forEach(tentar);
+  [0, 1].forEach(tentar);
+  for(let k = paginas.length - 4; k < paginas.length; k++) tentar(k);
+
+  const ordem = [...escolhidas].sort((x, y)=> x - y);
+  let out = '', anterior = -2;
+  ordem.forEach(i=>{
+    if(anterior >= 0 && i !== anterior + 1) out += '[... páginas omitidas nesta etapa ...]\n\n';
+    out += paginas[i].rotulo + '\n' + paginas[i].texto + '\n\n';
+    anterior = i;
+  });
+  return out;
+}
+
 async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual){
   const prompt = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
@@ -1061,8 +1150,10 @@ ${MODELO_MONOCRATICA_INCOMPETENCIA}
 ${textoMono ? '\nOutras decisões monocráticas já proferidas pelo Gabinete (referência adicional):\n'+textoMono : ''}
 ${textoManual ? '\nMATERIAL DE ESTUDO DO GABINETE (ver explicação detalhada nas regras gerais — manuais de entendimento do Des. Décio, repositórios da nova competência, planilhas de decisões vinculantes do STJ/STF e de temas suspensos):\n'+textoManual : ''}
 
+ATENÇÃO SOBRE O TEXTO ABAIXO: ele está dividido em páginas, identificadas por marcadores [[PÁG. n]] (ou [[DOC k · PÁG. n]], quando há mais de um PDF). Nesta etapa rápida, o site enviou apenas as páginas com maior probabilidade de conter a DECISÃO RECORRIDA, o RECURSO interposto e as informações de intimação/prazo/preparo, além da capa e das últimas páginas; as páginas não consecutivas foram omitidas e isso é indicado por "[... páginas omitidas nesta etapa ...]". Antes de concluir que algo "não consta" ou "não foi identificado", procure em todas as páginas fornecidas.
+
 PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um documento, eles vêm separados por marcadores "===== DOCUMENTO N DE M ====="; o Documento 1 costuma ser o recurso/petição principal, e os demais o processo de origem ou outros anexos — use os documentos adicionais para conferir se as alegações do recurso são verdadeiras, cruzando com o que de fato consta no processo de origem):
-${pdfText.slice(0,40000)}
+${trechoParaTriagem(pdfText)}
 
 REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array.
 Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON), no formato exato:
@@ -1072,8 +1163,12 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "recorrente_nome": "string em caixa alta",
   "recorrido_nome": "string em caixa alta",
   "tema_principal": "resumo curto (1 linha) do tema central do recurso, incluindo o produto financeiro/contratual exato quando aplicável",
+  "decisao_recorrida": "string — LOCALIZE no texto e descreva a decisão recorrida: tipo (sentença / decisão interlocutória / acórdão / decisão monocrática), juízo, data (se constar) e o RESULTADO do dispositivo em uma frase (ex.: 'sentença de 05/03/2026, do Juízo da 3ª Vara Cível de X, que julgou procedentes os pedidos e condenou o réu a [...]'). Se genuinamente não localizar, escreva 'não localizada no texto fornecido' — NÃO invente",
+  "recurso_interposto": "string — LOCALIZE no texto e descreva o recurso efetivamente interposto: tipo (apelação, agravo de instrumento, embargos de declaração, agravo interno...), quem recorreu, data de protocolo/interposição (se constar) e se há contrarrazões/contraminuta. Se não localizar, escreva 'não localizado no texto fornecido' — NÃO invente",
   "natureza_processo_origem": "conhecimento" ou "execucao" ou "cumprimento_de_sentenca" ou "liquidacao_de_sentenca" ou "inventario" ou "outra" — classifique SEMPRE, mesmo que o recurso não seja Agravo de Instrumento (obrigatório antes de avaliar subtipo_monocratica='inadmissibilidade_art1015', ver regra essencial acima),
   "tempestivo": true ou false — analise a data de intimação/ciência da decisão/sentença e a data de interposição do recurso, se constarem no texto; se não houver dados suficientes, responda true (presunção de tempestividade) mas mencione a limitação em situacao_preparo_gratuidade,
+  "analise_tempestividade": "string curta mostrando a conta: data de intimação/publicação da decisão recorrida, data de interposição do recurso, prazo aplicável e conclusão. Prazos (dias ÚTEIS, art. 219 do CPC): apelação, agravo de instrumento, agravo interno e demais recursos — 15 dias úteis (art. 1.003, §5º, CPC); embargos de declaração — 5 dias úteis (art. 1.023). Se faltar alguma data legível, NÃO presuma: diga qual dado faltou. Ao final, registre 'conferir a contagem (feriados e suspensões de prazo)'",
+  "via_recursal_adequada": true ou false — confronte o recurso efetivamente interposto com o tipo da decisão recorrida (apelação cabe de sentença; agravo de instrumento de decisão interlocutória nas hipóteses do art. 1.015 do CPC; embargos de declaração de qualquer decisão judicial; agravo interno de decisão monocrática) e responda false se a via for inadequada; se tempestivo=false ou via_recursal_adequada=false, avalie se cabe decisão monocrática de não conhecimento (art. 932, III, CPC; subtipo 'outro'),
   "situacao_preparo_gratuidade": "string curta e objetiva: 'preparo recolhido' OU 'beneficiário da gratuidade de justiça (já concedida)' OU 'pedido de gratuidade indeferido na origem — será analisado com o mérito do recurso' OU 'dispensado o preparo' — conforme o que constar no processo",
   "cabimento_recursal": "string curta: se o tipo de recurso for Apelação, confirme objetivamente que é cabível da sentença/decisão terminativa de mérito (art. 1.009, CPC); se for Agravo de Instrumento, analise e resuma o enquadramento nos incisos do art. 1.015 do CPC (ou no parágrafo único, se natureza_processo_origem for execução/cumprimento/liquidação/inventário) e, se não se enquadrar, se há taxatividade mitigada aplicável (urgência; ponto que não poderia ser suscitado depois em preliminar de apelação); para os demais tipos de recurso, confirme objetivamente o cabimento",
   "tem_preliminar": true ou false,
@@ -1101,10 +1196,12 @@ function buildTriagemHTML(triagem, meta){
   itens.push(['ti-file-check', `Processo identificado: <strong>${esc(meta.numProcessoLabel)} nº ${esc(triagem.numero_processo)}</strong> — Comarca de ${esc(triagem.comarca)}`]);
   itens.push(['ti-users', `${esc(meta.recorrenteLabel)}: ${esc(triagem.recorrente_nome)} &nbsp;×&nbsp; ${esc(meta.recorridoLabel)}: ${esc(triagem.recorrido_nome)}`]);
   itens.push(['ti-target', `Tema principal: ${esc(triagem.tema_principal||'—')}`]);
+  itens.push(['ti-file-description', `Decisão recorrida: ${esc(triagem.decisao_recorrida||'não informada pela triagem')}`]);
+  itens.push(['ti-send', `Recurso interposto: ${esc(triagem.recurso_interposto||'não informado pela triagem')}`]);
 
   // Admissibilidade recursal (tempestividade, preparo/gratuidade, cabimento específico do tipo de recurso)
   const rotuloNatureza = {conhecimento:'processo de conhecimento', execucao:'execução', cumprimento_de_sentenca:'cumprimento de sentença', liquidacao_de_sentenca:'liquidação de sentença', inventario:'inventário', outra:'outra natureza'}[triagem.natureza_processo_origem] || triagem.natureza_processo_origem;
-  let admisTxt = `Admissibilidade — tempestividade: <strong>${triagem.tempestivo===false ? 'intempestivo (!)' : 'tempestivo'}</strong>; ${esc(triagem.situacao_preparo_gratuidade||'—')}.`;
+  let admisTxt = `Admissibilidade — tempestividade: <strong>${triagem.tempestivo===false ? 'INTEMPESTIVO (!)' : 'tempestivo'}</strong>${triagem.analise_tempestividade ? ' ('+esc(triagem.analise_tempestividade)+')' : ''}; via recursal: <strong>${triagem.via_recursal_adequada===false ? 'INADEQUADA (!)' : 'adequada'}</strong>; ${esc(triagem.situacao_preparo_gratuidade||'—')}.`;
   if(meta.temDespacho){
     admisTxt += ` Natureza do processo de origem: <strong>${esc(rotuloNatureza||'—')}</strong>${['execucao','cumprimento_de_sentenca','liquidacao_de_sentenca','inventario'].includes(triagem.natureza_processo_origem) ? ' (art. 1.015, parágrafo único, CPC: agravo sempre cabível aqui)' : ''}. ${esc(triagem.cabimento_recursal||'')}`;
   } else {
@@ -1175,12 +1272,16 @@ ${meta.recorrenteLabel}: ${triagem.recorrente_nome}
 ${meta.recorridoLabel}: ${triagem.recorrido_nome}
 Tema principal: ${triagem.tema_principal}
 Natureza do processo de origem: ${triagem.natureza_processo_origem}
-Tempestividade: ${triagem.tempestivo===false ? 'INTEMPESTIVO — atenção especial' : 'tempestivo'}
+Decisão recorrida: ${triagem.decisao_recorrida||'—'}
+Recurso interposto: ${triagem.recurso_interposto||'—'}
+Tempestividade: ${triagem.tempestivo===false ? 'INTEMPESTIVO — atenção especial' : 'tempestivo'}${triagem.analise_tempestividade ? ' — ' + triagem.analise_tempestividade : ''}
+Via recursal adequada: ${triagem.via_recursal_adequada===false ? 'NÃO — atenção especial' : 'sim'}
 Situação de preparo/gratuidade: ${triagem.situacao_preparo_gratuidade||'—'}
 Cabimento recursal: ${triagem.cabimento_recursal||'—'}
 Competência da 21ª Câmara confirmada: ${triagem.competencia_confirmada}${triagem.competencia_confirmada===false ? ' — '+triagem.motivo_incompetencia : ''}
 Preliminar arguida: ${triagem.tem_preliminar ? triagem.preliminar_resumo : 'não há'}
 materia_sobrestada (já decidido): ${triagem.materia_sobrestada}
+(Se algum dos dados acima vier como "NÃO IDENTIFICADO", "dados insuficientes" ou semelhante, a triagem leu só um trecho do processo — identifique você mesmo esse dado no texto completo abaixo, em vez de repetir a lacuna.)
 
 TIPO DE RECURSO: ${meta.numProcessoLabel} (rótulo do recorrente: "${meta.recorrenteLabel}"; rótulo do recorrido: "${meta.recorridoLabel}")
 ${tipoBloco}
