@@ -147,6 +147,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
     <span class="dot" id="dd"></span>
     <span class="stxt" id="ld">Base de referência não conectada</span>
     <button class="bsm" id="bcn" onclick="abrirModal()"><i class="ti ti-settings"></i> Configurar</button>
+    <span class="stxt" style="margin-left:auto" id="versao-app"></span>
   </div>
 
   <div class="stats" id="sa" style="display:none">
@@ -714,10 +715,12 @@ async function handleFile(files){
 
   try{
     setProgress(8, lista.length>1 ? `Lendo os ${lista.length} PDFs do processo...` : 'Lendo o PDF do processo...');
+    LEITURA_PDF = []; S.leitura = null;
     const pdfText = await lerPDFs(lista, 350000, (pagina, total)=>{
       setProgress(10, `Aplicando reconhecimento de texto (OCR) em página escaneada ${pagina} de ${total}...`);
     });
 
+    S.leitura = montarDiagnosticoLeitura(pdfText);
     setProgress(16, 'Ocultando dados estruturados (CPF, CNPJ, e-mail, telefone)...');
     let pdfTextSeguro = redigirDadosEstruturados(pdfText);
     let mapaNomes = null;
@@ -796,6 +799,8 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
+const VERSAO_APP = '05/10/2026 · leitura-diagnóstico';
+let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
 
@@ -829,7 +834,7 @@ async function extrairTextoPDF(file, onProgresso, rotulo){
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({data: buf}).promise;
   let texto = '';
-  let paginasOcr = 0;
+  let paginasOcr = 0, paginasVazias = 0;
   for(let i=1; i<=pdf.numPages; i++){
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
@@ -842,9 +847,11 @@ async function extrairTextoPDF(file, onProgresso, rotulo){
         paginasOcr++;
       }catch(e){ /* falhou o OCR dessa página — segue com o que foi possível extrair (pode ficar vazio) */ }
     }
+    if(textoPagina.length < 10) paginasVazias++;   // página sem nenhum texto (imagem não lida por OCR)
     // marcador de página: permite localizar e citar as páginas da decisão, do recurso, das intimações etc.
     texto += `[[${rotulo}PÁG. ${i}]]\n` + textoPagina + '\n\n';
   }
+  LEITURA_PDF.push({ nome: file.name, paginas: pdf.numPages, ocr: paginasOcr, vazias: paginasVazias });
   return texto;
 }
 
@@ -1122,6 +1129,62 @@ function trechoParaTriagem(texto, orcamento){
   return out;
 }
 
+// ---------------------------------------------------------------------------------------------
+// DIAGNÓSTICO DE LEITURA (determinístico, sem IA): mostra o que o site de fato conseguiu ler do(s) PDF(s)
+// e se há sinais textuais de decisão recorrida, de recurso e de intimação/prazo. Serve para o usuário
+// perceber, na hora, quando o PDF enviado não contém a sentença/o recurso (ex.: processo exportado em
+// várias partes, ou páginas escaneadas sem texto).
+// ---------------------------------------------------------------------------------------------
+function montarDiagnosticoLeitura(pdfText){
+  const paginas = dividirEmPaginas(pdfText) || [];
+  const pontuar = (t, pares)=> pares.reduce((s, [re, peso])=> s + (re.test(t) ? peso : 0), 0);
+  const achar = (cat, minimo)=> paginas
+    .map(p=>({ r: p.rotulo.replace(/[\[\]]/g, '').replace('PÁG. ', 'pág. '), s: pontuar(p.texto, PADROES_TRIAGEM[cat]) }))
+    .filter(x=> x.s >= minimo)
+    .sort((a, b)=> b.s - a.s).slice(0, 4).map(x=> x.r);
+  return {
+    arquivos: LEITURA_PDF.slice(),
+    decisao: achar('decisao', 4),
+    recurso: achar('recurso', 4),
+    prazo:   achar('prazo', 3),
+  };
+}
+
+function buildLeituraItensHTML(){
+  const L = S.leitura;
+  if(!L || !L.arquivos.length) return [];
+  const itens = [];
+  const nomes = L.arquivos.map(a=> `${esc(a.nome)} (${a.paginas} págs.)`).join('; ');
+  const totPag = L.arquivos.reduce((s,a)=> s + a.paginas, 0);
+  const totOcr = L.arquivos.reduce((s,a)=> s + a.ocr, 0);
+  const totVaz = L.arquivos.reduce((s,a)=> s + a.vazias, 0);
+  itens.push(['ti-files', `Leitura do PDF: ${nomes} — ${totPag} página(s); ${totOcr} lida(s) por OCR (escaneadas); <strong>${totVaz}</strong> sem nenhum texto legível`]);
+  const sinal = (lista)=> lista.length ? `✔ (${esc(lista.join(', '))})` : '✘ não encontrado';
+  itens.push(['ti-search', `Sinais no texto lido — decisão recorrida: ${sinal(L.decisao)} · recurso: ${sinal(L.recurso)} · intimação/prazo: ${sinal(L.prazo)}`]);
+  return itens;
+}
+
+function buildAvisoLeituraHTML(){
+  const L = S.leitura;
+  if(!L || !L.arquivos.length) return '';
+  const problemas = [];
+  if(!L.decisao.length) problemas.push('sinais de <strong>sentença/decisão recorrida</strong>');
+  if(!L.recurso.length) problemas.push('sinais do <strong>recurso interposto</strong>');
+  const totPag = L.arquivos.reduce((s,a)=> s + a.paginas, 0);
+  const totVaz = L.arquivos.reduce((s,a)=> s + a.vazias, 0);
+  const muitasVazias = totVaz >= Math.max(10, Math.round(totPag * 0.05));
+  const partes = L.arquivos.filter(a=> /PARTE[_\s-]*\d+/i.test(a.nome)).map(a=> (a.nome.match(/PARTE[_\s-]*(\d+)/i)||[])[1]);
+  const arquivoEmPartes = partes.length > 0;
+  if(!problemas.length && !muitasVazias && !arquivoEmPartes) return '';
+
+  let html = `<div class="banner orange" style="flex-direction:column;gap:6px"><div><i class="ti ti-alert-triangle"></i> <strong>Atenção à leitura do PDF — confira antes de usar o resultado.</strong></div>`;
+  if(problemas.length) html += `<div>Não encontrei no texto lido ${problemas.join(' nem ')}. A triagem e o voto podem ter sido feitos sem essas peças.</div>`;
+  if(arquivoEmPartes) html += `<div>O nome do arquivo indica que ele é a <strong>PARTE ${esc(partes.join(', '))}</strong> de um processo exportado em partes (o TJSP divide processos grandes em PARTE_1, PARTE_2...). Se a sentença e o recurso estão em outra parte, <strong>selecione todas as partes de uma vez</strong> ao enviar (a ferramenta aceita vários PDFs).</div>`;
+  if(muitasVazias) html += `<div><strong>${totVaz} página(s) estão sem nenhum texto legível</strong> (imagens escaneadas que o OCR não leu — o OCR tem um teto de ${OCR_MAX_PAGINAS} páginas por arquivo). A sentença ou o recurso podem estar nessas páginas.</div>`;
+  html += `</div>`;
+  return html;
+}
+
 async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual){
   const prompt = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
@@ -1192,7 +1255,7 @@ function exibirTriagem(triagem, meta){
 }
 
 function buildTriagemHTML(triagem, meta){
-  const itens = [];
+  const itens = [...buildLeituraItensHTML()];
   itens.push(['ti-file-check', `Processo identificado: <strong>${esc(meta.numProcessoLabel)} nº ${esc(triagem.numero_processo)}</strong> — Comarca de ${esc(triagem.comarca)}`]);
   itens.push(['ti-users', `${esc(meta.recorrenteLabel)}: ${esc(triagem.recorrente_nome)} &nbsp;×&nbsp; ${esc(meta.recorridoLabel)}: ${esc(triagem.recorrido_nome)}`]);
   itens.push(['ti-target', `Tema principal: ${esc(triagem.tema_principal||'—')}`]);
@@ -1230,6 +1293,7 @@ function buildTriagemHTML(triagem, meta){
     html += `<div class="ri tri-item" style="animation-delay:${i*280}ms"><i class="ti ${it[0]}" style="color:var(--blue)"></i><span>${it[1]}</span></div>`;
   });
   html += `</div>`;
+  html += buildAvisoLeituraHTML();
   return html;
 }
 
@@ -1815,6 +1879,7 @@ async function exportarDespacho(){
    INIT
    ============================================================ */
 window.addEventListener('DOMContentLoaded', ()=>{
+  document.getElementById('versao-app').textContent = 'versão ' + VERSAO_APP;
   load();
   if(S.gkey && Object.keys(S.folders).length) carregarBase();
   garantirDocx().catch(()=>{});   // pré-carrega em segundo plano, sem travar a página se falhar
