@@ -232,7 +232,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
         <div style="grid-column:1/-1"><label>Embargos de Declaração + Agravo Interno <small style="font-weight:400">(pasta única — poucos modelos: 1 de rejeição de ED, 1 de acolhimento de ED, e o template de Agravo Interno do Dr. Décio)</small></label><input id="f-em" type="text" placeholder="ID da pasta"/></div>
         <div><label>Modelos de Decisão Monocrática <small style="font-weight:400">(opcional — os 3 modelos fixos já estão no site; use só p/ adicionar mais exemplos)</small></label><input id="f-mo" type="text" placeholder="ID da pasta (opcional)"/></div>
         <div><label>Despachos de Suspensão Repetitivo/IRDR <small style="font-weight:400">(opcional — idem)</small></label><input id="f-su" type="text" placeholder="ID da pasta (opcional)"/></div>
-        <div style="grid-column:1/-1"><label>Manual Dr. Décio e repositórios nova competência <small style="font-weight:400">(material de estudo — docx e xlsx — usado como pano de fundo em todas as gerações)</small></label><input id="f-dc" type="text" placeholder="ID da pasta"/><div style="font-size:10.5px;color:var(--tx2);margin-top:2px">já vinculada por padrão</div></div>
+        <div style="grid-column:1/-1"><label>Manual Dr. Décio e repositórios nova competência <small style="font-weight:400">(material de estudo — docx e xlsx. Arquivos com "suspens", "sobrest", "repetitiv", "vincul" ou "irdr" no nome são lidos por inteiro; os demais, por relevância)</small></label><input id="f-dc" type="text" placeholder="ID da pasta"/><div style="font-size:10.5px;color:var(--tx2);margin-top:2px">já vinculada por padrão</div></div>
       </div>
 
       <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">Privacidade</p>
@@ -309,13 +309,17 @@ A pasta de referência de Agravo Interno é compartilhada com a de Embargos de D
 
 NÃO mencione a análise de admissibilidade na fundamentação — isso fica só no §3 do relatório.
 
---- ESTRUTURA DA FUNDAMENTAÇÃO ---
-Direcione a busca nos documentos de referência fornecidos nesta ordem de prioridade:
-1º) Documentos de referência que tratem da(s) MESMA(S) PRELIMINAR(ES) suscitada(s) no recurso (se houver preliminar) — extraia e adapte o texto de fundamentação já usado pelo Desembargador para essa preliminar.
-2º) Documentos de referência sobre o TEMA PRINCIPAL do mérito.
-3º) Documentos de referência sobre TEMAS SECUNDÁRIOS eventualmente also suscitados.
-Ao usar um documento de referência, ADAPTE o texto ao caso concreto (nomes, valores, datas, particularidades) — nunca copie de forma idêntica sem ajustar. Todos os parágrafos da fundamentação devem estar adaptados ao processo em análise, mesmo quando a tese jurídica for reaproveitada.
-NÍVEL DE CONCRETUDE EXIGIDO: a fundamentação não pode ser só a tese jurídica abstrata (princípios, doutrina, jurisprudência genérica) — em CADA parágrafo, amarre a tese aos dados concretos deste processo específico: cite o número e a data do contrato quando houver, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas mencionados nos autos (extratos, laudos, termos, print de mensagens, protocolos de atendimento), e as alegações específicas de cada parte (não só "o autor alega dano moral", mas o que ele concretamente narrou ter sofrido; não só "o réu impugna", mas qual documento ou argumento específico ele apresentou em contestação/contrarrazões). Uma fundamentação que poderia ser copiada e colada em qualquer outro processo do mesmo tema, sem alterar nada além do nome das partes, está errada — o objetivo é o oposto: mostrar que a tese jurídica foi aplicada a ESTE caso, com seus dados próprios.
+--- ESTRUTURA DA FUNDAMENTAÇÃO E USO DOS VOTOS DE REFERÊNCIA ---
+Os "VOTOS DE REFERÊNCIA" fornecidos abaixo foram BUSCADOS pelo sistema, na base completa de votos do Desembargador, UM CONJUNTO POR MATÉRIA deste processo (cada voto traz o arquivo, a pasta e a matéria pela qual foi encontrado: preliminar, tema principal ou tema secundário). Eles estão em TEXTO INTEGRAL (salvo corte indicado). Cada voto é o entendimento do Desembargador sobre aquela matéria — ESTUDE-OS e USE-OS como a base decisória.
+1º) Preliminares: se o recurso suscita preliminar de mérito (ex.: cerceamento de defesa), siga os votos sobre a MESMA preliminar.
+2º) Tema principal do mérito: siga os votos sobre o mesmo tema.
+3º) Temas secundários (dano moral, repetição do indébito, juros e correção, honorários etc.): siga os votos correspondentes.
+REAPROVEITAMENTO LITERAL (regra principal): reproduza o texto e as palavras dos votos de referência — a mesma redação, a mesma ordem de argumentos, as mesmas expressões, as mesmas citações de súmulas, temas e precedentes que o voto já traz — e altere SOMENTE o que for específico do caso concreto: nomes das partes, datas, valores, números de contrato e de processo, documentos, fatos e alegações deste processo. Não reescreva com palavras próprias aquilo que o voto de referência já diz bem. Quando o processo trouxer um ponto que o voto de referência não cobre, acrescente apenas o parágrafo necessário, no mesmo estilo. Nunca deixe, no texto final, nome de parte, valor, data, número de contrato ou de processo pertencente ao voto de referência.
+VOTOS QUE DIVERGEM ENTRE SI: é comum o Desembargador decidir a mesma matéria de modos diferentes conforme as circunstâncias — por exemplo, acolher o cerceamento de defesa para anular a sentença e devolver os autos ao primeiro grau para realização de perícia grafotécnica (sem julgar o mérito), ou entender a perícia desnecessária e julgar o mérito. Quando os votos fornecidos divergirem, NÃO escolha ao acaso nem misture as linhas: identifique em cada voto o CRITÉRIO que levou àquele resultado (a prova já existente nos autos, a existência ou não de impugnação específica, o tipo de assinatura ou de contratação, a documentação apresentada pelo banco etc.), compare esse critério com os FATOS DESTE PROCESSO e siga a linha cujo critério corresponde a eles. Registre em "criterio_divergencia" quais votos divergem e qual critério você aplicou. Se os fatos do processo não permitirem distinguir com segurança, escreva isso em "criterio_divergencia" e siga a linha mais cautelosa, deixando a questão sinalizada para a conferência do assistente.
+Se NENHUM voto fornecido tratar da matéria, aplique a regra "QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA" abaixo.
+NÍVEL DE CONCRETUDE EXIGIDO: o texto reaproveitado dos votos deve ser aplicado a ESTE caso — em CADA parágrafo, onde o voto de referência traz dados do caso dele, coloque os dados deste processo: o número e a data do contrato, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas dos autos (extratos, laudos, termos, protocolos de atendimento) e as alegações específicas de cada parte (o que o autor concretamente narrou e qual documento ou argumento o réu apresentou). Uma fundamentação em que nenhum dado deste processo aparece está errada: a tese e a redação vêm dos votos do Desembargador, os fatos vêm do processo.
+EMENTA: mantenha-a bem resumida (um parágrafo curto com a matéria, as teses centrais e o resultado), mesmo que os votos de referência tragam ementas longas ou em itens.
+
 DICA DE PADRÃO: casos de ações revisionais, declaratórias de inexistência de débito e indenizatórias contra bancos e instituições financeiras, ajuizadas em massa pelos mesmos advogados com teses e documentos semelhantes, tendem a se repetir — priorize como referência votos que tratem de casos dessa natureza quando o caso em análise for semelhante. Mesmo nesses casos "quase repetidos", a concretude exigida acima não é dispensada: os valores, datas e documentos deste processo específico continuam obrigatórios.
 
 --- PARÁGRAFO DE CONCLUSÃO DA FUNDAMENTAÇÃO — PENÚLTIMO PARÁGRAFO DO VOTO (obrigatório, é o ÚLTIMO item do array "fundamentacao", logo antes do "dispositivo") ---
@@ -342,7 +346,9 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
 {
   "materia_sobrestada": true ou false,
   "cabe_monocratica": true ou false,
-  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou null,
+  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
+  "votos_seguidos": ["nome exato do arquivo de cada voto de referência que você efetivamente seguiu na redação (copie o nome como aparece no cabeçalho \"arquivo:\" de cada voto fornecido)"],
+  "criterio_divergencia": "string — vazio se os votos fornecidos não divergem; se divergirem, explique em 1 a 3 frases quais votos divergem, o critério de cada um e qual critério foi aplicado a este processo, e por quê",
   "referencia_insuficiente": true ou false,
   "aviso_referencia": "string (ver instrução acima) ou vazio",
   "numero_processo": "string - número do processo extraído do PDF",
@@ -366,6 +372,7 @@ Mantenha a mesma estrutura de relatório e a mesma lógica de fundamentação (p
 • "inadmissibilidade_art1015" — Agravo de Instrumento contra decisão que não se enquadra nas hipóteses taxativas do art. 1.015 do CPC, sem justificar a mitigação da taxatividade (Tema 988/STJ). Dispositivo: "Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente agravo de instrumento."
   REGRA ESSENCIAL, OBRIGATÓRIA, ANTES DE APLICAR ESTE SUBTIPO: o art. 1.015 do CPC tem um CAPUT com rol taxativo (incisos I a XIII, mitigado pelo Tema 988/STJ) e também um PARÁGRAFO ÚNICO que afasta completamente essa taxatividade. Nos termos do art. 1.015, parágrafo único, do CPC, cabe agravo de instrumento contra TODAS as decisões interlocutórias proferidas na fase de LIQUIDAÇÃO DE SENTENÇA, no CUMPRIMENTO DE SENTENÇA, no PROCESSO DE EXECUÇÃO (inclusive execução de título extrajudicial) e no INVENTÁRIO — independentemente do conteúdo da decisão e SEM QUALQUER análise de taxatividade ou de urgência. Portanto: SEMPRE que o processo de origem for uma execução (de título judicial ou extrajudicial), cumprimento de sentença, liquidação de sentença ou inventário, o agravo de instrumento É CABÍVEL por definição, e o subtipo "inadmissibilidade_art1015" NUNCA se aplica — não importa qual matéria específica a decisão agravada trate. Verifique isso ANTES de qualquer outra análise sobre o art. 1.015: primeiro identifique a natureza do processo de origem (conhecimento, execução, cumprimento de sentença, liquidação, inventário); só analise os incisos do caput e a mitigação do Tema 988/STJ se o processo de origem for processo de CONHECIMENTO (não for nenhuma das quatro hipóteses do parágrafo único).
 • "incompetencia" — recurso versa sobre matéria estranha à competência das Câmaras de Direito Privado (incompetência absoluta em razão da matéria, cognoscível de ofício, art. 64, §1º, CPC). Dispositivo: "Ante o exposto, com fundamento no art. 64, §1º, c.c. o art. 932, III, ambos do CPC, **NÃO CONHEÇO** do presente recurso por incompetência absoluta deste órgão julgador em razão da matéria, e determino a redistribuição dos autos à [Câmara/Seção competente]." Neste subtipo, ACRESCENTE como ÚLTIMO parágrafo de "fundamentacao" a determinação processual: "Comunique-se ao Juízo de origem. Após as anotações e baixas necessárias, remetam-se os autos à Presidência/Distribuidor para redistribuição."
+• "ausencia_dialeticidade" — o recurso não ataca nenhuma das razões da decisão recorrida (princípio da dialeticidade; arts. 932, III, e 1.010, II e III, do CPC; no agravo interno, art. 1.021, §1º). Dispositivo: "Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente recurso, por ausência de dialeticidade." Na fundamentação: (a) resuma as razões de decidir da decisão recorrida (até 3), indicando a página ou o evento quando possível; (b) mostre, razão por razão, que as razões recursais não as enfrentam, resumindo o que o recurso alega e explicando a falta de relação com o que foi decidido; (c) cite o princípio da dialeticidade e o dever de impugnação específica. NÃO analise o mérito.
 • "outro" — qualquer outra hipótese do art. 932 do CPC (improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, provimento monocrático por contrariedade a entendimento vinculante etc.). Dispositivo no formato: "Ante o exposto, com fundamento no art. 932, [inciso], do CPC, **DECIDO** monocraticamente por [negar seguimento ao / negar provimento ao / dar provimento ao] recurso. Publique-se. Intimem-se." — ajuste o inciso e a fundamentação ao motivo identificado.
 
 --- QUANDO O TIPO DE RECURSO FOR EMBARGOS DE DECLARAÇÃO (estrutura totalmente diferente — leia com atenção) ---
@@ -691,6 +698,8 @@ async function carregarBase(){
   document.getElementById('sa').style.display = 'grid';
 
   setStatus(true, `Base conectada — ${total} documentos carregados`);
+  INDICE.promessa = null; INDICE.pronto = false; INDICE.docs = [];
+  indexarBase();   // segundo plano: lê o texto completo dos votos e guarda no navegador
   document.getElementById('bcn').innerHTML = '<i class="ti ti-settings"></i> Reconfigurar';
 }
 
@@ -711,6 +720,8 @@ async function handleFile(files){
   document.getElementById('ra').style.display='none';
   document.getElementById('pw').style.display='block';
   S.doc = null;
+  S.metricas = { inicio: Date.now(), acumulado: 0, chamadas: [] };     // medição de tempo e custo desta minuta
+  S.leituraReduzida = null; S.avisoLeitura = ''; S.reprocessarCompleto = null;
   const meta = TAB_META[S.tab];
 
   try{
@@ -735,15 +746,18 @@ async function handleFile(files){
     }
 
     setProgress(20, 'Carregando documentos de referência da base...');
-    const textoRefs = await montarTextoReferencias(meta.folderKey, 8);
+    await esperarIndice(20);
+    // Embargos/Agravo Interno: poucos modelos, lidos por inteiro. Apelação/Agravo: os votos são BUSCADOS por matéria depois da triagem.
+    let textoRefs = (meta.folderKey === 'em') ? await montarTextoReferencias('em', 8, 12000) : '';
     const textoSusp = await montarTextoReferencias('su', 5);
     const textoMono = await montarTextoReferencias('mo', 5);
-    const textoManual = await montarTextoReferencias('dc', 6);
 
     if(!S.akey){ mostrarSemChave(meta); return; }
 
     setProgress(38, 'Fazendo a triagem do processo...');
-    const triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, textoManual);
+    const manualTriagem = montarManualParaChamada(consultaManualTriagem(pdfTextSeguro), { maxChars: 16000 });
+    const triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem);
+    aplicarTravaDialeticidade(triagemPseudo, meta, S.leitura);
     const triagemExibicao = mapaNomes ? reverterPseudonimizacao(triagemPseudo, mapaNomes) : triagemPseudo;
     S.triagem = triagemExibicao;
     exibirTriagem(triagemExibicao, meta);
@@ -753,13 +767,45 @@ async function handleFile(files){
       : (triagemPseudo.cabe_monocratica ? 'Redigindo decisão monocrática...' : 'Redigindo voto para julgamento colegiado...');
     setProgress(65, etapaFinal);
 
-    // a geração final recebe a triagem AINDA pseudonimizada (mesmo texto que ela já viu);
-    // só depois de pronto é que os nomes reais voltam, para exibição e exportação
-    let finalJson = await gerarDocumentoFinal(meta, triagemPseudo, pdfTextSeguro, textoRefs, textoSusp, textoMono, textoManual);
-    if(mapaNomes) finalJson = reverterPseudonimizacao(finalJson, mapaNomes);
-    S.doc = Object.assign({}, triagemExibicao, finalJson);
-    setProgress(100, 'Concluído!');
-    renderResultado(meta, true, triagemExibicao);
+    // busca, na base de votos, os votos de cada matéria apontada pela triagem
+    S.votosUsados = null;
+    if(meta.folderKey !== 'em'){
+      setProgress(55, 'Consultando a base de votos do gabinete...');
+      let achados = null;
+      try{ achados = await recuperarVotos(meta, triagemPseudo); }catch(e){ achados = null; }
+      if(achados && achados.length){
+        textoRefs = montarTextoVotosRecuperados(achados);
+        S.votosUsados = achados.map(e=> ({ nome: e.d.nome, pasta: e.d.pasta, papel: e.papel, consulta: e.consulta, tambem: e.tambem || [] }));
+      } else {
+        textoRefs = await montarTextoReferencias(meta.folderKey, 8);   // plano B: sem índice ou sem votos relevantes
+      }
+    }
+    const manualFinal = montarManualParaChamada(consultaManualFinal(triagemPseudo), { maxChars: 14000 });
+
+    // a redação lê o processo inteiro, salvo quando a triagem mostra que só as páginas-chave bastam (e o usuário pode refazer com o processo inteiro)
+    const leit = decidirLeitura(triagemPseudo, S.leitura, pdfTextSeguro);
+    const gerarFinal = async (textoProcesso, reduzido)=>{
+      S.leituraReduzida = reduzido ? { motivo: leit.motivo, enviados: textoProcesso.length, total: pdfTextSeguro.length } : null;
+      S.avisoLeitura = reduzido
+        ? 'ATENÇÃO: o texto do processo abaixo traz apenas as páginas-chave (decisão recorrida, recurso, contrarrazões, intimações, capa e final), porque a controvérsia foi classificada como ' + (leit.motivo === 'sobrestamento' ? 'sobrestamento por tema repetitivo' : 'puramente jurídica') + '. Não invente fatos que não estejam nessas páginas; se faltar um fato necessário, diga isso expressamente.\n\n'
+        : '';
+      setProgress(65, etapaFinal);
+      let finalJson = await gerarDocumentoFinal(meta, triagemPseudo, textoProcesso, textoRefs, textoSusp, textoMono, manualFinal);
+      if(mapaNomes) finalJson = reverterPseudonimizacao(finalJson, mapaNomes);
+      S.doc = Object.assign({}, triagemExibicao, finalJson);
+      S.metricas.fim = Date.now();
+      setProgress(100, 'Concluído!');
+      renderResultado(meta, true, triagemExibicao);
+    };
+    S.reprocessarCompleto = async ()=>{
+      try{
+        document.getElementById('pw').style.display = 'block';
+        S.metricas.acumulado += (S.metricas.fim || Date.now()) - S.metricas.inicio;
+        S.metricas.inicio = Date.now();
+        await gerarFinal(pdfTextSeguro, false);
+      }catch(e){ document.getElementById('pw').style.display = 'none'; alert('Erro ao reprocessar: ' + e.message); }
+    };
+    await gerarFinal(leit.reduzir ? leit.texto : pdfTextSeguro, leit.reduzir);
   }catch(e){
     document.getElementById('pw').style.display='none';
     alert('Erro ao processar o documento: ' + e.message + '\n\nAbra o Console do navegador (F12) para mais detalhes.');
@@ -799,7 +845,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '05/10/2026 · leitura-diagnóstico';
+const VERSAO_APP = '06/10/2026 · dialeticidade';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -928,13 +974,362 @@ async function lerArquivoReferencia(arquivo){
   return await lerWord(arquivo.id);
 }
 
-async function montarTextoReferencias(folderKey, limite){
+/* ============================================================
+   ÍNDICE LOCAL DOS VOTOS E BUSCA POR RELEVÂNCIA
+   - Lê o texto COMPLETO de todos os arquivos das pastas (Drive) e guarda no navegador (IndexedDB),
+     de modo que só arquivos novos ou alterados são baixados nas vezes seguintes.
+   - Busca por relevância (BM25) com uma consulta por matéria (tema principal, cada preliminar, cada
+     tema secundário), montada pela triagem.
+   ============================================================ */
+const PASTAS_INDEXADAS = ['ap','ag','em','mo','su','dc'];
+const INDICE = { docs: [], promessa: null, pronto: false, progresso: { feitos: 0, total: 0 } };
+
+function idbAbrir(){
+  return new Promise((res, rej)=>{
+    try{
+      const rq = indexedDB.open('mva-indice', 1);
+      rq.onupgradeneeded = ()=>{ rq.result.createObjectStore('votos', { keyPath: 'id' }); };
+      rq.onsuccess = ()=> res(rq.result);
+      rq.onerror = ()=> rej(rq.error);
+    }catch(e){ rej(e); }
+  });
+}
+async function idbTodos(){
+  const db = await idbAbrir();
+  return new Promise((res, rej)=>{
+    const rq = db.transaction('votos', 'readonly').objectStore('votos').getAll();
+    rq.onsuccess = ()=> res(rq.result || []);
+    rq.onerror = ()=> rej(rq.error);
+  });
+}
+async function idbGravar(docs){
+  const db = await idbAbrir();
+  return new Promise((res, rej)=>{
+    const tx = db.transaction('votos', 'readwrite'); const st = tx.objectStore('votos');
+    docs.forEach(d=> st.put({ id: d.id, nome: d.nome, pasta: d.pasta, modificado: d.modificado, texto: d.texto }));
+    tx.oncomplete = ()=> res(); tx.onerror = ()=> rej(tx.error);
+  });
+}
+async function idbRemover(ids){
+  const db = await idbAbrir();
+  return new Promise((res, rej)=>{
+    const tx = db.transaction('votos', 'readwrite'); const st = tx.objectStore('votos');
+    ids.forEach(id=> st.delete(id));
+    tx.oncomplete = ()=> res(); tx.onerror = ()=> rej(tx.error);
+  });
+}
+
+function atualizarStatusIndice(){
+  const total = Object.values(S.arquivos||{}).reduce((s, l)=> s + l.length, 0);
+  const p = INDICE.progresso;
+  if(INDICE.pronto) setStatus(true, `Base conectada — ${total} documentos; ${INDICE.docs.length} lidos e indexados`);
+  else setStatus(true, `Base conectada — ${total} documentos; lendo e indexando ${p.feitos} de ${p.total}...`);
+}
+
+function indexarBase(){
+  if(INDICE.promessa) return INDICE.promessa;
+  INDICE.promessa = (async()=>{
+    let salvos = [];
+    try{ salvos = await idbTodos(); }catch(e){ /* sem IndexedDB (ex.: bloqueio do navegador): o índice vale só nesta sessão */ }
+    const porId = new Map(salvos.map(d=> [d.id, d]));
+    const alvo = [];
+    PASTAS_INDEXADAS.forEach(k=> (S.arquivos[k]||[]).forEach(a=>
+      alvo.push({ id: a.id, nome: a.name, modificado: a.modifiedTime||'', pasta: k, mimeType: a.mimeType||'' })));
+    const docs = [], pend = [];
+    alvo.forEach(a=>{
+      const s = porId.get(a.id);
+      if(s && s.modificado === a.modificado && s.pasta === a.pasta && typeof s.texto === 'string') docs.push(s); else pend.push(a);
+    });
+    INDICE.progresso = { feitos: docs.length, total: alvo.length };
+    atualizarStatusIndice();
+    const novos = []; let i = 0;
+    const trabalhador = async()=>{
+      while(i < pend.length){
+        const a = pend[i++];
+        try{
+          const texto = await lerArquivoReferencia({ id: a.id, mimeType: a.mimeType });
+          const d = { id: a.id, nome: a.nome, pasta: a.pasta, modificado: a.modificado, texto };
+          docs.push(d); novos.push(d);
+        }catch(e){ /* arquivo ilegível: segue sem ele */ }
+        INDICE.progresso.feitos++; atualizarStatusIndice();
+      }
+    };
+    await Promise.all(Array.from({ length: 5 }, trabalhador));
+    try{
+      if(novos.length) await idbGravar(novos);
+      const atuais = new Set(alvo.map(a=> a.id));
+      const remover = salvos.filter(s=> !atuais.has(s.id)).map(s=> s.id);
+      if(remover.length) await idbRemover(remover);
+    }catch(e){ /* cache indisponível: tudo bem */ }
+    INDICE.docs = docs; INDICE.pronto = true; atualizarStatusIndice();
+  })();
+  return INDICE.promessa;
+}
+
+// ---- busca por relevância (BM25) -------------------------------------------------------------
+const STOPWORDS = new Set(('a o as os um uma uns umas de do da dos das em no na nos nas por para com sem sob sobre entre ate ao aos e ou mas que se como mais '+
+  'menos muito muita ja nao sim foi ser sao era eram sera serao tem teve ter tendo ha havia seu sua seus suas lhe lhes este esta estes estas esse essa esses '+
+  'essas aquele aquela isso isto aquilo cujo cuja qual quais quando onde porque pois assim entao tambem apos antes ainda pelo pela pelos pelas num numa dele dela deles delas').split(' '));
+function normalizarTexto(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+function tokensBusca(s){
+  const out = [];
+  normalizarTexto(s).split(/[^a-z0-9]+/).forEach(w=>{
+    if(w.length < 3 || STOPWORDS.has(w) || /^\d+$/.test(w)) return;
+    out.push(w);
+    if(w.length > 5) out.push('~' + w.slice(0, 5));     // radical aproximado: empréstimo/emprestimos, fraude/fraudulento...
+  });
+  return out;
+}
+function prepararDocBusca(d){
+  if(d._tf) return d;
+  const nome = String(d.nome||'').replace(/\.docx?$/i, '');
+  const ini = d.texto.slice(0, 1500);      // cabeçalho e ementa pesam mais: dizem do que trata o voto
+  const tk = tokensBusca(nome + ' ' + nome + ' ' + nome + ' ' + ini + ' ' + ini + ' ' + d.texto);
+  const tf = new Map(); tk.forEach(t=> tf.set(t, (tf.get(t)||0) + 1));
+  d._tf = tf; d._len = tk.length;
+  return d;
+}
+function rankearBM25(docs, consulta){
+  docs.forEach(prepararDocBusca);
+  const N = docs.length; if(!N) return [];
+  const media = docs.reduce((s, d)=> s + d._len, 0) / N;
+  const q = [...new Set(tokensBusca(consulta))];
+  // palavras distintas da consulta (sem os radicais), para exigir cobertura mínima e evitar casamentos por acaso
+  const palavras = [...new Set(normalizarTexto(consulta).split(/[^a-z0-9]+/).filter(w=> w.length >= 3 && !STOPWORDS.has(w) && !/^\d+$/.test(w)))];
+  const exigidas = palavras.length >= 4 ? 2 : 1;
+  const df = new Map();
+  q.forEach(t=>{ let n = 0; docs.forEach(d=>{ if(d._tf.has(t)) n++; }); df.set(t, n); });
+  const k1 = 1.5, b = 0.75;
+  return docs.map(d=>{
+    let s = 0;
+    q.forEach(t=>{
+      const f = d._tf.get(t) || 0; if(!f) return;
+      const idf = Math.log(1 + (N - df.get(t) + 0.5) / (df.get(t) + 0.5));
+      s += idf * ((f * (k1 + 1)) / (f + k1 * (1 - b + b * d._len / media)));
+    });
+    const casadas = palavras.filter(w=> d._tf.has(w) || (w.length > 5 && d._tf.has('~' + w.slice(0, 5)))).length;
+    return { d, s, casadas };
+  }).filter(x=> x.s > 0 && x.casadas >= exigidas).sort((x, y)=> y.s - x.s);
+}
+
+const ROTULO_PASTA = { ap:'Apelações', ag:'Agravos de Instrumento', em:'Embargos/Agravo Interno', mo:'Decisões monocráticas', su:'Suspensões', dc:'Manual/estudo' };
+const ROTULO_PAPEL = { tema_principal:'tema principal', preliminar:'preliminar', tema_secundario:'tema secundário' };
+
+// Recupera, para cada matéria apontada pela triagem, os votos mais relevantes da base (Apelações; no agravo, Agravos + Apelações)
+function selecionarVotos(docsPasta, consultas){
+  const LIMITE_TOTAL = 7;
+  const porPapel = { tema_principal: 4, preliminar: 3, tema_secundario: 1 };
+  const ordem = ['tema_principal', 'preliminar', 'tema_secundario'];
+  const rankings = consultas.map(c=> ({ c, r: rankearBM25(docsPasta, c.consulta) }));
+  const escolhidos = [], vistos = new Set();
+  const proximo = (r)=> {
+    if(!r.length) return null;
+    const minimo = r[0].s * 0.4;                         // ignora votos muito mais fracos que o melhor da consulta
+    return r.find(x=> !vistos.has(x.d.id) && x.s >= minimo) || null;
+  };
+  const tomar = (c, x)=>{ vistos.add(x.d.id); escolhidos.push({ d: x.d, papel: c.papel, consulta: c.consulta, score: x.s, tambem: [] }); };
+  // 1ª passada: o melhor voto de cada matéria (garante cobertura de todas)
+  rankings.forEach(({ c, r })=>{
+    if(!r.length) return;
+    // se o melhor voto desta matéria já foi escolhido por outra, registra que ele cobre também esta matéria
+    const melhor = r[0];
+    if(vistos.has(melhor.d.id)){
+      const ja = escolhidos.find(e=> e.d.id === melhor.d.id);
+      if(ja && ja.consulta !== c.consulta) ja.tambem.push({ papel: c.papel, consulta: c.consulta });
+    }
+    // e busca também o próximo voto relevante desta matéria (traz, por exemplo, a linha divergente)
+    if(escolhidos.length < LIMITE_TOTAL){ const x = proximo(r); if(x) tomar(c, x); }
+  });
+  // 2ª passada: completa com os seguintes, priorizando tema principal > preliminar > secundário
+  const priorizados = rankings.slice().sort((x, y)=> ordem.indexOf(x.c.papel) - ordem.indexOf(y.c.papel));
+  for(let rodada = 0; rodada < 4 && escolhidos.length < LIMITE_TOTAL; rodada++){
+    priorizados.forEach(({ c, r })=>{
+      if(escolhidos.length >= LIMITE_TOTAL) return;
+      const lim = porPapel[c.papel] || 2;
+      if(escolhidos.filter(e=> e.consulta === c.consulta).length >= lim) return;
+      const x = proximo(r); if(x) tomar(c, x);
+    });
+  }
+  return escolhidos;
+}
+
+function recortarVoto(t, max){
+  max = max || 16000;
+  if(t.length <= max) return t;
+  return t.slice(0, 11000) + '\n[... trecho intermediário omitido por tamanho ...]\n' + t.slice(-5000);   // mantém o final: dispositivo
+}
+function montarTextoVotosRecuperados(escolhidos){
+  return escolhidos.map((e, i)=>
+    `\n\n=== VOTO DE REFERÊNCIA ${i+1} — arquivo: ${e.d.nome} (pasta: ${ROTULO_PASTA[e.d.pasta]||e.d.pasta}; encontrado pela busca como: ${[e].concat((e.tambem||[]).map(t=> ({papel:t.papel, consulta:t.consulta}))).map(m=> (ROTULO_PAPEL[m.papel]||m.papel) + ' — consulta: ' + m.consulta).join(' | ')}) ===\n${recortarVoto(e.d.texto)}`
+  ).join('');
+}
+
+async function esperarIndice(pct){
+  const aviso = setInterval(()=>{ if(!INDICE.pronto) setProgress(pct, `Lendo os votos da base: ${INDICE.progresso.feitos} de ${INDICE.progresso.total} (só na primeira vez ou quando há votos novos)...`); }, 600);
+  try{ await indexarBase(); } finally { clearInterval(aviso); }
+}
+
+async function recuperarVotos(meta, triagem){
+  const pastas = meta.folderKey === 'ag' ? ['ag', 'ap'] : (meta.folderKey === 'ap' ? ['ap'] : []);
+  if(!pastas.length) return null;
+  await esperarIndice(50);
+  const docs = INDICE.docs.filter(d=> pastas.includes(d.pasta) && d.texto && d.texto.length > 200);
+  if(!docs.length) return null;
+  let consultas = Array.isArray(triagem.consultas_busca) ? triagem.consultas_busca.filter(c=> c && typeof c.consulta === 'string' && c.consulta.trim()) : [];
+  if(!consultas.length){
+    consultas = [{ papel: 'tema_principal', consulta: [triagem.tema_principal, triagem.preliminar_resumo].filter(Boolean).join(' ') }];
+  }
+  consultas = consultas.slice(0, 6).map(c=> ({ papel: ROTULO_PAPEL[c.papel] ? c.papel : 'tema_secundario', consulta: c.consulta.trim() }));
+  const escolhidos = selecionarVotos(docs, consultas);
+  return escolhidos.length ? escolhidos : null;
+}
+
+// ---- Material de estudo (pasta "Manual"): listas lidas por inteiro; o restante, por relevância ----------------------
+const PADRAO_LISTA = /suspens|sobrest|repetitiv|vincul|irdr/i;   // arquivos assim nomeados são "listas de consulta"
+
+function dividirManualEmTrechos(doc){
+  if(doc._trechos) return doc._trechos;
+  const nome = String(doc.nome||'').replace(/\.(docx?|xlsx?)$/i, '');
+  const t = doc.texto || '';
+  const LIM = 1800, trechos = [];
+  if(/\[Planilha: /.test(t)){
+    const partes = t.split(/\n?\[Planilha: ([^\]\n]*)\]\n/);     // [antes, aba1, corpo1, aba2, corpo2, ...]
+    for(let k = 1; k < partes.length; k += 2){
+      const aba = partes[k];
+      const linhas = String(partes[k+1]||'').split('\n').filter(l=> l.trim());
+      if(!linhas.length) continue;
+      const rotulo = `[${nome} — planilha ${aba}] colunas: ${linhas[0]}\n`;
+      let atual = [], tam = 0;
+      linhas.slice(1).forEach(l=>{
+        if(tam + l.length > LIM && atual.length){ trechos.push(rotulo + atual.join('\n')); atual = []; tam = 0; }
+        atual.push(l); tam += l.length + 1;
+      });
+      if(atual.length) trechos.push(rotulo + atual.join('\n'));
+    }
+  } else {
+    const paras = t.split(/\n\s*\n/).map(p=> p.trim()).filter(Boolean);
+    let atual = [], tam = 0;
+    paras.forEach(p=>{
+      if(tam + p.length > LIM && atual.length){ trechos.push(`[${nome}] ` + atual.join('\n')); atual = []; tam = 0; }
+      atual.push(p); tam += p.length + 1;
+    });
+    if(atual.length) trechos.push(`[${nome}] ` + atual.join('\n'));
+  }
+  doc._trechos = trechos.map(x=> ({ nome: doc.nome, texto: x }));
+  return doc._trechos;
+}
+
+function montarManualParaChamada(consulta, opcoes){
+  const maxChars = (opcoes && opcoes.maxChars) || 14000;
+  const maxLista = (opcoes && opcoes.maxLista) || 45000;
+  const docs = INDICE.docs.filter(d=> d.pasta === 'dc' && d.texto);
+  if(!docs.length) return '';
+  const maisRecente = (x, y)=> String(y.modificado||'').localeCompare(String(x.modificado||''));
+  const listas = docs.filter(d=> PADRAO_LISTA.test(d.nome)).sort(maisRecente);
+  const demais = docs.filter(d=> !PADRAO_LISTA.test(d.nome));
+  let out = '', usadoLista = 0; const fora = [];
+  listas.forEach(d=>{
+    const folga = maxLista - usadoLista;
+    if(folga <= 500){ fora.push(d.nome); return; }
+    const t = d.texto.length > folga ? d.texto.slice(0, folga) + '\n[... lista truncada por tamanho ...]' : d.texto;
+    usadoLista += t.length;
+    out += `\n\n--- LISTA DE CONSULTA (arquivo: ${d.nome}; modificado em ${String(d.modificado||'').slice(0,10)}; lida por inteiro) ---\n${t}`;
+  });
+  if(fora.length) out += `\n\n[Listas não incluídas por limite de tamanho: ${fora.join('; ')}]`;
+  const trechos = demais.flatMap(dividirManualEmTrechos);
+  if(trechos.length && consulta && String(consulta).trim()){
+    const rank = rankearBM25(trechos, consulta);
+    if(rank.length){
+      const piso = rank[0].s * 0.25;                      // descarta trechos muito mais fracos que o melhor
+      let usado = 0; const escolhidos = [];
+      for(const x of rank){
+        if(x.s < piso && escolhidos.length) break;
+        const tx = x.d.texto.slice(0, 4000);
+        if(usado + tx.length > maxChars && escolhidos.length) break;
+        escolhidos.push(tx); usado += tx.length;
+      }
+      out += `\n\n--- TRECHOS RELEVANTES DO MATERIAL DE ESTUDO (selecionados por relevância entre ${trechos.length} trechos de ${demais.length} arquivo(s)) ---\n` + escolhidos.join('\n\n');
+    }
+  }
+  return out;
+}
+
+// consulta ao material de estudo na triagem: texto das páginas mais prováveis de trazer a decisão e o recurso
+function consultaManualTriagem(pdfText){
+  const paginas = dividirEmPaginas(pdfText);
+  if(!paginas || !paginas.length) return String(pdfText||'').slice(-6000);
+  const pont = (t, pares)=> pares.reduce((s, [re, p])=> s + (re.test(t) ? p : 0), 0);
+  const top = (cat, n)=> paginas.map((p, i)=> ({ i, s: pont(p.texto, PADROES_TRIAGEM[cat]) })).filter(x=> x.s >= 1)
+    .sort((x, y)=> (y.s - x.s) || (y.i - x.i)).slice(0, n).map(x=> x.i);
+  const idx = [...new Set([...top('decisao', 2), ...top('recurso', 2)])].sort((x, y)=> x - y);
+  const pedacos = idx.map(i=> paginas[i].texto.slice(0, 3000));
+  return pedacos.length ? pedacos.join('\n') : paginas.slice(0, 2).map(p=> p.texto.slice(0, 3000)).join('\n');
+}
+// consulta ao material de estudo na redação: as matérias que a triagem identificou
+function consultaManualFinal(triagem){
+  const consultas = (triagem.consultas_busca || []).map(x=> x && x.consulta).filter(Boolean).join(' ');
+  return [consultas, triagem.tema_principal, triagem.preliminar_resumo, triagem.tema_sobrestado, triagem.elemento_correspondencia].filter(Boolean).join(' ');
+}
+
+// Trava da dialeticidade: só se conclui pela falta quando a decisão recorrida e o recurso foram localizados no texto lido;
+// embargos de declaração não se submetem a esta regra; incompetência e art. 1.015 têm precedência.
+function aplicarTravaDialeticidade(t, meta, leitura){
+  const limpar = ()=>{ t.cabe_monocratica = false; t.subtipo_monocratica = null; t.motivo_monocratica = ''; };
+  if(meta.semRelatorio){
+    t.dialeticidade_ok = true;
+    if(t.subtipo_monocratica === 'ausencia_dialeticidade') limpar();
+    return t;
+  }
+  const temPecas = !!(leitura && leitura.decisao && leitura.decisao.length && leitura.recurso && leitura.recurso.length);
+  if(t.dialeticidade_ok === false && !temPecas){
+    t.dialeticidade_ok = true;
+    t.analise_dialeticidade = '(não aferida: a decisão recorrida ou o recurso não foram localizados no texto lido) ' + (t.analise_dialeticidade || '');
+    if(t.subtipo_monocratica === 'ausencia_dialeticidade') limpar();
+    return t;
+  }
+  if(t.dialeticidade_ok === false){
+    const precede = t.cabe_monocratica && (t.subtipo_monocratica === 'incompetencia' || t.subtipo_monocratica === 'inadmissibilidade_art1015');
+    if(!precede){
+      t.cabe_monocratica = true;
+      t.subtipo_monocratica = 'ausencia_dialeticidade';
+      t.motivo_monocratica = t.analise_dialeticidade || 'o recurso não ataca nenhuma das razões da decisão recorrida';
+      t.materia_sobrestada = false;     // recurso que não será conhecido não se sobresta
+    }
+  } else if(t.subtipo_monocratica === 'ausencia_dialeticidade'){
+    limpar();                            // subtipo marcado sem a falha correspondente: desfaz
+  }
+  return t;
+}
+
+// Decide se a redação recebe o processo inteiro ou só as páginas-chave
+function decidirLeitura(triagem, leitura, pdfText){
+  let motivo = null, orcamento = 0;
+  if(triagem.materia_sobrestada){ motivo = 'sobrestamento'; orcamento = 40000; }
+  else if(triagem.natureza_controversia === 'juridica' && triagem.subtipo_monocratica !== 'incompetencia'
+          && leitura && leitura.decisao && leitura.decisao.length && leitura.recurso && leitura.recurso.length){
+    motivo = 'juridica'; orcamento = 70000;
+  }
+  if(!motivo) return { reduzir: false };
+  const texto = trechoParaTriagem(pdfText, orcamento);
+  if(texto.length >= pdfText.length * 0.9) return { reduzir: false };       // quase nada a poupar: lê tudo
+  return { reduzir: true, motivo, texto, enviados: texto.length, total: pdfText.length };
+}
+
+// Texto de referência de uma pasta: usa o índice local (rápido) e, se ele não estiver disponível, baixa direto
+async function montarTextoReferencias(folderKey, limite, maxChars){
+  maxChars = maxChars || 1800;
+  try{ await indexarBase(); }catch(e){ /* cai no plano B */ }
+  const docs = INDICE.docs.filter(d=> d.pasta === folderKey)
+    .sort((x, y)=> String(y.modificado||'').localeCompare(String(x.modificado||''))).slice(0, limite);
+  if(docs.length){
+    return docs.map(d=> `\n\n--- REFERÊNCIA: ${d.nome} (última modificação: ${String(d.modificado||'').slice(0,10)}) ---\n${d.texto.slice(0, maxChars)}`).join('');
+  }
   const arquivos = (S.arquivos[folderKey]||[]).slice(0, limite);
   let texto = '';
   for(const a of arquivos){
     try{
       const t = await lerArquivoReferencia(a);
-      texto += `\n\n--- REFERÊNCIA: ${a.name} (última modificação: ${(a.modifiedTime||'').slice(0,10)}) ---\n${t.slice(0,1800)}`;
+      texto += `\n\n--- REFERÊNCIA: ${a.name} (última modificação: ${(a.modifiedTime||'').slice(0,10)}) ---\n${t.slice(0, maxChars)}`;
     }catch(e){ /* ignora arquivo individual com erro */ }
   }
   return texto;
@@ -960,7 +1355,7 @@ async function extrairNomesPessoais(texto){
 
 TEXTO:
 ${trechoParaTriagem(texto, 80000)}`;
-  const r = await chamarAnthropic(prompt, 800);
+  const r = await chamarAnthropic(prompt, 800, 'Identificação de nomes');
   return Array.isArray(r.nomes) ? r.nomes.filter(n=>typeof n==='string' && n.trim().length>3) : [];
 }
 
@@ -1002,7 +1397,26 @@ function reverterPseudonimizacao(valor, mapa){
   return valor;
 }
 
-async function chamarAnthropicBruto(prompt, maxTokens){
+// Modelo e preços (US$ por milhão de tokens). Para trocar de modelo, mude MODELO_IA e acrescente os preços dele em PRECOS_IA.
+const MODELO_IA = 'claude-sonnet-4-6';
+const PRECOS_IA = { 'claude-sonnet-4-6': { entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 } };
+const CAMBIO_REAIS = 5.5;   // premissa para converter o custo em reais
+
+function registrarUso(rotulo, uso, ms){
+  if(!S.metricas) S.metricas = { inicio: Date.now(), acumulado: 0, chamadas: [] };
+  const u = uso || {};
+  S.metricas.chamadas.push({ rotulo, ms,
+    entrada: u.input_tokens || 0, saida: u.output_tokens || 0,
+    cacheLeitura: u.cache_read_input_tokens || 0, cacheEscrita: u.cache_creation_input_tokens || 0 });
+}
+
+// prompt = texto simples, ou { estatico, dinamico }: a parte estática (regras, listas, modelos) vai primeiro e é marcada
+// para cache — repetida em outra minuta feita em poucos minutos, a Anthropic a cobra a 10% do preço normal.
+async function chamarAnthropicBruto(prompt, maxTokens, rotulo){
+  const conteudo = (prompt && typeof prompt === 'object')
+    ? [ { type: 'text', text: prompt.estatico, cache_control: { type: 'ephemeral' } }, { type: 'text', text: prompt.dinamico } ]
+    : prompt;
+  const t0 = Date.now();
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{
@@ -1012,18 +1426,19 @@ async function chamarAnthropicBruto(prompt, maxTokens){
       'anthropic-dangerous-direct-browser-access':'true'
     },
     body: JSON.stringify({
-      model:'claude-sonnet-4-6',
-      max_tokens:maxTokens,
-      messages:[{role:'user', content: prompt}]
+      model: MODELO_IA,
+      max_tokens: maxTokens,
+      messages:[{ role:'user', content: conteudo }]
     })
   });
   const data = await resp.json();
   if(data.error) throw new Error(data.error.message||'erro da API');
+  registrarUso(rotulo || 'Chamada à IA', data.usage, Date.now() - t0);
   return { texto: (data.content||[]).map(b=>b.text||'').join(''), stop: data.stop_reason };
 }
 
-async function chamarAnthropic(prompt, maxTokens){
-  const r = await chamarAnthropicBruto(prompt, maxTokens);
+async function chamarAnthropic(prompt, maxTokens, rotulo){
+  const r = await chamarAnthropicBruto(prompt, maxTokens, rotulo);
   try{
     return extrairJSON(r.texto);
   }catch(e){
@@ -1034,7 +1449,8 @@ async function chamarAnthropic(prompt, maxTokens){
     // Última tentativa: pedir à própria IA que corrija SÓ a sintaxe, sem mudar o conteúdo.
     const reparo = await chamarAnthropicBruto(
       `O texto abaixo deveria ser um objeto JSON válido, mas tem erro de sintaxe (${e.message}). Corrija APENAS a sintaxe, sem mudar, resumir ou omitir nenhum conteúdo: escape com \\" as aspas duplas que estiverem dentro de textos, troque quebras de linha dentro de textos por \\n, e feche colchetes/chaves pendentes. Responda SOMENTE com o JSON corrigido, sem markdown e sem comentários.\n\n${r.texto}`,
-      maxTokens
+      maxTokens,
+      'Reparo do JSON'
     );
     return extrairJSON(reparo.texto);
   }
@@ -1186,7 +1602,8 @@ function buildAvisoLeituraHTML(){
 }
 
 async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual){
-  const prompt = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
+  // Parte FIXA (regras, listas, modelos e formato de resposta): vai primeiro e é marcada para cache.
+  const estatico = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
 REGRA DE RIGOR NA LEITURA (aplica-se a toda a triagem): leia com atenção a decisão/sentença recorrida, as razões recursais e as contrarrazões (se houver) no texto do processo abaixo, identificando com precisão qual é o produto financeiro, o tipo de contrato e a causa de pedir REAL do caso — não presuma ou generalize a partir de palavras-chave soltas (ex: "consignado" sozinho não identifica o produto; é preciso confirmar se é empréstimo consignado comum ou especificamente cartão de crédito consignado/RMC/RCC). Erros de sobrestamento por matéria parecida mas distinta já ocorreram e devem ser evitados a todo custo.
 
@@ -1194,14 +1611,11 @@ REGRA CRÍTICA — IDENTIFICAÇÃO DAS PARTES: identifique o apelante/agravante/
 
 REGRA CRÍTICA — IDENTIFICAÇÃO DO TEMA E DO PRODUTO FINANCEIRO: identifique o produto financeiro e a causa de pedir efetivamente discutidos no processo a partir do que a PARTE AUTORA/RECORRENTE NARRA expressamente na petição inicial ou nas razões recursais (o que ela alega ter contratado, valor, data, banco, e o que pede). NÃO determine o tema, nem decida sobrestamento, com base numa busca isolada por palavras-chave (ex: "RMC", "cartão de crédito consignado") dentro de documentos de prova anexados (extratos, comprovantes) — esses documentos podem conter menções a produtos financeiros completamente distintos e irrelevantes ao pedido, inclusive de contratos que a própria parte autora desconhece ou impugna. Só considere RMC/cartão de crédito consignado como produto efetivamente discutido se a NARRATIVA da petição inicial (ou das razões recursais) descrever esse produto como objeto do litígio — não porque a palavra apareça em algum lugar do PDF.
 
-TIPO DE RECURSO INFORMADO PELO USUÁRIO: ${meta.numProcessoLabel}
-
 REGRAS ATUAIS DE COMPETÊNCIA DAS CÂMARAS DE DIREITO PRIVADO DO TJSP (verifique SEMPRE, antes de qualquer outra coisa, se a 21ª Câmara é competente):
 ${TJSP_COMPETENCIA_TEXTO}
 
 LISTA OFICIAL DE TEMAS ATUALMENTE SUSPENSOS POR REPETITIVO/IRDR (compare a matéria do processo com esta lista para checar sobrestamento — preste atenção especial às notas "⚠️ NÃO CONFUNDIR" de cada item; se o produto/matéria não corresponder EXATAMENTE ao tema, NÃO marque como sobrestada, mesmo que pareça semelhante). ATENÇÃO: esta lista pode estar desatualizada — se o MATERIAL DE ESTUDO DO GABINETE (mais abaixo) trouxer uma planilha de temas suspensos, ela é mais atual e prevalece sobre esta lista em caso de conflito:
 ${TEMAS_SUSPENSOS_TEXTO}
-${textoSusp ? '\nOutros despachos de sobrestamento já proferidos pelo Gabinete (referência adicional):\n'+textoSusp : ''}
 
 MODELOS DE DECISÃO MONOCRÁTICA CONHECIDOS PELO GABINETE (compare o caso com estes para checar se cabe decisão monocrática nos termos do art. 932 do CPC):
 --- Subtipo "inadmissibilidade_art1015" (só se aplica a Agravo de Instrumento) ---
@@ -1209,15 +1623,9 @@ MODELOS DE DECISÃO MONOCRÁTICA CONHECIDOS PELO GABINETE (compare o caso com es
 ${MODELO_MONOCRATICA_ART1015}
 --- Subtipo "incompetencia" (inclui incompetência por matéria E por prevenção de outro Relator/Câmara — ver regras de competência acima) ---
 ${MODELO_MONOCRATICA_INCOMPETENCIA}
+--- Subtipo "ausencia_dialeticidade" (vale para apelação, agravo de instrumento e agravo interno; NÃO vale para embargos de declaração) ---
+PRINCÍPIO DA DIALETICIDADE (arts. 932, III, e 1.010, II e III, do CPC; no agravo interno, art. 1.021, §1º): o recurso deve atacar, de forma específica, ao menos UMA das razões (fundamentos) da decisão recorrida. Procedimento obrigatório: (1) identifique, na decisão recorrida, as suas razões de decidir (até 3, cada uma em frase curta); (2) leia as razões recursais e verifique, para cada uma daquelas razões, se o recurso a enfrenta; (3) só marque dialeticidade_ok=false se o recurso NÃO enfrentar NENHUMA das razões — por exemplo, razões genéricas, mera repetição da petição inicial ou da contestação sem enfrentar a decisão, ou tese alheia ao que foi decidido. Se o recurso ataca ao menos uma razão, ainda que de forma deficiente ou apenas em parte, a dialeticidade está atendida (dialeticidade_ok=true). Se dialeticidade_ok=false: cabe_monocratica=true e subtipo_monocratica="ausencia_dialeticidade" (salvo se já couber "incompetencia" ou "inadmissibilidade_art1015", que têm precedência). Se NÃO conseguir localizar a decisão recorrida ou o recurso no texto fornecido, NÃO conclua pela falta de dialeticidade: responda dialeticidade_ok=true e registre em analise_dialeticidade qual peça não foi localizada.
 --- Também cabe decisão monocrática (subtipo "outro") em qualquer outra hipótese do art. 932 do CPC: improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, ou provimento monocrático por contrariedade a entendimento vinculante. ---
-${textoMono ? '\nOutras decisões monocráticas já proferidas pelo Gabinete (referência adicional):\n'+textoMono : ''}
-${textoManual ? '\nMATERIAL DE ESTUDO DO GABINETE (ver explicação detalhada nas regras gerais — manuais de entendimento do Des. Décio, repositórios da nova competência, planilhas de decisões vinculantes do STJ/STF e de temas suspensos):\n'+textoManual : ''}
-
-ATENÇÃO SOBRE O TEXTO ABAIXO: ele está dividido em páginas, identificadas por marcadores [[PÁG. n]] (ou [[DOC k · PÁG. n]], quando há mais de um PDF). Nesta etapa rápida, o site enviou apenas as páginas com maior probabilidade de conter a DECISÃO RECORRIDA, o RECURSO interposto e as informações de intimação/prazo/preparo, além da capa e das últimas páginas; as páginas não consecutivas foram omitidas e isso é indicado por "[... páginas omitidas nesta etapa ...]". Antes de concluir que algo "não consta" ou "não foi identificado", procure em todas as páginas fornecidas.
-
-PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um documento, eles vêm separados por marcadores "===== DOCUMENTO N DE M ====="; o Documento 1 costuma ser o recurso/petição principal, e os demais o processo de origem ou outros anexos — use os documentos adicionais para conferir se as alegações do recurso são verdadeiras, cruzando com o que de fato consta no processo de origem):
-${trechoParaTriagem(pdfText)}
-
 REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array.
 Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON), no formato exato:
 {
@@ -1234,8 +1642,13 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "via_recursal_adequada": true ou false — confronte o recurso efetivamente interposto com o tipo da decisão recorrida (apelação cabe de sentença; agravo de instrumento de decisão interlocutória nas hipóteses do art. 1.015 do CPC; embargos de declaração de qualquer decisão judicial; agravo interno de decisão monocrática) e responda false se a via for inadequada; se tempestivo=false ou via_recursal_adequada=false, avalie se cabe decisão monocrática de não conhecimento (art. 932, III, CPC; subtipo 'outro'),
   "situacao_preparo_gratuidade": "string curta e objetiva: 'preparo recolhido' OU 'beneficiário da gratuidade de justiça (já concedida)' OU 'pedido de gratuidade indeferido na origem — será analisado com o mérito do recurso' OU 'dispensado o preparo' — conforme o que constar no processo",
   "cabimento_recursal": "string curta: se o tipo de recurso for Apelação, confirme objetivamente que é cabível da sentença/decisão terminativa de mérito (art. 1.009, CPC); se for Agravo de Instrumento, analise e resuma o enquadramento nos incisos do art. 1.015 do CPC (ou no parágrafo único, se natureza_processo_origem for execução/cumprimento/liquidação/inventário) e, se não se enquadrar, se há taxatividade mitigada aplicável (urgência; ponto que não poderia ser suscitado depois em preliminar de apelação); para os demais tipos de recurso, confirme objetivamente o cabimento",
+  "consultas_busca": [ { "papel": "tema_principal" ou "preliminar" ou "tema_secundario", "consulta": "string" } ] — consultas que o site usará para BUSCAR, na base de votos do gabinete, os votos sobre cada matéria deste processo. Faça de 2 a 6 consultas, UMA POR MATÉRIA: (a) exatamente uma de papel "tema_principal", a mais específica possível; (b) uma de papel "preliminar" para CADA preliminar de mérito arguida (ex.: cerceamento de defesa, ilegitimidade, prescrição, decadência, falta de interesse); (c) uma de papel "tema_secundario" para cada tema relevante adicional (ex.: dano moral, repetição do indébito, juros e correção, honorários, gratuidade). Cada consulta deve ter de 6 a 14 palavras, com os TERMOS JURÍDICOS E FÁTICOS que um voto sobre aquela matéria conteria (produto/contrato, causa de pedir, tese, prova discutida), sem nomes de partes e sem números. Exemplos: "golpe da falsa central de atendimento banco transferência Pix estelionatário falha na prestação do serviço"; "empréstimo consignado fraude contratação não reconhecida aposentada descontos benefício INSS"; "cerceamento de defesa perícia grafotécnica anulação da sentença retorno ao primeiro grau".
   "tem_preliminar": true ou false,
   "preliminar_resumo": "string curta ou vazio se não houver — preliminares de MÉRITO (ex: falta de interesse de agir, inépcia da inicial, ilegitimidade), não confundir com admissibilidade recursal (campos acima)",
+  "dialeticidade_ok": true ou false — o recurso ataca ao menos uma das razões da decisão recorrida? (ver a regra do subtipo "ausencia_dialeticidade" acima; em embargos de declaração, responda sempre true),
+  "analise_dialeticidade": "string curta: as razões da decisão recorrida (até 3, resumidas) e, para cada uma, se o recurso a enfrenta ('enfrenta' ou 'não enfrenta'); se não for possível aferir, diga qual peça não foi localizada",
+  "natureza_controversia": "juridica" ou "fatica" ou "mista" — "juridica" SOMENTE se NÃO houver divergência sobre os fatos entre o relato da decisão recorrida e as alegações do recurso, e o recurso discutir apenas a tese de direito (interpretação de lei, aplicação de precedente, cabimento, prazo prescricional sobre datas incontroversas, juros, correção, honorários etc.) sem depender de reexame de provas; "fatica" se o recurso depender de provas ou contestar a descrição dos fatos (contratação não reconhecida, pagamento, dano, perícia, documentos); "mista" se houver os dois. EM DÚVIDA, responda "mista" (o sistema, nesse caso, lê o processo inteiro),
+  "justificativa_controversia": "string curta (1 frase) que justifica a classificação acima",
   "materia_sobrestada": true ou false,
   "tema_sobrestado": "string (qual Tema/IRDR, exatamente como na lista oficial) ou vazio",
   "elemento_correspondencia": "string curta citando TEXTUALMENTE do processo o elemento que confirma a correspondência exata com o tema sobrestado (ex: 'contrato de cartão de crédito consignado RMC nº X') — obrigatório preencher se materia_sobrestada=true; deixe vazio se materia_sobrestada=false",
@@ -1243,10 +1656,23 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "competencia_confirmada": true ou false — a 21ª Câmara de Direito Privado é competente? Verifique: (a) se a matéria é de Família/Sucessões, Direito Empresarial especializado, ou estranha ao Direito Privado (ver regras de competência acima); (b) se há sinal, no texto do processo, de decisão anterior do MESMO processo já julgada por OUTRO Relator/Câmara (gera prevenção daquele, não deste gabinete). Se qualquer uma dessas ocorrer, responda false,
   "motivo_incompetencia": "string curta explicando para onde deveria ir (Câmara de Família e Sucessões / Câmara Reservada de Direito Empresarial / Seção de Direito Público / outro Relator ou Câmara por prevenção) ou vazio se competencia_confirmada=true",
   "cabe_monocratica": true ou false,
-  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou null,
+  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
   "motivo_monocratica": "string curta com o motivo específico (se for incompetencia, reaproveite o motivo_incompetencia acima) ou vazio se não cabível"
 }`;
-  return await chamarAnthropic(prompt, 1200);
+  // Parte que MUDA a cada processo.
+  const dinamico = `TIPO DE RECURSO INFORMADO PELO USUÁRIO: ${meta.numProcessoLabel}
+
+${textoSusp ? '\nOutros despachos de sobrestamento já proferidos pelo Gabinete (referência adicional):\n'+textoSusp : ''}
+${textoMono ? '\nOutras decisões monocráticas já proferidas pelo Gabinete (referência adicional):\n'+textoMono : ''}
+${textoManual ? '\nMATERIAL DE ESTUDO DO GABINETE (listas de consulta inteiras e trechos relevantes selecionados por relevância; ver explicação detalhada nas regras gerais — manuais de entendimento do Des. Décio, repositórios da nova competência, planilhas de decisões vinculantes do STJ/STF e de temas suspensos):\n'+textoManual : ''}
+
+ATENÇÃO SOBRE O TEXTO ABAIXO: ele está dividido em páginas, identificadas por marcadores [[PÁG. n]] (ou [[DOC k · PÁG. n]], quando há mais de um PDF). Nesta etapa rápida, o site enviou apenas as páginas com maior probabilidade de conter a DECISÃO RECORRIDA, o RECURSO interposto e as informações de intimação/prazo/preparo, além da capa e das últimas páginas; as páginas não consecutivas foram omitidas e isso é indicado por "[... páginas omitidas nesta etapa ...]". Antes de concluir que algo "não consta" ou "não foi identificado", procure em todas as páginas fornecidas.
+
+PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um documento, eles vêm separados por marcadores "===== DOCUMENTO N DE M ====="; o Documento 1 costuma ser o recurso/petição principal, e os demais o processo de origem ou outros anexos — use os documentos adicionais para conferir se as alegações do recurso são verdadeiras, cruzando com o que de fato consta no processo de origem):
+${trechoParaTriagem(pdfText)}
+
+Agora responda SOMENTE com o objeto JSON no formato definido acima.`;
+  return await chamarAnthropic({ estatico, dinamico }, 2500, 'Triagem');
 }
 
 function exibirTriagem(triagem, meta){
@@ -1261,6 +1687,8 @@ function buildTriagemHTML(triagem, meta){
   itens.push(['ti-target', `Tema principal: ${esc(triagem.tema_principal||'—')}`]);
   itens.push(['ti-file-description', `Decisão recorrida: ${esc(triagem.decisao_recorrida||'não informada pela triagem')}`]);
   itens.push(['ti-send', `Recurso interposto: ${esc(triagem.recurso_interposto||'não informado pela triagem')}`]);
+  const rotCont = { juridica:'puramente jurídica', fatica:'fática', mista:'mista (fatos e direito)' }[triagem.natureza_controversia];
+  if(rotCont) itens.push(['ti-scale', `Natureza da controvérsia: <strong>${rotCont}</strong>${triagem.justificativa_controversia ? ' — ' + esc(triagem.justificativa_controversia) : ''}`]);
 
   // Admissibilidade recursal (tempestividade, preparo/gratuidade, cabimento específico do tipo de recurso)
   const rotuloNatureza = {conhecimento:'processo de conhecimento', execucao:'execução', cumprimento_de_sentenca:'cumprimento de sentença', liquidacao_de_sentenca:'liquidação de sentença', inventario:'inventário', outra:'outra natureza'}[triagem.natureza_processo_origem] || triagem.natureza_processo_origem;
@@ -1271,6 +1699,10 @@ function buildTriagemHTML(triagem, meta){
     admisTxt += ` ${esc(triagem.cabimento_recursal||'')}`;
   }
   itens.push(['ti-stamp', admisTxt]);
+  if(!meta.semRelatorio){
+    const dial = triagem.dialeticidade_ok === false ? '<strong>NÃO ATENDIDA (!)</strong>' : 'atendida';
+    itens.push(['ti-link', `Dialeticidade (o recurso ataca ao menos uma razão da decisão): ${dial}${triagem.analise_dialeticidade ? ' — ' + esc(triagem.analise_dialeticidade) : ''}`]);
+  }
 
   itens.push(['ti-alert-triangle', triagem.tem_preliminar ? `Preliminar de mérito arguida (será analisada no voto): ${esc(triagem.preliminar_resumo)}` : 'Nenhuma preliminar de mérito arguida']);
 
@@ -1283,7 +1715,7 @@ function buildTriagemHTML(triagem, meta){
     ? `Matéria <strong>SOBRESTADA</strong> — ${esc(triagem.tema_sobrestado)}${triagem.elemento_correspondencia ? ' (baseado em: "'+esc(triagem.elemento_correspondencia)+'")' : ''}. Será gerado apenas o despacho de sobrestamento.`
     : 'Matéria não sobrestada — segue para julgamento']);
   if(!triagem.materia_sobrestada){
-    const rotuloSubtipo = {inadmissibilidade_art1015:'inadmissibilidade — art. 1.015 do CPC', incompetencia:'incompetência absoluta em razão da matéria', outro:'art. 932 do CPC'}[triagem.subtipo_monocratica] || '';
+    const rotuloSubtipo = {inadmissibilidade_art1015:'inadmissibilidade — art. 1.015 do CPC', ausencia_dialeticidade:'ausência de dialeticidade — art. 932, III, e art. 1.010, II e III, do CPC', incompetencia:'incompetência absoluta em razão da matéria', outro:'art. 932 do CPC'}[triagem.subtipo_monocratica] || '';
     itens.push(['ti-gavel', triagem.cabe_monocratica
       ? `Cabe <strong>DECISÃO MONOCRÁTICA</strong> (${esc(rotuloSubtipo)}) — ${esc(triagem.motivo_monocratica)}`
       : 'Recurso segue para julgamento <strong>COLEGIADO</strong> (voto)']);
@@ -1315,6 +1747,7 @@ ${MODELO_DESPACHO_SOBRESTAMENTO}`;
   } else if(triagem.cabe_monocratica){
     const modeloRef = triagem.subtipo_monocratica==='inadmissibilidade_art1015' ? MODELO_MONOCRATICA_ART1015
       : triagem.subtipo_monocratica==='incompetencia' ? MODELO_MONOCRATICA_INCOMPETENCIA
+      : triagem.subtipo_monocratica==='ausencia_dialeticidade' ? ('(Use deste modelo apenas a ESTRUTURA e o formato do dispositivo de não conhecimento; a fundamentação aqui é a da ausência de dialeticidade, e não a do art. 1.015.)\n' + MODELO_MONOCRATICA_ART1015)
       : (MODELO_MONOCRATICA_ART1015 + '\n\n' + MODELO_MONOCRATICA_INCOMPETENCIA);
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DECISÃO MONOCRÁTICA (art. 932 do CPC), subtipo "${triagem.subtipo_monocratica}".
 A triagem identificou cabimento de decisão monocrática pelo motivo: "${triagem.motivo_monocratica}". Redija relatório e fundamentação normalmente, e o dispositivo no formato monocrático do subtipo indicado (ver regras acima e o modelo de referência abaixo — lembre-se de marcar a expressão-verbo decisória entre **dois asteriscos**).
@@ -1327,9 +1760,7 @@ ${meta.temDespacho ? `Preencha também "despacho_bullets" com o despacho de efei
 ${ADC80_TEXTO}` : 'Retorne despacho_bullets: null.'}`;
   }
 
-  return `${REGRAS_GERAIS}
-
-DADOS JÁ IDENTIFICADOS NA TRIAGEM (reaproveite tal como estão, não precisa redescobrir nem redecidir):
+  return { estatico: REGRAS_GERAIS, dinamico: `DADOS JÁ IDENTIFICADOS NA TRIAGEM (reaproveite tal como estão, não precisa redescobrir nem redecidir):
 Número do processo: ${triagem.numero_processo}
 Comarca: ${triagem.comarca}
 ${meta.recorrenteLabel}: ${triagem.recorrente_nome}
@@ -1340,6 +1771,8 @@ Decisão recorrida: ${triagem.decisao_recorrida||'—'}
 Recurso interposto: ${triagem.recurso_interposto||'—'}
 Tempestividade: ${triagem.tempestivo===false ? 'INTEMPESTIVO — atenção especial' : 'tempestivo'}${triagem.analise_tempestividade ? ' — ' + triagem.analise_tempestividade : ''}
 Via recursal adequada: ${triagem.via_recursal_adequada===false ? 'NÃO — atenção especial' : 'sim'}
+Dialeticidade: ${triagem.dialeticidade_ok===false ? 'NÃO ATENDIDA' : 'atendida'}${triagem.analise_dialeticidade ? ' — ' + triagem.analise_dialeticidade : ''}
+Natureza da controvérsia: ${triagem.natureza_controversia||'—'}${triagem.justificativa_controversia ? ' — ' + triagem.justificativa_controversia : ''}
 Situação de preparo/gratuidade: ${triagem.situacao_preparo_gratuidade||'—'}
 Cabimento recursal: ${triagem.cabimento_recursal||'—'}
 Competência da 21ª Câmara confirmada: ${triagem.competencia_confirmada}${triagem.competencia_confirmada===false ? ' — '+triagem.motivo_incompetencia : ''}
@@ -1351,9 +1784,9 @@ TIPO DE RECURSO: ${meta.numProcessoLabel} (rótulo do recorrente: "${meta.recorr
 ${tipoBloco}
 
 PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um documento, eles vêm separados por marcadores "===== DOCUMENTO N DE M ====="; o Documento 1 costuma ser o recurso/petição principal, e os demais o processo de origem ou outros anexos — use os documentos adicionais para conferir se as alegações do recurso são verdadeiras, cruzando com o que de fato consta no processo de origem):
-${pdfText}
+${S.avisoLeitura || ''}${pdfText}
 
-DOCUMENTOS DE REFERÊNCIA DO GABINETE — ${meta.label} (mais recentes primeiro):
+VOTOS/DOCUMENTOS DE REFERÊNCIA DO GABINETE — ${meta.label} (buscados por matéria; ver as regras de uso acima):
 ${textoRefs}
 
 MODELOS DE DECISÃO MONOCRÁTICA (referência):
@@ -1362,15 +1795,15 @@ ${textoMono}
 DESPACHOS DE SUSPENSÃO POR REPETITIVO/IRDR (referência):
 ${textoSusp}
 
-MATERIAL DE ESTUDO DO GABINETE (ver explicação detalhada nas regras gerais):
+MATERIAL DE ESTUDO DO GABINETE (listas de consulta inteiras e trechos selecionados por relevância; ver explicação detalhada nas regras gerais):
 ${textoManual || '(nenhum material carregado)'}
 
-Gere o JSON completo agora, seguindo rigorosamente o formato especificado.`;
+Gere o JSON completo agora, seguindo rigorosamente o formato especificado.` };
 }
 
 async function gerarDocumentoFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono, textoManual){
   const prompt = montarPromptFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono, textoManual);
-  return await chamarAnthropic(prompt, 8192);
+  return await chamarAnthropic(prompt, 8192, 'Redação');
 }
 
 function extrairJSON(texto){
@@ -1513,6 +1946,61 @@ function previewDespacho(d, meta){
   return t;
 }
 
+function formatarTempo(ms){
+  const s = Math.round(ms / 1000);
+  return s < 60 ? `${s} s` : `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')} s`;
+}
+function calcularMetricas(){
+  const m = S.metricas;
+  if(!m || !m.chamadas.length) return null;
+  const p = PRECOS_IA[MODELO_IA] || PRECOS_IA['claude-sonnet-4-6'];
+  const t = { usd: 0, ent: 0, sai: 0, cl: 0, ce: 0, ia: 0 };
+  m.chamadas.forEach(x=>{
+    x.usd = (x.entrada * p.entrada + x.saida * p.saida + x.cacheLeitura * p.cacheLeitura + x.cacheEscrita * p.cacheEscrita) / 1e6;
+    t.usd += x.usd; t.ent += x.entrada; t.sai += x.saida; t.cl += x.cacheLeitura; t.ce += x.cacheEscrita; t.ia += x.ms;
+  });
+  t.total = (m.acumulado || 0) + ((m.fim || Date.now()) - m.inicio);
+  return t;
+}
+function buildMetricasHTML(){
+  const t = calcularMetricas(); if(!t) return '';
+  const brl = (u)=> 'R$ ' + (u * CAMBIO_REAIS).toFixed(2).replace('.', ',');
+  const usd = (u)=> 'US$ ' + u.toFixed(2).replace('.', ',');
+  let html = `<div class="rc"><div class="rt" style="margin-bottom:10px"><i class="ti ti-report-money"></i> Custo e tempo desta minuta <small style="color:var(--tx2);font-weight:400">(estimativa)</small></div>`;
+  html += `<div class="ri"><i class="ti ti-coin" style="color:var(--blue)"></i><span><strong>${usd(t.usd)} (${brl(t.usd)})</strong> · tempo total ${formatarTempo(t.total)} (IA: ${formatarTempo(t.ia)}) · ${S.metricas.chamadas.length} chamada(s) à IA</span></div>`;
+  html += `<div class="ri"><i class="ti ti-database" style="color:var(--blue)"></i><span>Tokens — entrada: ${t.ent.toLocaleString('pt-BR')} · saída: ${t.sai.toLocaleString('pt-BR')} · lidos do cache: ${t.cl.toLocaleString('pt-BR')} · gravados no cache: ${t.ce.toLocaleString('pt-BR')}</span></div>`;
+  S.metricas.chamadas.forEach(x=>{
+    html += `<div class="ri"><i class="ti ti-point" style="color:var(--tx2)"></i><span style="font-size:12px;color:var(--tx2)">${esc(x.rotulo)}: ${formatarTempo(x.ms)} · entrada ${x.entrada.toLocaleString('pt-BR')} (cache lido ${x.cacheLeitura.toLocaleString('pt-BR')}) · saída ${x.saida.toLocaleString('pt-BR')} · ${usd(x.usd)}</span></div>`;
+  });
+  html += `<p style="font-size:11px;color:var(--tx2);margin-top:8px">Preços do ${esc(MODELO_IA)} e câmbio de R$ ${String(CAMBIO_REAIS).replace('.', ',')}; o tempo inclui a leitura do PDF e do índice. Para comparar, rode o mesmo processo antes e depois de uma mudança.</p></div>`;
+  return html;
+}
+function buildLeituraReduzidaHTML(){
+  const r = S.leituraReduzida; if(!r) return '';
+  const motivo = r.motivo === 'sobrestamento' ? 'sobrestamento por tema repetitivo' : 'controvérsia puramente jurídica';
+  return `<div class="banner blue" style="flex-wrap:wrap;gap:8px"><i class="ti ti-zoom-scan"></i><span style="flex:1">Leitura reduzida (${motivo}): a redação recebeu ${r.enviados.toLocaleString('pt-BR')} de ${r.total.toLocaleString('pt-BR')} caracteres — as páginas-chave do processo.</span>`
+       + `<button type="button" class="bsm" onclick="S.reprocessarCompleto && S.reprocessarCompleto()"><i class="ti ti-refresh"></i> Refazer lendo o processo inteiro</button></div>`;
+}
+
+// Painel dos votos da base que a busca forneceu à IA (por matéria) e dos que ela declarou ter seguido
+function buildVotosUsadosHTML(d){
+  const norm = (s)=> normalizarTexto(String(s||'')).replace(/\.docx?$/i, '').replace(/\s+/g, ' ').trim();
+  const seguidos = (Array.isArray(d.votos_seguidos) ? d.votos_seguidos : []).map(norm).filter(Boolean);
+  const foiSeguido = (nome)=> seguidos.some(s=> s === norm(nome) || norm(nome).includes(s) || s.includes(norm(nome)));
+  let html = `<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-books"></i> Votos da base usados como referência <small style="color:var(--tx2);font-weight:400">(buscados por matéria, em texto integral)</small></div>`;
+  S.votosUsados.forEach(v=>{
+    const seg = foiSeguido(v.nome);
+    html += `<div class="ri"><i class="ti ${seg ? 'ti-circle-check' : 'ti-file-description'}" style="color:${seg ? 'var(--green,#1B7F4B)' : 'var(--tx2)'}"></i>`
+          + `<span style="flex:1">${esc(v.nome)}<br><span style="font-size:11px;color:var(--tx2)">${[v].concat(v.tambem||[]).map(m=> esc(ROTULO_PAPEL[m.papel]||m.papel) + ' — ' + esc(m.consulta)).join('<br>')}</span></span>`
+          + `<span style="font-size:11px;color:var(--tx2)">${esc(ROTULO_PASTA[v.pasta]||v.pasta)}${seg ? ' · seguido' : ''}</span></div>`;
+  });
+  if(d.criterio_divergencia && String(d.criterio_divergencia).trim()){
+    html += `<div class="banner orange" style="margin-top:10px"><i class="ti ti-arrows-diff"></i><span><strong>Votos que divergem — critério aplicado:</strong> ${esc(d.criterio_divergencia)}</span></div>`;
+  }
+  html += `<p style="font-size:12px;color:var(--tx2);margin-top:8px">✔ = voto que a IA declarou ter seguido. Confira se a linha escolhida corresponde aos fatos do processo.</p></div>`;
+  return html;
+}
+
 // Localiza, na lista embutida (planilha de 08/09/2026), a(s) entrada(s) correspondente(s) ao tema que a triagem apontou
 function entradasListaSuspensos(temaTexto){
   if(!temaTexto) return [];
@@ -1562,6 +2050,7 @@ function renderResultado(meta, comIA, triagem){
   let html = '';
 
   if(triagem) html += buildTriagemHTML(triagem, meta);
+  if(comIA) html += buildLeituraReduzidaHTML();
 
   if(comIA && d.referencia_insuficiente && d.aviso_referencia){
     html += `<div class="banner orange"><i class="ti ti-alert-triangle"></i><span><strong>Atenção:</strong> ${esc(d.aviso_referencia)}</span></div>`;
@@ -1610,7 +2099,11 @@ function renderResultado(meta, comIA, triagem){
     // mostra-se a fonte real da identificação do sobrestamento
     html += buildFonteSobrestamentoHTML(d);
   }
-  const refs = d.materia_sobrestada ? [] : (S.arquivos[meta.folderKey]||[]).slice(0,5);
+  if(comIA && !d.materia_sobrestada && S.votosUsados && S.votosUsados.length){
+    html += buildVotosUsadosHTML(d);
+  }
+  if(comIA) html += buildMetricasHTML();
+  const refs = (d.materia_sobrestada || (S.votosUsados && S.votosUsados.length)) ? [] : (S.arquivos[meta.folderKey]||[]).slice(0,5);
   if(refs.length){
     html += `<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-history"></i> Documentos de referência usados <small style="color:var(--tx2);font-weight:400">(mais recentes primeiro)</small></div>`;
     refs.forEach(r=>{
