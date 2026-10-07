@@ -225,12 +225,26 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
         <button type="button" class="btn" onclick="alternarVisibilidade('i-akey')" title="Mostrar/ocultar">👁</button>
       </div>
 
-      <label>Modelo de IA</label>
+      <label>Modelo da redação (voto, decisão, despacho)</label>
       <select id="i-modelo" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
         <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — padrão, já testado (US$ 3 e US$ 15 por milhão de tokens)</option>
         <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais novo, em teste (US$ 2 e US$ 10, mas usa cerca de 30% mais tokens)</option>
       </select>
       <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Se o modelo escolhido recusar a requisição, o sistema usa o 4.6 automaticamente. Compare o custo de cada minuta, que aparece na tela, antes de trocar de vez.</div>
+
+      <label>Modelo da triagem</label>
+      <select id="i-modelo-triagem" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
+        <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — mais barato (US$ 1 e US$ 5 por milhão de tokens)</option>
+        <option value="mesmo">O mesmo modelo da redação</option>
+      </select>
+      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Com o Haiku, se a triagem apontar sobrestamento, decisão monocrática, intempestividade, via inadequada, falta de dialeticidade ou incompetência, ela é refeita e confirmada pelo modelo da redação.</div>
+
+      <label>Votos de referência por minuta</label>
+      <select id="i-maxvotos" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
+        <option value="3">3 votos (mais barato)</option><option value="4">4 votos</option><option value="5">5 votos (padrão)</option>
+        <option value="6">6 votos</option><option value="7">7 votos (mais caro)</option>
+      </select>
+      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">A busca escolhe os votos mais relevantes de cada matéria; com menos votos, sobra menos exemplo, mas o custo cai.</div>
 
       <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">IDs das pastas de referência (Google Drive)</p>
       <div class="fold-grid">
@@ -327,7 +341,7 @@ LEITURA ADICIONAL: quando o texto do processo vier com o aviso "LEITURA A PARTIR
 VOTOS QUE DIVERGEM ENTRE SI: é comum o Desembargador decidir a mesma matéria de modos diferentes conforme as circunstâncias — por exemplo, acolher o cerceamento de defesa para anular a sentença e devolver os autos ao primeiro grau para realização de perícia grafotécnica (sem julgar o mérito), ou entender a perícia desnecessária e julgar o mérito. Quando os votos fornecidos divergirem, NÃO escolha ao acaso nem misture as linhas: identifique em cada voto o CRITÉRIO que levou àquele resultado (a prova já existente nos autos, a existência ou não de impugnação específica, o tipo de assinatura ou de contratação, a documentação apresentada pelo banco etc.), compare esse critério com os FATOS DESTE PROCESSO e siga a linha cujo critério corresponde a eles. Registre em "criterio_divergencia" quais votos divergem e qual critério você aplicou. Se os fatos do processo não permitirem distinguir com segurança, escreva isso em "criterio_divergencia" e siga a linha mais cautelosa, deixando a questão sinalizada para a conferência do assistente.
 Se NENHUM voto fornecido tratar da matéria, aplique a regra "QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA" abaixo.
 NÍVEL DE CONCRETUDE EXIGIDO: o texto reaproveitado dos votos deve ser aplicado a ESTE caso — em CADA parágrafo, onde o voto de referência traz dados do caso dele, coloque os dados deste processo: o número e a data do contrato, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas dos autos (extratos, laudos, termos, protocolos de atendimento) e as alegações específicas de cada parte (o que o autor concretamente narrou e qual documento ou argumento o réu apresentou). Uma fundamentação em que nenhum dado deste processo aparece está errada: a tese e a redação vêm dos votos do Desembargador, os fatos vêm do processo.
-EMENTA: mantenha-a bem resumida (um parágrafo curto com a matéria, as teses centrais e o resultado), mesmo que os votos de referência tragam ementas longas ou em itens.
+EMENTA: adote a ementa do voto de referência do tema principal (a mesma redação, alterando só o específico do caso); se ela for longa ou em itens, condense-a em um parágrafo curto, com a matéria, as teses centrais e o resultado. Cada voto de referência vem com a ementa e, depois, o texto a partir de "É o relatório.": o relatório do voto de referência foi omitido de propósito, e você redige o relatório pelo processo, conforme as regras.
 
 DICA DE PADRÃO: casos de ações revisionais, declaratórias de inexistência de débito e indenizatórias contra bancos e instituições financeiras, ajuizadas em massa pelos mesmos advogados com teses e documentos semelhantes, tendem a se repetir — priorize como referência votos que tratem de casos dessa natureza quando o caso em análise for semelhante. Mesmo nesses casos "quase repetidos", a concretude exigida acima não é dispensada: os valores, datas e documentos deste processo específico continuam obrigatórios.
 
@@ -570,6 +584,8 @@ function load(){
   S.gkey = localStorage.getItem('gk')||'';
   S.akey = localStorage.getItem('ak')||'';
   S.modelo = localStorage.getItem('modelo') || MODELO_PADRAO;
+  S.modeloTriagem = localStorage.getItem('modeloTriagem') || MODELO_TRIAGEM_PADRAO;
+  S.maxVotos = parseInt(localStorage.getItem('maxVotos') || '', 10) || MAX_VOTOS_PADRAO;
   S.folders = JSON.parse(localStorage.getItem('folds')||'{}');
   S.pseudonimizar = localStorage.getItem('pseudo')==='1';
   if(!S.folders.ap) S.folders.ap = APELACOES_FOLDER_PADRAO;
@@ -641,6 +657,8 @@ async function tentarDesbloquear(){
   document.getElementById('i-gkey').value = S.gkey;
   document.getElementById('i-akey').value = S.akey;
   document.getElementById('i-modelo').value = modeloAtivo();
+  document.getElementById('i-modelo-triagem').value = (S.modeloTriagem === 'mesmo') ? 'mesmo' : modeloTriagemAtivo();
+  document.getElementById('i-maxvotos').value = String(maxVotosAtivo());
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
     document.getElementById('f-'+k).value = S.folders[k]||'';
   });
@@ -666,6 +684,8 @@ async function salvarConfig(){
   S.gkey = document.getElementById('i-gkey').value.trim();
   S.akey = document.getElementById('i-akey').value.trim();
   S.modelo = document.getElementById('i-modelo').value;
+  S.modeloTriagem = document.getElementById('i-modelo-triagem').value;
+  S.maxVotos = parseInt(document.getElementById('i-maxvotos').value, 10) || MAX_VOTOS_PADRAO;
   S.pseudonimizar = document.getElementById('i-pseudo').checked;
   S.folders = {};
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
@@ -675,6 +695,8 @@ async function salvarConfig(){
   localStorage.setItem('gk', S.gkey);
   localStorage.setItem('ak', S.akey);
   localStorage.setItem('modelo', S.modelo);
+  localStorage.setItem('modeloTriagem', S.modeloTriagem);
+  localStorage.setItem('maxVotos', String(S.maxVotos));
   atualizarRotuloVersao();
   localStorage.setItem('folds', JSON.stringify(S.folders));
   localStorage.setItem('pseudo', S.pseudonimizar ? '1' : '0');
@@ -778,8 +800,29 @@ async function handleFile(files){
 
     setProgress(38, 'Fazendo a triagem do processo...');
     const manualTriagem = montarManualParaChamada(consultaManualTriagem(pdfTextSeguro), { maxChars: 16000 });
-    const triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem);
+    S.triagemInfo = null;
+    let triagemPseudo;
+    try{
+      triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem);
+    }catch(e){
+      // o modelo menor não devolveu uma resposta utilizável: refaz com o modelo da redação
+      if(modeloTriagemAtivo() === modeloAtivo()) throw e;
+      console.warn('Triagem com o modelo menor falhou; refazendo com o modelo da redação.', e);
+      const menor = MODELOS_IA[modeloTriagemAtivo()].nome;
+      triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (refeita)');
+      S.triagemInfo = { refeita: true, menor, maior: MODELOS_IA[modeloAtivo()].nome };
+    }
     aplicarTravaDialeticidade(triagemPseudo, meta, S.leitura);
+    // com o modelo menor, qualquer desvio da rota normal (que muda o tipo de documento) é confirmado pelo modelo da redação
+    const usadoNaTriagem = modeloTriagemAtivo();
+    const motivosConf = motivosDeConfirmacao(triagemPseudo);
+    if(!S.triagemInfo && motivosConf.length && usadoNaTriagem !== modeloAtivo()){
+      setProgress(46, 'A triagem apontou um desvio; confirmando com o modelo maior...');
+      const conf = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (confirmação)');
+      aplicarTravaDialeticidade(conf, meta, S.leitura);
+      S.triagemInfo = { confirmada: true, motivos: motivosConf, menor: MODELOS_IA[usadoNaTriagem].nome, maior: MODELOS_IA[modeloAtivo()].nome };
+      triagemPseudo = conf;
+    }
     const triagemExibicao = mapaNomes ? reverterPseudonimizacao(triagemPseudo, mapaNomes) : triagemPseudo;
     S.triagem = triagemExibicao;
     exibirTriagem(triagemExibicao, meta);
@@ -810,7 +853,7 @@ async function handleFile(files){
     const gerarFinal = async (textoProcesso, reduzido)=>{
       S.leituraCompletaAutomatica = false;
       S.leituraReduzida = reduzido ? { motivo: leit.motivo, enviados: textoProcesso.length, total: pdfTextSeguro.length,
-        inicio: leit.rec ? leit.rec.inicioRotulo : '', anteriores: leit.rec ? leit.rec.anteriores : [], pedido: null } : null;
+        inicio: leit.rec ? leit.rec.inicioRotulo : '', anteriores: leit.rec ? leit.rec.anteriores : [], omitidas: leit.rec ? leit.rec.omitidas : 0, pedido: null } : null;
       S.avisoLeitura = reduzido ? montarAvisoLeitura(leit, null) : '';
       setProgress(65, etapaFinal);
       let finalJson = await gerarDocumentoFinal(meta, triagemPseudo, textoProcesso, textoRefs, textoSusp, textoMono, manualFinal);
@@ -889,7 +932,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '06/10/2026 · leitura-da-decisao';
+const VERSAO_APP = '07/10/2026 · triagem-haiku';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -1160,8 +1203,8 @@ const ROTULO_PASTA = { ap:'Apelações', ag:'Agravos de Instrumento', em:'Embarg
 const ROTULO_PAPEL = { tema_principal:'tema principal', preliminar:'preliminar', tema_secundario:'tema secundário' };
 
 // Recupera, para cada matéria apontada pela triagem, os votos mais relevantes da base (Apelações; no agravo, Agravos + Apelações)
-function selecionarVotos(docsPasta, consultas){
-  const LIMITE_TOTAL = 7;
+function selecionarVotos(docsPasta, consultas, limite){
+  const LIMITE_TOTAL = limite || 7;
   const porPapel = { tema_principal: 4, preliminar: 3, tema_secundario: 1 };
   const ordem = ['tema_principal', 'preliminar', 'tema_secundario'];
   const rankings = consultas.map(c=> ({ c, r: rankearBM25(docsPasta, c.consulta) }));
@@ -1202,9 +1245,34 @@ function recortarVoto(t, max){
   if(t.length <= max) return t;
   return t.slice(0, 11000) + '\n[... trecho intermediário omitido por tamanho ...]\n' + t.slice(-5000);   // mantém o final: dispositivo
 }
+// Do voto de referência, vai à IA a EMENTA e o texto a partir de "É o relatório." (fundamentação e dispositivo).
+// O relatório do voto de referência é omitido: a IA redige o relatório pelo processo.
+function reduzirVotoReferencia(t){
+  const texto = String(t || '');
+  const re = /(?:^|[\s.;:])é\s+o\s+relat[óo]rio\b\.?/gi;   // (\b não funciona com letra acentuada)
+  let m, achado = null;
+  while((m = re.exec(texto)) !== null){ if(m.index >= 150){ achado = m; break; } }
+  if(!achado) return { texto, reduzido: false };
+  const antes = texto.slice(0, achado.index);
+  const depois = texto.slice(achado.index).trim();
+  const linhas = antes.split(/\n+/).map(l=> l.trim()).filter(Boolean);
+  const cabecalho = /^(voto\s*n[ºo°.]|apela[çc][ãa]o\s+c[íi]vel\s*n[ºo°.]|agravo\s+(de\s+instrumento|interno)\s*n[ºo°.]|embargos\s+de\s+declara[çc][ãa]o\s*n[ºo°.]|comarca\b|apelante\s*:|apelado\s*:|agravante\s*:|agravado\s*:|embargante\s*:|embargado\s*:|recorrente\s*:|recorrido\s*:|relator\b|processo\s*n)/i;
+  const inicioRelatorio = /^(trata-se|cuida-se|vistos|apela[çc][ãa]o interposta|agravo interposto|recurso (de apela[çc][ãa]o )?interposto|insurge|inconformad|em s[íi]ntese|os autos|versam|a r\. senten[çc]a|a\s+senten[çc]a|ação\b[^.]{0,60}(ajuizad|proposta|movida))/i;
+  let k = 0;
+  while(k < linhas.length && cabecalho.test(linhas[k])) k++;
+  const ementa = [];
+  let tam = 0;
+  for(; k < linhas.length && ementa.length < 2; k++){
+    if(inicioRelatorio.test(linhas[k]) || tam + linhas[k].length > 1200) break;
+    ementa.push(linhas[k]); tam += linhas[k].length;
+  }
+  const saida = (ementa.length ? '[EMENTA DO VOTO DE REFERÊNCIA]\n' + ementa.join('\n') + '\n\n' : '')
+    + '[TEXTO A PARTIR DE "É O RELATÓRIO." — o relatório do voto de referência foi omitido de propósito]\n' + depois;
+  return { texto: saida, reduzido: true };
+}
 function montarTextoVotosRecuperados(escolhidos){
   return escolhidos.map((e, i)=>
-    `\n\n=== VOTO DE REFERÊNCIA ${i+1} — arquivo: ${e.d.nome} (pasta: ${ROTULO_PASTA[e.d.pasta]||e.d.pasta}; encontrado pela busca como: ${[e].concat((e.tambem||[]).map(t=> ({papel:t.papel, consulta:t.consulta}))).map(m=> (ROTULO_PAPEL[m.papel]||m.papel) + ' — consulta: ' + m.consulta).join(' | ')}) ===\n${recortarVoto(e.d.texto)}`
+    `\n\n=== VOTO DE REFERÊNCIA ${i+1} — arquivo: ${e.d.nome} (pasta: ${ROTULO_PASTA[e.d.pasta]||e.d.pasta}; encontrado pela busca como: ${[e].concat((e.tambem||[]).map(t=> ({papel:t.papel, consulta:t.consulta}))).map(m=> (ROTULO_PAPEL[m.papel]||m.papel) + ' — consulta: ' + m.consulta).join(' | ')}) ===\n${recortarVoto(reduzirVotoReferencia(e.d.texto).texto)}`
   ).join('');
 }
 
@@ -1224,7 +1292,7 @@ async function recuperarVotos(meta, triagem){
     consultas = [{ papel: 'tema_principal', consulta: [triagem.tema_principal, triagem.preliminar_resumo].filter(Boolean).join(' ') }];
   }
   consultas = consultas.slice(0, 6).map(c=> ({ papel: ROTULO_PAPEL[c.papel] ? c.papel : 'tema_secundario', consulta: c.consulta.trim() }));
-  const escolhidos = selecionarVotos(docs, consultas);
+  const escolhidos = selecionarVotos(docs, consultas, maxVotosAtivo());
   return escolhidos.length ? escolhidos : null;
 }
 
@@ -1315,6 +1383,18 @@ function consultaManualFinal(triagem){
   return [consultas, triagem.tema_principal, triagem.preliminar_resumo, triagem.tema_sobrestado, triagem.elemento_correspondencia].filter(Boolean).join(' ');
 }
 
+// Desvios que, quando apontados pelo modelo menor da triagem, exigem confirmação pelo modelo da redação
+function motivosDeConfirmacao(t){
+  const m = [];
+  if(t.materia_sobrestada) m.push('sobrestamento por tema repetitivo');
+  if(t.cabe_monocratica) m.push('cabimento de decisão monocrática' + (t.subtipo_monocratica ? ' (' + t.subtipo_monocratica + ')' : ''));
+  if(t.tempestivo === false) m.push('intempestividade');
+  if(t.via_recursal_adequada === false) m.push('via recursal inadequada');
+  if(t.dialeticidade_ok === false) m.push('falta de dialeticidade');
+  if(t.competencia_confirmada === false) m.push('incompetência da Câmara');
+  return m;
+}
+
 // Trava da dialeticidade: só se conclui pela falta quando a decisão recorrida e o recurso foram localizados no texto lido;
 // embargos de declaração não se submetem a esta regra; incompetência e art. 1.015 têm precedência.
 function aplicarTravaDialeticidade(t, meta, leitura){
@@ -1401,7 +1481,7 @@ function montarAvisoLeitura(leit, extras){
   let t = 'ATENÇÃO — LEITURA A PARTIR DA DECISÃO RECORRIDA: o texto do processo abaixo vai da decisão recorrida (' + (rec ? rec.inicioRotulo : 'início não indicado') + ') em diante';
   if(rec && rec.anteriores.length) t += ', mais páginas anteriores selecionadas por tratarem das provas que o recurso contesta (' + rec.anteriores.join(', ') + ')';
   if(extras && extras.length) t += ', mais páginas anteriores que você pediu (' + extras.join(', ') + ')';
-  t += '. As demais peças anteriores à decisão (petições, provas) NÃO foram incluídas; para o que ocorreu antes, apoie-se no relatório da própria decisão recorrida. Não invente fatos que não estejam no texto. ';
+  t += '. As demais peças anteriores à decisão (petições, provas) NÃO foram incluídas' + (rec && rec.omitidas ? ', e ' + rec.omitidas + ' página(s) sem informação (avisos de recebimento, guias, páginas em branco) foram omitidas' : '') + '; para o que ocorreu antes, apoie-se no relatório da própria decisão recorrida. Não invente fatos que não estejam no texto. ';
   t += (extras && extras.length)
     ? 'Esta já é a segunda leitura: NÃO peça leitura adicional de novo; redija com o que há.\n\n'
     : 'Se, para decidir algum ponto, você PRECISAR conferir uma peça anterior (por exemplo, um documento ou prova que o recurso contesta e que não está reproduzido no texto), preencha leitura_adicional com necessaria=true, o motivo e os termos de busca, e deixe os demais campos vazios: o sistema trará essas páginas e chamará você de novo.\n\n';
@@ -1416,6 +1496,22 @@ function textoDasPaginas(paginas, indices){
     anterior = i;
   });
   return out;
+}
+
+// Páginas sem informação útil (aviso de recebimento, guia, comprovante, página em branco). Nunca descarta páginas de
+// decisão, de recurso ou de prazo (certidões, intimações, publicações).
+const PADROES_SEM_INFO = [/aviso\s+de\s+recebimento/i, /correios|rastreamento|objeto\s+entregue|c[óo]digo\s+de\s+rastreio/i,
+  /guia\s+de\s+recolhimento|comprovante\s+de\s+(pagamento|recolhimento|inscri[çc][ãa]o)|\bDARE\b|\bGRU\b|boleto|c[óo]digo\s+de\s+barras|autentica[çc][ãa]o\s+banc[áa]ria/i];
+const PRAZO_CURTO = [[/certifico/i, 1], [/decorr|decurs/i, 1], [/\bprazo\b/i, 1], [/\bintim/i, 1], [/\bpublica/i, 1], [/\bcertid/i, 1]];   // sinais que salvam uma página curta
+const PRAZO_ESTRITO = [[/disponibiliza[çc][ãa]o/i, 2], [/intima[çc][ãa]o/i, 2], [/tempestiv/i, 2], [/decurso\s+de\s+prazo/i, 2],
+  [/publica[çc][ãa]o/i, 1], [/certid[ãa]o/i, 1], [/prazo\s+(?:de|para)/i, 1]];
+function paginaSemInformacao(texto){
+  const s = String(texto || '').trim();
+  const prazo = pontuarSinais(s, PRAZO_ESTRITO), decisao = pontuarSinais(s, PADROES_TRIAGEM.decisao), recurso = pontuarSinais(s, PADROES_TRIAGEM.recurso);
+  if(s.length < 120) return (prazo + decisao + recurso + pontuarSinais(s, PRAZO_CURTO)) === 0;   // curta: só sai se não tiver NENHUM sinal (uma certidão curta de prazo fica)
+  if(s.length > 1200) return false;                              // página com conteúdo
+  if(prazo >= 3 || decisao >= 2 || recurso >= 2) return false;   // prazo, decisão ou recurso: sempre fica
+  return PADROES_SEM_INFO.some(re=> re.test(s));
 }
 
 function recorteDaDecisao(pdfText, triagem, opc){
@@ -1433,7 +1529,12 @@ function recorteDaDecisao(pdfText, triagem, opc){
   const fixas = new Set();                                   // recurso principal (PDF 1), sempre inteiro
   if(varios) paginas.forEach((p, i)=>{ if(infoRotulo(p.rotulo).doc === 1) fixas.add(i); });
   let posteriores = [];
-  for(let i = ini; i < paginas.length; i++) if(!fixas.has(i)) posteriores.push(i);
+  let omitidas = 0;
+  for(let i = ini; i < paginas.length; i++){
+    if(fixas.has(i)) continue;
+    if(i > ini && paginaSemInformacao(paginas[i].texto)){ omitidas++; continue; }
+    posteriores.push(i);
+  }
   const total = (lista)=> lista.reduce((s, i)=> s + paginas[i].texto.length + paginas[i].rotulo.length + 3, 0);
   if(total(posteriores) > (opc.maxChars || 200000)){        // muito longo: mantém o começo (a decisão) e o final
     let ini2 = [], usado = 0;
@@ -1446,7 +1547,7 @@ function recorteDaDecisao(pdfText, triagem, opc){
   const todas = [...new Set([...fixas, ...anteriores, ...posteriores])].sort((x, y)=> x - y);
   return { texto: textoDasPaginas(paginas, todas), inicioIdx: ini, inicioRotulo: rotuloLimpo(paginas[ini].rotulo),
            indicesFixos: [...fixas], indicesAnteriores: anteriores, anteriores: anteriores.map(i=> rotuloLimpo(paginas[i].rotulo)),
-           totalPaginas: paginas.length, enviadas: todas.length };
+           totalPaginas: paginas.length, enviadas: todas.length, omitidas };
 }
 
 // Decide se a redação recebe o processo inteiro ou só da decisão recorrida em diante
@@ -1548,6 +1649,7 @@ function reverterPseudonimizacao(valor, mapa){
 // Para acrescentar outro modelo, inclua-o aqui com os preços da página de preços da Anthropic.
 const MODELOS_IA = {
   'claude-sonnet-4-6': { nome: 'Claude Sonnet 4.6',            entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 },
+  'claude-haiku-4-5-20251001': { nome: 'Claude Haiku 4.5',   entrada: 1, saida: 5,  cacheLeitura: 0.10, cacheEscrita: 1.25 },
   // O 5.5 pensa por padrão (raciocínio interno cobrado como saída e contado no limite): desligamos o raciocínio inicial
   // com thinking "between_tools" (a forma aceita por esse modelo) e controlamos a profundidade por output_config.effort.
   'claude-sonnet-5-5': { nome: 'Claude Sonnet 5.5 (em teste)', entrada: 2, saida: 10, cacheLeitura: 0.20, cacheEscrita: 2.50,
@@ -1555,7 +1657,11 @@ const MODELOS_IA = {
 };
 const MODELO_PADRAO = 'claude-sonnet-4-6';
 const MODELO_RESERVA = 'claude-sonnet-4-6';     // usado automaticamente se o modelo escolhido recusar a requisição
+const MODELO_TRIAGEM_PADRAO = 'claude-haiku-4-5-20251001';   // a triagem usa o modelo menor; se ela apontar desvio, o modelo da redação a confirma
+const MAX_VOTOS_PADRAO = 5;
 function modeloAtivo(){ return MODELOS_IA[S.modelo] ? S.modelo : MODELO_PADRAO; }
+function modeloTriagemAtivo(){ return S.modeloTriagem === 'mesmo' ? modeloAtivo() : (MODELOS_IA[S.modeloTriagem] ? S.modeloTriagem : MODELO_TRIAGEM_PADRAO); }
+function maxVotosAtivo(){ const n = parseInt(S.maxVotos, 10); return (n >= 2 && n <= 7) ? n : MAX_VOTOS_PADRAO; }
 const CAMBIO_REAIS = 5.5;   // premissa para converter o custo em reais
 
 function registrarUso(rotulo, uso, ms, modelo){
@@ -1573,7 +1679,7 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo, op){
   const conteudo = (prompt && typeof prompt === 'object')
     ? [ { type: 'text', text: prompt.estatico, cache_control: { type: 'ephemeral' } }, { type: 'text', text: prompt.dinamico } ]
     : prompt;
-  const modelo = modeloAtivo();
+  const modelo = op.modelo || modeloAtivo();
   const cfg = MODELOS_IA[modelo] || {};
   const corpo = { model: modelo, max_tokens: maxTokens, messages: [{ role: 'user', content: conteudo }] };
   if(cfg.raciocinio) corpo.thinking = { type: cfg.raciocinio };                       // sem raciocínio inicial
@@ -1598,8 +1704,8 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo, op){
       || /thinking|effort|output_config/i.test(msg);
     if(recusado && modelo !== MODELO_RESERVA && !op.reserva){
       console.warn('Modelo ' + modelo + ' recusado nesta chave; usando ' + MODELO_RESERVA + '.', msg);
-      S.modelo = MODELO_RESERVA;
-      return chamarAnthropicBruto(prompt, maxTokens, rotulo, Object.assign({}, op, { reserva: true }));
+      if(op.modelo){ S.modeloTriagem = MODELO_RESERVA; } else { S.modelo = MODELO_RESERVA; }
+      return chamarAnthropicBruto(prompt, maxTokens, rotulo, Object.assign({}, op, { reserva: true, modelo: op.modelo ? MODELO_RESERVA : undefined }));
     }
     if(/usage limits?|credit balance|spend limit|billing|purchase credits/i.test(msg)){
       throw new Error('O limite de uso ou o saldo da sua conta da API Anthropic acabou. Entre em platform.claude.com, abra Settings > Billing, compre créditos e aumente o limite mensal (Spend limits). Detalhe técnico: ' + msg);
@@ -1786,7 +1892,7 @@ function buildAvisoLeituraHTML(){
   return html;
 }
 
-async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual){
+async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual, modeloForcado, rotulo){
   // Parte FIXA (regras, listas, modelos e formato de resposta): vai primeiro e é marcada para cache.
   const estatico = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
@@ -1859,7 +1965,7 @@ PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um docu
 ${trechoParaTriagem(pdfText)}
 
 Agora responda SOMENTE com o objeto JSON no formato definido acima.`;
-  return await chamarAnthropic({ estatico, dinamico }, 6000, 'Triagem', { esforco: 'medium' });
+  return await chamarAnthropic({ estatico, dinamico }, 6000, rotulo || 'Triagem', { esforco: 'medium', modelo: modeloForcado || modeloTriagemAtivo() });
 }
 
 function exibirTriagem(triagem, meta){
@@ -1869,6 +1975,8 @@ function exibirTriagem(triagem, meta){
 
 function buildTriagemHTML(triagem, meta){
   const itens = [...buildLeituraItensHTML()];
+  if(S.triagemInfo && S.triagemInfo.confirmada) itens.push(['ti-shield-check', `Triagem feita pelo ${esc(S.triagemInfo.menor)} e <strong>confirmada pelo ${esc(S.triagemInfo.maior)}</strong>, porque apontou: ${esc(S.triagemInfo.motivos.join('; '))}.`]);
+  if(S.triagemInfo && S.triagemInfo.refeita) itens.push(['ti-shield-check', `A triagem do ${esc(S.triagemInfo.menor)} não deu uma resposta utilizável e foi refeita pelo ${esc(S.triagemInfo.maior)}.`]);
   itens.push(['ti-file-check', `Processo identificado: <strong>${esc(meta.numProcessoLabel)} nº ${esc(triagem.numero_processo)}</strong> — Comarca de ${esc(triagem.comarca)}`]);
   itens.push(['ti-users', `${esc(meta.recorrenteLabel)}: ${esc(triagem.recorrente_nome)} &nbsp;×&nbsp; ${esc(meta.recorridoLabel)}: ${esc(triagem.recorrido_nome)}`]);
   itens.push(['ti-target', `Tema principal: ${esc(triagem.tema_principal||'—')}`]);
@@ -2174,6 +2282,7 @@ function buildLeituraReduzidaHTML(){
   }
   let txt = `Leitura a partir da decisão recorrida (${esc(r.inicio || 'início indicado pela triagem')}): a redação recebeu ${r.enviados.toLocaleString('pt-BR')} de ${r.total.toLocaleString('pt-BR')} caracteres.`;
   if(r.anteriores && r.anteriores.length) txt += ` Páginas anteriores incluídas por tratarem das provas contestadas: ${esc(r.anteriores.join(', '))}.`;
+  if(r.omitidas) txt += ` ${r.omitidas} página(s) sem informação (avisos de recebimento, guias, páginas em branco) foram omitidas.`;
   if(r.pedido) txt += ` A IA pediu e recebeu peças anteriores (${esc(r.pedido.paginas.join(', '))})${r.pedido.motivo ? ': ' + esc(r.pedido.motivo) : ''}.`;
   return `<div class="banner blue" style="flex-wrap:wrap;gap:8px"><i class="ti ti-zoom-scan"></i><span style="flex:1">${txt}</span>`
        + `<button type="button" class="bsm" onclick="S.reprocessarCompleto && S.reprocessarCompleto()"><i class="ti ti-refresh"></i> Refazer lendo o processo inteiro</button></div>`;
