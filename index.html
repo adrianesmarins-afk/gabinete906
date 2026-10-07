@@ -863,7 +863,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '06/10/2026 · modelo-e-limites';
+const VERSAO_APP = '06/10/2026 · saida-ampliada';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -1472,16 +1472,23 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo, jaTentouReserva){
     throw new Error(msg);
   }
   registrarUso(rotulo || 'Chamada à IA', data.usage, Date.now() - t0, modelo);
-  return { texto: (data.content||[]).map(b=>b.text||'').join(''), stop: data.stop_reason };
+  return { texto: (data.content||[]).map(b=>b.text||'').join(''), stop: data.stop_reason, saida: (data.usage||{}).output_tokens || 0 };
 }
 
 async function chamarAnthropic(prompt, maxTokens, rotulo){
-  const r = await chamarAnthropicBruto(prompt, maxTokens, rotulo);
+  let r = await chamarAnthropicBruto(prompt, maxTokens, rotulo);
+  if(r.stop === 'max_tokens' && maxTokens < 16000){
+    // a resposta foi cortada pelo limite de saída: repete uma vez com o dobro do limite (a cobrança é só pelo que a IA escrever)
+    const ampliado = Math.min(maxTokens * 2, 16000);
+    console.warn(`${rotulo||'Chamada'}: resposta cortada em ${maxTokens} tokens (a IA usou ${r.saida}); repetindo com ${ampliado}.`);
+    maxTokens = ampliado;
+    r = await chamarAnthropicBruto(prompt, maxTokens, (rotulo || 'Chamada') + ' (limite ampliado)');
+  }
   try{
     return extrairJSON(r.texto);
   }catch(e){
     if(r.stop === 'max_tokens'){
-      throw new Error('A resposta da IA foi cortada por exceder o limite de tokens de saída. Tente novamente (às vezes uma nova tentativa gera um texto mais enxuto), ou avise o desenvolvedor para aumentar o limite.');
+      throw new Error(`A resposta da IA foi cortada mesmo com o limite ampliado (${maxTokens} tokens; a IA usou ${r.saida}). Tente de novo; se persistir, avise o desenvolvedor — pode ser a opção de raciocínio do modelo. Enquanto isso, escolha o Claude Sonnet 4.6 em Configurar.`);
     }
     // A IA devolveu um JSON com defeito de sintaxe (ex.: aspas duplas soltas dentro de um texto).
     // Última tentativa: pedir à própria IA que corrija SÓ a sintaxe, sem mudar o conteúdo.
@@ -1664,7 +1671,7 @@ ${MODELO_MONOCRATICA_INCOMPETENCIA}
 --- Subtipo "ausencia_dialeticidade" (vale para apelação, agravo de instrumento e agravo interno; NÃO vale para embargos de declaração) ---
 PRINCÍPIO DA DIALETICIDADE (arts. 932, III, e 1.010, II e III, do CPC; no agravo interno, art. 1.021, §1º): o recurso deve atacar, de forma específica, ao menos UMA das razões (fundamentos) da decisão recorrida. Procedimento obrigatório: (1) identifique, na decisão recorrida, as suas razões de decidir (até 3, cada uma em frase curta); (2) leia as razões recursais e verifique, para cada uma daquelas razões, se o recurso a enfrenta; (3) só marque dialeticidade_ok=false se o recurso NÃO enfrentar NENHUMA das razões — por exemplo, razões genéricas, mera repetição da petição inicial ou da contestação sem enfrentar a decisão, ou tese alheia ao que foi decidido. Se o recurso ataca ao menos uma razão, ainda que de forma deficiente ou apenas em parte, a dialeticidade está atendida (dialeticidade_ok=true). Se dialeticidade_ok=false: cabe_monocratica=true e subtipo_monocratica="ausencia_dialeticidade" (salvo se já couber "incompetencia" ou "inadmissibilidade_art1015", que têm precedência). Se NÃO conseguir localizar a decisão recorrida ou o recurso no texto fornecido, NÃO conclua pela falta de dialeticidade: responda dialeticidade_ok=true e registre em analise_dialeticidade qual peça não foi localizada.
 --- Também cabe decisão monocrática (subtipo "outro") em qualquer outra hipótese do art. 932 do CPC: improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, ou provimento monocrático por contrariedade a entendimento vinculante. ---
-REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array.
+REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array. SEJA CONCISO: cada campo de texto deve ter no máximo 1 ou 2 frases curtas (analise_tempestividade e analise_dialeticidade podem ter até 3); a triagem é um resumo, não uma minuta.
 Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON), no formato exato:
 {
   "numero_processo": "string",
@@ -1710,7 +1717,7 @@ PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um docu
 ${trechoParaTriagem(pdfText)}
 
 Agora responda SOMENTE com o objeto JSON no formato definido acima.`;
-  return await chamarAnthropic({ estatico, dinamico }, 2500, 'Triagem');
+  return await chamarAnthropic({ estatico, dinamico }, 6000, 'Triagem');
 }
 
 function exibirTriagem(triagem, meta){
