@@ -227,10 +227,10 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
 
       <label>Modelo de IA</label>
       <select id="i-modelo" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
-        <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais novo e mais barato (US$ 2 e US$ 10 por milhão de tokens)</option>
-        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — modelo anterior (US$ 3 e US$ 15)</option>
+        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — padrão, já testado (US$ 3 e US$ 15 por milhão de tokens)</option>
+        <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais novo, em teste (US$ 2 e US$ 10, mas usa cerca de 30% mais tokens)</option>
       </select>
-      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Se o modelo escolhido não estiver disponível para a sua chave, o sistema usa o anterior automaticamente. O custo de cada minuta aparece na tela.</div>
+      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Se o modelo escolhido recusar a requisição, o sistema usa o 4.6 automaticamente. Compare o custo de cada minuta, que aparece na tela, antes de trocar de vez.</div>
 
       <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">IDs das pastas de referência (Google Drive)</p>
       <div class="fold-grid">
@@ -322,6 +322,8 @@ Os "VOTOS DE REFERÊNCIA" fornecidos abaixo foram BUSCADOS pelo sistema, na base
 2º) Tema principal do mérito: siga os votos sobre o mesmo tema.
 3º) Temas secundários (dano moral, repetição do indébito, juros e correção, honorários etc.): siga os votos correspondentes.
 REAPROVEITAMENTO LITERAL (regra principal): reproduza o texto e as palavras dos votos de referência — a mesma redação, a mesma ordem de argumentos, as mesmas expressões, as mesmas citações de súmulas, temas e precedentes que o voto já traz — e altere SOMENTE o que for específico do caso concreto: nomes das partes, datas, valores, números de contrato e de processo, documentos, fatos e alegações deste processo. Não reescreva com palavras próprias aquilo que o voto de referência já diz bem. Quando o processo trouxer um ponto que o voto de referência não cobre, acrescente apenas o parágrafo necessário, no mesmo estilo. Nunca deixe, no texto final, nome de parte, valor, data, número de contrato ou de processo pertencente ao voto de referência.
+EXTENSÃO: o voto deve ter extensão semelhante à dos votos de referência (em regra, de 4 a 10 páginas). Use de cada voto de referência apenas as passagens pertinentes às matérias efetivamente suscitadas neste recurso; NÃO reproduza partes que tratem de matéria não suscitada aqui, e não repita argumentos já expostos em outro ponto do voto. Nos temas secundários, seja sintético.
+LEITURA ADICIONAL: quando o texto do processo vier com o aviso "LEITURA A PARTIR DA DECISÃO RECORRIDA", as peças anteriores à decisão não foram incluídas (salvo as indicadas). Em regra isso basta: o relatório da decisão recorrida resume o que ocorreu antes. Só se, para decidir um ponto, você precisar conferir um documento ou uma prova anterior que o recurso contesta e que não está reproduzido no texto, preencha leitura_adicional (necessaria=true, motivo e termos_busca) e deixe os demais campos vazios. Fora desse caso, deixe necessaria=false.
 VOTOS QUE DIVERGEM ENTRE SI: é comum o Desembargador decidir a mesma matéria de modos diferentes conforme as circunstâncias — por exemplo, acolher o cerceamento de defesa para anular a sentença e devolver os autos ao primeiro grau para realização de perícia grafotécnica (sem julgar o mérito), ou entender a perícia desnecessária e julgar o mérito. Quando os votos fornecidos divergirem, NÃO escolha ao acaso nem misture as linhas: identifique em cada voto o CRITÉRIO que levou àquele resultado (a prova já existente nos autos, a existência ou não de impugnação específica, o tipo de assinatura ou de contratação, a documentação apresentada pelo banco etc.), compare esse critério com os FATOS DESTE PROCESSO e siga a linha cujo critério corresponde a eles. Registre em "criterio_divergencia" quais votos divergem e qual critério você aplicou. Se os fatos do processo não permitirem distinguir com segurança, escreva isso em "criterio_divergencia" e siga a linha mais cautelosa, deixando a questão sinalizada para a conferência do assistente.
 Se NENHUM voto fornecido tratar da matéria, aplique a regra "QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA" abaixo.
 NÍVEL DE CONCRETUDE EXIGIDO: o texto reaproveitado dos votos deve ser aplicado a ESTE caso — em CADA parágrafo, onde o voto de referência traz dados do caso dele, coloque os dados deste processo: o número e a data do contrato, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas dos autos (extratos, laudos, termos, protocolos de atendimento) e as alegações específicas de cada parte (o que o autor concretamente narrou e qual documento ou argumento o réu apresentou). Uma fundamentação em que nenhum dado deste processo aparece está errada: a tese e a redação vêm dos votos do Desembargador, os fatos vêm do processo.
@@ -354,6 +356,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "materia_sobrestada": true ou false,
   "cabe_monocratica": true ou false,
   "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
+  "leitura_adicional": { "necessaria": true ou false, "motivo": "string curta", "termos_busca": ["2 a 5 palavras cada, para localizar nas peças ANTERIORES à decisão recorrida"] } — use necessaria=true SOMENTE nas condições da regra LEITURA ADICIONAL; caso contrário, necessaria=false e os demais campos vazios,
   "votos_seguidos": ["nome exato do arquivo de cada voto de referência que você efetivamente seguiu na redação (copie o nome como aparece no cabeçalho \"arquivo:\" de cada voto fornecido)"],
   "criterio_divergencia": "string — vazio se os votos fornecidos não divergem; se divergirem, explique em 1 a 3 frases quais votos divergem, o critério de cada um e qual critério foi aplicado a este processo, e por quê",
   "referencia_insuficiente": true ou false,
@@ -740,6 +743,7 @@ async function handleFile(files){
   S.doc = null;
   S.metricas = { inicio: Date.now(), acumulado: 0, chamadas: [] };     // medição de tempo e custo desta minuta
   S.leituraReduzida = null; S.avisoLeitura = ''; S.reprocessarCompleto = null;
+  S.leituraCompletaAutomatica = false; S.leituraNaoLocalizada = false;
   const meta = TAB_META[S.tab];
 
   try{
@@ -800,15 +804,37 @@ async function handleFile(files){
     }
     const manualFinal = montarManualParaChamada(consultaManualFinal(triagemPseudo), { maxChars: 14000 });
 
-    // a redação lê o processo inteiro, salvo quando a triagem mostra que só as páginas-chave bastam (e o usuário pode refazer com o processo inteiro)
-    const leit = decidirLeitura(triagemPseudo, S.leitura, pdfTextSeguro);
+    // a redação lê da decisão recorrida em diante; peças anteriores só se necessárias (e o usuário pode refazer lendo tudo)
+    const leit = decidirLeitura(triagemPseudo, S.leitura, pdfTextSeguro, meta);
+    S.leituraNaoLocalizada = !leit.reduzir && leit.motivo === 'decisao_nao_localizada';
     const gerarFinal = async (textoProcesso, reduzido)=>{
-      S.leituraReduzida = reduzido ? { motivo: leit.motivo, enviados: textoProcesso.length, total: pdfTextSeguro.length } : null;
-      S.avisoLeitura = reduzido
-        ? 'ATENÇÃO: o texto do processo abaixo traz apenas as páginas-chave (decisão recorrida, recurso, contrarrazões, intimações, capa e final), porque a controvérsia foi classificada como ' + (leit.motivo === 'sobrestamento' ? 'sobrestamento por tema repetitivo' : 'puramente jurídica') + '. Não invente fatos que não estejam nessas páginas; se faltar um fato necessário, diga isso expressamente.\n\n'
-        : '';
+      S.leituraCompletaAutomatica = false;
+      S.leituraReduzida = reduzido ? { motivo: leit.motivo, enviados: textoProcesso.length, total: pdfTextSeguro.length,
+        inicio: leit.rec ? leit.rec.inicioRotulo : '', anteriores: leit.rec ? leit.rec.anteriores : [], pedido: null } : null;
+      S.avisoLeitura = reduzido ? montarAvisoLeitura(leit, null) : '';
       setProgress(65, etapaFinal);
       let finalJson = await gerarDocumentoFinal(meta, triagemPseudo, textoProcesso, textoRefs, textoSusp, textoMono, manualFinal);
+      const pediu = ()=> !!(finalJson && finalJson.leitura_adicional && finalJson.leitura_adicional.necessaria);
+      if(reduzido && pediu()){
+        // a IA disse que precisa de peça anterior à decisão: busca só o que ela pediu e redige de novo
+        const paginas = dividirEmPaginas(pdfTextSeguro) || [];
+        const rec = leit.rec;
+        const excluir = new Set([...(rec.indicesFixos || []), ...(rec.indicesAnteriores || [])]);
+        const extra = selecionarPaginasAnteriores(paginas, rec.inicioIdx, finalJson.leitura_adicional.termos_busca, excluir, 40000);
+        if(extra.length){
+          const rotulos = extra.map(k=> rotuloLimpo(paginas[k].rotulo));
+          S.leituraReduzida.pedido = { motivo: finalJson.leitura_adicional.motivo || '', paginas: rotulos };
+          S.avisoLeitura = montarAvisoLeitura(leit, rotulos);
+          setProgress(80, 'A IA pediu peças anteriores à decisão; lendo-as e redigindo de novo...');
+          finalJson = await gerarDocumentoFinal(meta, triagemPseudo, textoDasPaginas(paginas, extra) + '\n\n' + textoProcesso, textoRefs, textoSusp, textoMono, manualFinal);
+        }
+        if(!extra.length || pediu()){
+          // nada encontrado, ou a IA ainda precisa de mais: lê o processo inteiro
+          S.leituraReduzida = null; S.avisoLeitura = ''; S.leituraCompletaAutomatica = true;
+          setProgress(88, 'A IA precisa de peças anteriores; lendo o processo inteiro...');
+          finalJson = await gerarDocumentoFinal(meta, triagemPseudo, pdfTextSeguro, textoRefs, textoSusp, textoMono, manualFinal);
+        }
+      }
       if(mapaNomes) finalJson = reverterPseudonimizacao(finalJson, mapaNomes);
       S.doc = Object.assign({}, triagemExibicao, finalJson);
       S.metricas.fim = Date.now();
@@ -863,7 +889,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '06/10/2026 · saida-ampliada';
+const VERSAO_APP = '06/10/2026 · leitura-da-decisao';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -1319,18 +1345,121 @@ function aplicarTravaDialeticidade(t, meta, leitura){
   return t;
 }
 
-// Decide se a redação recebe o processo inteiro ou só as páginas-chave
-function decidirLeitura(triagem, leitura, pdfText){
-  let motivo = null, orcamento = 0;
-  if(triagem.materia_sobrestada){ motivo = 'sobrestamento'; orcamento = 40000; }
-  else if(triagem.natureza_controversia === 'juridica' && triagem.subtipo_monocratica !== 'incompetencia'
-          && leitura && leitura.decisao && leitura.decisao.length && leitura.recurso && leitura.recurso.length){
-    motivo = 'juridica'; orcamento = 70000;
+// ---------------------------------------------------------------------------------------------
+// LEITURA DA DECISÃO RECORRIDA EM DIANTE
+// A redação recebe, por padrão, o processo A PARTIR DA DECISÃO RECORRIDA (decisão, recurso, contrarrazões, certidões).
+// Peças anteriores só entram se necessárias: (a) as páginas que tratam das provas que o recurso contesta, apontadas
+// pela triagem, e (b) as que a própria IA pedir ao redigir. O usuário pode, a qualquer momento, refazer lendo tudo.
+// ---------------------------------------------------------------------------------------------
+function pontuarSinais(texto, pares){ return pares.reduce((s, [re, peso])=> s + (re.test(texto) ? peso : 0), 0); }
+
+function parseRotuloPagina(rot){
+  const m = String(rot || '').match(/(?:DOC\s*(\d+)\s*[·.\-:]*\s*)?P[ÁA]G\.?\s*(\d+)/i);
+  if(m) return { doc: m[1] ? +m[1] : null, pag: +m[2] };
+  const n = String(rot || '').match(/^\s*(\d+)\s*$/);
+  return n ? { doc: null, pag: +n[1] } : null;
+}
+function infoRotulo(rotulo){
+  const m = String(rotulo).match(/\[\[(?:DOC (\d+) · )?PÁG\. (\d+)\]\]/);
+  return m ? { doc: m[1] ? +m[1] : null, pag: +m[2] } : { doc: null, pag: 0 };
+}
+function rotuloLimpo(rotulo){ return String(rotulo).replace(/[\[\]]/g, '').replace('PÁG. ', 'pág. '); }
+function localizarIndicePagina(paginas, ref){
+  const achados = [];
+  paginas.forEach((p, i)=>{ const r = infoRotulo(p.rotulo); if(r.pag === ref.pag && (ref.doc == null || r.doc == null || r.doc === ref.doc)) achados.push({ i, doc: r.doc }); });
+  if(!achados.length) return -1;
+  if(ref.doc == null && achados.length > 1){            // vários PDFs: o PDF 1 é o recurso; a decisão está, em geral, no processo de origem
+    const fora = achados.find(x=> x.doc !== 1);
+    if(fora) return fora.i;
   }
-  if(!motivo) return { reduzir: false };
-  const texto = trechoParaTriagem(pdfText, orcamento);
-  if(texto.length >= pdfText.length * 0.9) return { reduzir: false };       // quase nada a poupar: lê tudo
-  return { reduzir: true, motivo, texto, enviados: texto.length, total: pdfText.length };
+  return achados[0].i;
+}
+
+// páginas ANTERIORES à decisão (índices < ini) mais pertinentes aos termos de busca; inclui a página seguinte às melhores
+function selecionarPaginasAnteriores(paginas, ini, termos, excluir, maxChars){
+  const consulta = (Array.isArray(termos) ? termos : []).filter(t=> typeof t === 'string' && t.trim()).join(' ');
+  if(!consulta) return [];
+  const cand = [];
+  for(let i = 0; i < ini; i++) if(!excluir.has(i)) cand.push({ nome: '', texto: paginas[i].texto, _i: i });
+  if(!cand.length) return [];
+  const rank = rankearBM25(cand, consulta);
+  if(!rank.length) return [];
+  const piso = rank[0].s * 0.4;
+  const escolhidas = new Set(); let usado = 0;
+  const tentar = (i)=>{
+    if(i < 0 || i >= ini || escolhidas.has(i) || excluir.has(i)) return;
+    const t = paginas[i].texto.length + paginas[i].rotulo.length + 3;
+    if(usado + t > maxChars || escolhidas.size >= 12) return;
+    escolhidas.add(i); usado += t;
+  };
+  rank.filter(x=> x.s >= piso).slice(0, 8).forEach((x, k)=>{ tentar(x.d._i); if(k < 3) tentar(x.d._i + 1); });
+  return [...escolhidas].sort((x, y)=> x - y);
+}
+
+function montarAvisoLeitura(leit, extras){
+  const rec = leit.rec;
+  let t = 'ATENÇÃO — LEITURA A PARTIR DA DECISÃO RECORRIDA: o texto do processo abaixo vai da decisão recorrida (' + (rec ? rec.inicioRotulo : 'início não indicado') + ') em diante';
+  if(rec && rec.anteriores.length) t += ', mais páginas anteriores selecionadas por tratarem das provas que o recurso contesta (' + rec.anteriores.join(', ') + ')';
+  if(extras && extras.length) t += ', mais páginas anteriores que você pediu (' + extras.join(', ') + ')';
+  t += '. As demais peças anteriores à decisão (petições, provas) NÃO foram incluídas; para o que ocorreu antes, apoie-se no relatório da própria decisão recorrida. Não invente fatos que não estejam no texto. ';
+  t += (extras && extras.length)
+    ? 'Esta já é a segunda leitura: NÃO peça leitura adicional de novo; redija com o que há.\n\n'
+    : 'Se, para decidir algum ponto, você PRECISAR conferir uma peça anterior (por exemplo, um documento ou prova que o recurso contesta e que não está reproduzido no texto), preencha leitura_adicional com necessaria=true, o motivo e os termos de busca, e deixe os demais campos vazios: o sistema trará essas páginas e chamará você de novo.\n\n';
+  return t;
+}
+
+function textoDasPaginas(paginas, indices){
+  let out = '', anterior = -2;
+  indices.forEach(i=>{
+    if(anterior >= 0 && i !== anterior + 1) out += '[... páginas omitidas ...]\n\n';
+    out += paginas[i].rotulo + '\n' + paginas[i].texto + '\n\n';
+    anterior = i;
+  });
+  return out;
+}
+
+function recorteDaDecisao(pdfText, triagem, opc){
+  opc = opc || {};
+  const paginas = dividirEmPaginas(pdfText);
+  if(!paginas || paginas.length < 8) return null;
+  const ref = parseRotuloPagina(triagem.inicio_decisao_recorrida);
+  if(!ref) return null;
+  const ini = localizarIndicePagina(paginas, ref);
+  if(ini < 0) return null;
+  // confere: a página indicada, ou uma das duas seguintes, deve mostrar sinais de decisão (título, dispositivo...)
+  if(![0, 1, 2].some(k=> ini + k < paginas.length && pontuarSinais(paginas[ini + k].texto, PADROES_TRIAGEM.decisao) >= 2)) return null;
+
+  const varios = paginas.some(p=> infoRotulo(p.rotulo).doc === 2);
+  const fixas = new Set();                                   // recurso principal (PDF 1), sempre inteiro
+  if(varios) paginas.forEach((p, i)=>{ if(infoRotulo(p.rotulo).doc === 1) fixas.add(i); });
+  let posteriores = [];
+  for(let i = ini; i < paginas.length; i++) if(!fixas.has(i)) posteriores.push(i);
+  const total = (lista)=> lista.reduce((s, i)=> s + paginas[i].texto.length + paginas[i].rotulo.length + 3, 0);
+  if(total(posteriores) > (opc.maxChars || 200000)){        // muito longo: mantém o começo (a decisão) e o final
+    let ini2 = [], usado = 0;
+    for(const i of posteriores){ const t = paginas[i].texto.length + 20; if(usado + t > 120000) break; ini2.push(i); usado += t; }
+    let fim2 = [], usado2 = 0;
+    for(let k = posteriores.length - 1; k >= 0; k--){ const i = posteriores[k]; const t = paginas[i].texto.length + 20; if(usado2 + t > 60000 || ini2.includes(i)) break; fim2.unshift(i); usado2 += t; }
+    posteriores = [...ini2, ...fim2];
+  }
+  const anteriores = selecionarPaginasAnteriores(paginas, ini, triagem.pecas_anteriores_a_conferir, fixas, opc.maxCharsAnteriores || 40000);
+  const todas = [...new Set([...fixas, ...anteriores, ...posteriores])].sort((x, y)=> x - y);
+  return { texto: textoDasPaginas(paginas, todas), inicioIdx: ini, inicioRotulo: rotuloLimpo(paginas[ini].rotulo),
+           indicesFixos: [...fixas], indicesAnteriores: anteriores, anteriores: anteriores.map(i=> rotuloLimpo(paginas[i].rotulo)),
+           totalPaginas: paginas.length, enviadas: todas.length };
+}
+
+// Decide se a redação recebe o processo inteiro ou só da decisão recorrida em diante
+function decidirLeitura(triagem, leitura, pdfText, meta){
+  if(meta && meta.folderKey === 'em') return { reduzir: false };               // embargos e agravo interno: leem tudo
+  if(triagem.subtipo_monocratica === 'incompetencia') return { reduzir: false };  // incompetência/prevenção pode depender de qualquer peça
+  const rec = recorteDaDecisao(pdfText, triagem, {});
+  if(!rec) return { reduzir: false, motivo: 'decisao_nao_localizada' };
+  let texto = rec.texto;
+  if(triagem.materia_sobrestada && texto.length > 60000) texto = trechoParaTriagem(texto, 60000);   // despacho: resumo da questão basta
+  if(texto.length >= pdfText.length * 0.9) return { reduzir: false };               // quase nada a poupar: lê tudo
+  const motivo = triagem.materia_sobrestada ? 'sobrestamento' : (triagem.natureza_controversia === 'juridica' ? 'juridica' : 'decisao');
+  return { reduzir: true, motivo, texto, enviados: texto.length, total: pdfText.length, rec };
 }
 
 // Texto de referência de uma pasta: usa o índice local (rápido) e, se ele não estiver disponível, baixa direto
@@ -1373,7 +1502,7 @@ async function extrairNomesPessoais(texto){
 
 TEXTO:
 ${trechoParaTriagem(texto, 80000)}`;
-  const r = await chamarAnthropic(prompt, 800, 'Identificação de nomes');
+  const r = await chamarAnthropic(prompt, 800, 'Identificação de nomes', { esforco: 'low' });
   return Array.isArray(r.nomes) ? r.nomes.filter(n=>typeof n==='string' && n.trim().length>3) : [];
 }
 
@@ -1418,11 +1547,14 @@ function reverterPseudonimizacao(valor, mapa){
 // Modelos disponíveis e preços (US$ por milhão de tokens). O modelo é escolhido na tela de Configuração.
 // Para acrescentar outro modelo, inclua-o aqui com os preços da página de preços da Anthropic.
 const MODELOS_IA = {
-  'claude-sonnet-5-5': { nome: 'Claude Sonnet 5.5',               entrada: 2, saida: 10, cacheLeitura: 0.20, cacheEscrita: 2.50 },
-  'claude-sonnet-4-6': { nome: 'Claude Sonnet 4.6 (anterior)',    entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 },
+  'claude-sonnet-4-6': { nome: 'Claude Sonnet 4.6',            entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 },
+  // O 5.5 pensa por padrão (raciocínio interno cobrado como saída e contado no limite): desligamos o raciocínio inicial
+  // com thinking "between_tools" (a forma aceita por esse modelo) e controlamos a profundidade por output_config.effort.
+  'claude-sonnet-5-5': { nome: 'Claude Sonnet 5.5 (em teste)', entrada: 2, saida: 10, cacheLeitura: 0.20, cacheEscrita: 2.50,
+                         raciocinio: 'between_tools', esforco: true },
 };
-const MODELO_PADRAO = 'claude-sonnet-5-5';
-const MODELO_RESERVA = 'claude-sonnet-4-6';     // usado automaticamente se o modelo escolhido não estiver disponível para a chave
+const MODELO_PADRAO = 'claude-sonnet-4-6';
+const MODELO_RESERVA = 'claude-sonnet-4-6';     // usado automaticamente se o modelo escolhido recusar a requisição
 function modeloAtivo(){ return MODELOS_IA[S.modelo] ? S.modelo : MODELO_PADRAO; }
 const CAMBIO_REAIS = 5.5;   // premissa para converter o custo em reais
 
@@ -1436,11 +1568,16 @@ function registrarUso(rotulo, uso, ms, modelo){
 
 // prompt = texto simples, ou { estatico, dinamico }: a parte estática (regras, listas, modelos) vai primeiro e é marcada
 // para cache — repetida em outra minuta feita em poucos minutos, a Anthropic a cobra a 10% do preço normal.
-async function chamarAnthropicBruto(prompt, maxTokens, rotulo, jaTentouReserva){
+async function chamarAnthropicBruto(prompt, maxTokens, rotulo, op){
+  op = op || {};
   const conteudo = (prompt && typeof prompt === 'object')
     ? [ { type: 'text', text: prompt.estatico, cache_control: { type: 'ephemeral' } }, { type: 'text', text: prompt.dinamico } ]
     : prompt;
   const modelo = modeloAtivo();
+  const cfg = MODELOS_IA[modelo] || {};
+  const corpo = { model: modelo, max_tokens: maxTokens, messages: [{ role: 'user', content: conteudo }] };
+  if(cfg.raciocinio) corpo.thinking = { type: cfg.raciocinio };                       // sem raciocínio inicial
+  if(cfg.esforco)    corpo.output_config = { effort: op.esforco || 'high' };          // low | medium | high
   const t0 = Date.now();
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
@@ -1450,21 +1587,19 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo, jaTentouReserva){
       'anthropic-version':'2023-06-01',
       'anthropic-dangerous-direct-browser-access':'true'
     },
-    body: JSON.stringify({
-      model: modelo,
-      max_tokens: maxTokens,
-      messages:[{ role:'user', content: conteudo }]
-    })
+    body: JSON.stringify(corpo)
   });
   const data = await resp.json();
   if(data.error){
     const msg = data.error.message || 'erro da API';
-    // modelo indisponível para esta chave: volta, uma vez, ao modelo anterior
-    const modeloIndisponivel = data.error.type === 'not_found_error' || (/model/i.test(msg) && /not.?found|does not exist|not available|unknown|invalid/i.test(msg));
-    if(modeloIndisponivel && modelo !== MODELO_RESERVA && !jaTentouReserva){
-      console.warn('Modelo ' + modelo + ' indisponível para esta chave; usando ' + MODELO_RESERVA + '.', msg);
+    // modelo (ou algum parâmetro dele) recusado por esta chave: volta, uma vez, ao modelo anterior
+    const recusado = data.error.type === 'not_found_error'
+      || (/model/i.test(msg) && /not.?found|does not exist|not available|unknown|invalid/i.test(msg))
+      || /thinking|effort|output_config/i.test(msg);
+    if(recusado && modelo !== MODELO_RESERVA && !op.reserva){
+      console.warn('Modelo ' + modelo + ' recusado nesta chave; usando ' + MODELO_RESERVA + '.', msg);
       S.modelo = MODELO_RESERVA;
-      return chamarAnthropicBruto(prompt, maxTokens, rotulo, true);
+      return chamarAnthropicBruto(prompt, maxTokens, rotulo, Object.assign({}, op, { reserva: true }));
     }
     if(/usage limits?|credit balance|spend limit|billing|purchase credits/i.test(msg)){
       throw new Error('O limite de uso ou o saldo da sua conta da API Anthropic acabou. Entre em platform.claude.com, abra Settings > Billing, compre créditos e aumente o limite mensal (Spend limits). Detalhe técnico: ' + msg);
@@ -1472,30 +1607,35 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo, jaTentouReserva){
     throw new Error(msg);
   }
   registrarUso(rotulo || 'Chamada à IA', data.usage, Date.now() - t0, modelo);
-  return { texto: (data.content||[]).map(b=>b.text||'').join(''), stop: data.stop_reason, saida: (data.usage||{}).output_tokens || 0 };
+  const texto = (data.content||[]).filter(b=> b.type === 'text' || (b.type === undefined && b.text)).map(b=>b.text||'').join('');
+  return { texto, stop: data.stop_reason, saida: (data.usage||{}).output_tokens || 0, chars: texto.length };
 }
 
-async function chamarAnthropic(prompt, maxTokens, rotulo){
-  let r = await chamarAnthropicBruto(prompt, maxTokens, rotulo);
+async function chamarAnthropic(prompt, maxTokens, rotulo, op){
+  let r = await chamarAnthropicBruto(prompt, maxTokens, rotulo, op);
   if(r.stop === 'max_tokens' && maxTokens < 16000){
     // a resposta foi cortada pelo limite de saída: repete uma vez com o dobro do limite (a cobrança é só pelo que a IA escrever)
     const ampliado = Math.min(maxTokens * 2, 16000);
-    console.warn(`${rotulo||'Chamada'}: resposta cortada em ${maxTokens} tokens (a IA usou ${r.saida}); repetindo com ${ampliado}.`);
+    console.warn(`${rotulo||'Chamada'}: resposta cortada em ${maxTokens} tokens (a IA usou ${r.saida}; texto visível: ${r.chars} caracteres); repetindo com ${ampliado}.`);
     maxTokens = ampliado;
-    r = await chamarAnthropicBruto(prompt, maxTokens, (rotulo || 'Chamada') + ' (limite ampliado)');
+    r = await chamarAnthropicBruto(prompt, maxTokens, (rotulo || 'Chamada') + ' (limite ampliado)', op);
   }
   try{
     return extrairJSON(r.texto);
   }catch(e){
     if(r.stop === 'max_tokens'){
-      throw new Error(`A resposta da IA foi cortada mesmo com o limite ampliado (${maxTokens} tokens; a IA usou ${r.saida}). Tente de novo; se persistir, avise o desenvolvedor — pode ser a opção de raciocínio do modelo. Enquanto isso, escolha o Claude Sonnet 4.6 em Configurar.`);
+      const raciocinio = r.chars < r.saida * 2;      // texto normal rende ~3,5 caracteres por token
+      throw new Error(`A resposta da IA foi cortada mesmo com o limite ampliado (${maxTokens} tokens). ` + (raciocinio
+        ? `A IA gastou ${r.saida} tokens, mas devolveu só ${r.chars} caracteres de texto: o resto foi raciocínio interno do modelo. Escolha o Claude Sonnet 4.6 em Configurar.`
+        : `A IA escreveu ${r.chars} caracteres, mais do que cabe no limite: o texto saiu longo demais. Tente de novo; se persistir, avise o desenvolvedor.`));
     }
     // A IA devolveu um JSON com defeito de sintaxe (ex.: aspas duplas soltas dentro de um texto).
     // Última tentativa: pedir à própria IA que corrija SÓ a sintaxe, sem mudar o conteúdo.
     const reparo = await chamarAnthropicBruto(
       `O texto abaixo deveria ser um objeto JSON válido, mas tem erro de sintaxe (${e.message}). Corrija APENAS a sintaxe, sem mudar, resumir ou omitir nenhum conteúdo: escape com \\" as aspas duplas que estiverem dentro de textos, troque quebras de linha dentro de textos por \\n, e feche colchetes/chaves pendentes. Responda SOMENTE com o JSON corrigido, sem markdown e sem comentários.\n\n${r.texto}`,
       maxTokens,
-      'Reparo do JSON'
+      'Reparo do JSON',
+      op
     );
     return extrairJSON(reparo.texto);
   }
@@ -1690,6 +1830,8 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "consultas_busca": [ { "papel": "tema_principal" ou "preliminar" ou "tema_secundario", "consulta": "string" } ] — consultas que o site usará para BUSCAR, na base de votos do gabinete, os votos sobre cada matéria deste processo. Faça de 2 a 6 consultas, UMA POR MATÉRIA: (a) exatamente uma de papel "tema_principal", a mais específica possível; (b) uma de papel "preliminar" para CADA preliminar de mérito arguida (ex.: cerceamento de defesa, ilegitimidade, prescrição, decadência, falta de interesse); (c) uma de papel "tema_secundario" para cada tema relevante adicional (ex.: dano moral, repetição do indébito, juros e correção, honorários, gratuidade). Cada consulta deve ter de 6 a 14 palavras, com os TERMOS JURÍDICOS E FÁTICOS que um voto sobre aquela matéria conteria (produto/contrato, causa de pedir, tese, prova discutida), sem nomes de partes e sem números. Exemplos: "golpe da falsa central de atendimento banco transferência Pix estelionatário falha na prestação do serviço"; "empréstimo consignado fraude contratação não reconhecida aposentada descontos benefício INSS"; "cerceamento de defesa perícia grafotécnica anulação da sentença retorno ao primeiro grau".
   "tem_preliminar": true ou false,
   "preliminar_resumo": "string curta ou vazio se não houver — preliminares de MÉRITO (ex: falta de interesse de agir, inépcia da inicial, ilegitimidade), não confundir com admissibilidade recursal (campos acima)",
+  "inicio_decisao_recorrida": "string — o marcador EXATO da página em que COMEÇA a decisão recorrida (sentença, decisão interlocutória ou acórdão), copiado dos marcadores do texto, por exemplo 'PÁG. 689' ou 'DOC 2 · PÁG. 150'. A decisão recorrida costuma começar na página do título 'SENTENÇA' ou 'DECISÃO'; se o texto fornecido não permitir localizar o início, deixe vazio",
+  "pecas_anteriores_a_conferir": ["termos de busca (2 a 5 palavras cada) para localizar, ANTES da decisão recorrida, documentos ou provas que o recurso contesta e que a redação precisa conferir (ex.: 'contrato assinatura', 'extrato bancário', 'laudo pericial')"] — lista VAZIA se a controvérsia for só de direito ou se o relato da própria decisão bastar para decidir,
   "dialeticidade_ok": true ou false — o recurso ataca ao menos uma das razões da decisão recorrida? (ver a regra do subtipo "ausencia_dialeticidade" acima; em embargos de declaração, responda sempre true),
   "analise_dialeticidade": "string curta: as razões da decisão recorrida (até 3, resumidas) e, para cada uma, se o recurso a enfrenta ('enfrenta' ou 'não enfrenta'); se não for possível aferir, diga qual peça não foi localizada",
   "natureza_controversia": "juridica" ou "fatica" ou "mista" — "juridica" SOMENTE se NÃO houver divergência sobre os fatos entre o relato da decisão recorrida e as alegações do recurso, e o recurso discutir apenas a tese de direito (interpretação de lei, aplicação de precedente, cabimento, prazo prescricional sobre datas incontroversas, juros, correção, honorários etc.) sem depender de reexame de provas; "fatica" se o recurso depender de provas ou contestar a descrição dos fatos (contratação não reconhecida, pagamento, dano, perícia, documentos); "mista" se houver os dois. EM DÚVIDA, responda "mista" (o sistema, nesse caso, lê o processo inteiro),
@@ -1717,7 +1859,7 @@ PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um docu
 ${trechoParaTriagem(pdfText)}
 
 Agora responda SOMENTE com o objeto JSON no formato definido acima.`;
-  return await chamarAnthropic({ estatico, dinamico }, 6000, 'Triagem');
+  return await chamarAnthropic({ estatico, dinamico }, 6000, 'Triagem', { esforco: 'medium' });
 }
 
 function exibirTriagem(triagem, meta){
@@ -1848,7 +1990,7 @@ Gere o JSON completo agora, seguindo rigorosamente o formato especificado.` };
 
 async function gerarDocumentoFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono, textoManual){
   const prompt = montarPromptFinal(meta, triagem, pdfText, textoRefs, textoSusp, textoMono, textoManual);
-  return await chamarAnthropic(prompt, 8192, 'Redação');
+  return await chamarAnthropic(prompt, 8192, 'Redação', { esforco: 'high' });
 }
 
 function extrairJSON(texto){
@@ -2021,9 +2163,19 @@ function buildMetricasHTML(){
   return html;
 }
 function buildLeituraReduzidaHTML(){
-  const r = S.leituraReduzida; if(!r) return '';
-  const motivo = r.motivo === 'sobrestamento' ? 'sobrestamento por tema repetitivo' : 'controvérsia puramente jurídica';
-  return `<div class="banner blue" style="flex-wrap:wrap;gap:8px"><i class="ti ti-zoom-scan"></i><span style="flex:1">Leitura reduzida (${motivo}): a redação recebeu ${r.enviados.toLocaleString('pt-BR')} de ${r.total.toLocaleString('pt-BR')} caracteres — as páginas-chave do processo.</span>`
+  if(S.leituraCompletaAutomatica){
+    return `<div class="banner blue"><i class="ti ti-zoom-scan"></i><span>A IA indicou que precisava de peças anteriores à decisão recorrida, e o processo foi lido por inteiro.</span></div>`;
+  }
+  const r = S.leituraReduzida;
+  if(!r){
+    return S.leituraNaoLocalizada
+      ? `<div class="banner blue"><i class="ti ti-zoom-scan"></i><span>Não foi possível localizar com segurança o início da decisão recorrida; o processo foi lido por inteiro.</span></div>`
+      : '';
+  }
+  let txt = `Leitura a partir da decisão recorrida (${esc(r.inicio || 'início indicado pela triagem')}): a redação recebeu ${r.enviados.toLocaleString('pt-BR')} de ${r.total.toLocaleString('pt-BR')} caracteres.`;
+  if(r.anteriores && r.anteriores.length) txt += ` Páginas anteriores incluídas por tratarem das provas contestadas: ${esc(r.anteriores.join(', '))}.`;
+  if(r.pedido) txt += ` A IA pediu e recebeu peças anteriores (${esc(r.pedido.paginas.join(', '))})${r.pedido.motivo ? ': ' + esc(r.pedido.motivo) : ''}.`;
+  return `<div class="banner blue" style="flex-wrap:wrap;gap:8px"><i class="ti ti-zoom-scan"></i><span style="flex:1">${txt}</span>`
        + `<button type="button" class="bsm" onclick="S.reprocessarCompleto && S.reprocessarCompleto()"><i class="ti ti-refresh"></i> Refazer lendo o processo inteiro</button></div>`;
 }
 
