@@ -225,6 +225,13 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
         <button type="button" class="btn" onclick="alternarVisibilidade('i-akey')" title="Mostrar/ocultar">👁</button>
       </div>
 
+      <label>Modelo de IA</label>
+      <select id="i-modelo" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
+        <option value="claude-sonnet-5-5">Claude Sonnet 5.5 — mais novo e mais barato (US$ 2 e US$ 10 por milhão de tokens)</option>
+        <option value="claude-sonnet-4-6">Claude Sonnet 4.6 — modelo anterior (US$ 3 e US$ 15)</option>
+      </select>
+      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Se o modelo escolhido não estiver disponível para a sua chave, o sistema usa o anterior automaticamente. O custo de cada minuta aparece na tela.</div>
+
       <p style="font-weight:700;font-size:12px;margin-top:14px;margin-bottom:4px;color:var(--tx)">IDs das pastas de referência (Google Drive)</p>
       <div class="fold-grid">
         <div><label>Apelações</label><input id="f-ap" type="text" placeholder="ID da pasta"/><div style="font-size:10.5px;color:var(--tx2);margin-top:2px">já vinculada da versão anterior</div></div>
@@ -551,13 +558,20 @@ let S = {
 };
 const hoje = new Date().toLocaleDateString('pt-BR');
 
+function atualizarRotuloVersao(){
+  const el = document.getElementById('versao-app');
+  if(el) el.textContent = 'versão ' + VERSAO_APP + ' · ' + MODELOS_IA[modeloAtivo()].nome;
+}
+
 function load(){
   S.gkey = localStorage.getItem('gk')||'';
   S.akey = localStorage.getItem('ak')||'';
+  S.modelo = localStorage.getItem('modelo') || MODELO_PADRAO;
   S.folders = JSON.parse(localStorage.getItem('folds')||'{}');
   S.pseudonimizar = localStorage.getItem('pseudo')==='1';
   if(!S.folders.ap) S.folders.ap = APELACOES_FOLDER_PADRAO;
   if(!S.folders.dc) S.folders.dc = MANUAL_FOLDER_PADRAO;
+  atualizarRotuloVersao();
 }
 
 function setTab(t, el){
@@ -623,6 +637,7 @@ async function tentarDesbloquear(){
   document.getElementById('config-fields').style.display='block';
   document.getElementById('i-gkey').value = S.gkey;
   document.getElementById('i-akey').value = S.akey;
+  document.getElementById('i-modelo').value = modeloAtivo();
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
     document.getElementById('f-'+k).value = S.folders[k]||'';
   });
@@ -647,6 +662,7 @@ function alternarVisibilidade(id){
 async function salvarConfig(){
   S.gkey = document.getElementById('i-gkey').value.trim();
   S.akey = document.getElementById('i-akey').value.trim();
+  S.modelo = document.getElementById('i-modelo').value;
   S.pseudonimizar = document.getElementById('i-pseudo').checked;
   S.folders = {};
   ['ap','ag','mo','em','su','dc'].forEach(k=>{
@@ -655,6 +671,8 @@ async function salvarConfig(){
   });
   localStorage.setItem('gk', S.gkey);
   localStorage.setItem('ak', S.akey);
+  localStorage.setItem('modelo', S.modelo);
+  atualizarRotuloVersao();
   localStorage.setItem('folds', JSON.stringify(S.folders));
   localStorage.setItem('pseudo', S.pseudonimizar ? '1' : '0');
   fecharModal();
@@ -845,7 +863,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '06/10/2026 · dialeticidade';
+const VERSAO_APP = '06/10/2026 · modelo-e-limites';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -1397,25 +1415,32 @@ function reverterPseudonimizacao(valor, mapa){
   return valor;
 }
 
-// Modelo e preços (US$ por milhão de tokens). Para trocar de modelo, mude MODELO_IA e acrescente os preços dele em PRECOS_IA.
-const MODELO_IA = 'claude-sonnet-4-6';
-const PRECOS_IA = { 'claude-sonnet-4-6': { entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 } };
+// Modelos disponíveis e preços (US$ por milhão de tokens). O modelo é escolhido na tela de Configuração.
+// Para acrescentar outro modelo, inclua-o aqui com os preços da página de preços da Anthropic.
+const MODELOS_IA = {
+  'claude-sonnet-5-5': { nome: 'Claude Sonnet 5.5',               entrada: 2, saida: 10, cacheLeitura: 0.20, cacheEscrita: 2.50 },
+  'claude-sonnet-4-6': { nome: 'Claude Sonnet 4.6 (anterior)',    entrada: 3, saida: 15, cacheLeitura: 0.30, cacheEscrita: 3.75 },
+};
+const MODELO_PADRAO = 'claude-sonnet-5-5';
+const MODELO_RESERVA = 'claude-sonnet-4-6';     // usado automaticamente se o modelo escolhido não estiver disponível para a chave
+function modeloAtivo(){ return MODELOS_IA[S.modelo] ? S.modelo : MODELO_PADRAO; }
 const CAMBIO_REAIS = 5.5;   // premissa para converter o custo em reais
 
-function registrarUso(rotulo, uso, ms){
+function registrarUso(rotulo, uso, ms, modelo){
   if(!S.metricas) S.metricas = { inicio: Date.now(), acumulado: 0, chamadas: [] };
   const u = uso || {};
-  S.metricas.chamadas.push({ rotulo, ms,
+  S.metricas.chamadas.push({ rotulo, ms, modelo: modelo || modeloAtivo(),
     entrada: u.input_tokens || 0, saida: u.output_tokens || 0,
     cacheLeitura: u.cache_read_input_tokens || 0, cacheEscrita: u.cache_creation_input_tokens || 0 });
 }
 
 // prompt = texto simples, ou { estatico, dinamico }: a parte estática (regras, listas, modelos) vai primeiro e é marcada
 // para cache — repetida em outra minuta feita em poucos minutos, a Anthropic a cobra a 10% do preço normal.
-async function chamarAnthropicBruto(prompt, maxTokens, rotulo){
+async function chamarAnthropicBruto(prompt, maxTokens, rotulo, jaTentouReserva){
   const conteudo = (prompt && typeof prompt === 'object')
     ? [ { type: 'text', text: prompt.estatico, cache_control: { type: 'ephemeral' } }, { type: 'text', text: prompt.dinamico } ]
     : prompt;
+  const modelo = modeloAtivo();
   const t0 = Date.now();
   const resp = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
@@ -1426,14 +1451,27 @@ async function chamarAnthropicBruto(prompt, maxTokens, rotulo){
       'anthropic-dangerous-direct-browser-access':'true'
     },
     body: JSON.stringify({
-      model: MODELO_IA,
+      model: modelo,
       max_tokens: maxTokens,
       messages:[{ role:'user', content: conteudo }]
     })
   });
   const data = await resp.json();
-  if(data.error) throw new Error(data.error.message||'erro da API');
-  registrarUso(rotulo || 'Chamada à IA', data.usage, Date.now() - t0);
+  if(data.error){
+    const msg = data.error.message || 'erro da API';
+    // modelo indisponível para esta chave: volta, uma vez, ao modelo anterior
+    const modeloIndisponivel = data.error.type === 'not_found_error' || (/model/i.test(msg) && /not.?found|does not exist|not available|unknown|invalid/i.test(msg));
+    if(modeloIndisponivel && modelo !== MODELO_RESERVA && !jaTentouReserva){
+      console.warn('Modelo ' + modelo + ' indisponível para esta chave; usando ' + MODELO_RESERVA + '.', msg);
+      S.modelo = MODELO_RESERVA;
+      return chamarAnthropicBruto(prompt, maxTokens, rotulo, true);
+    }
+    if(/usage limits?|credit balance|spend limit|billing|purchase credits/i.test(msg)){
+      throw new Error('O limite de uso ou o saldo da sua conta da API Anthropic acabou. Entre em platform.claude.com, abra Settings > Billing, compre créditos e aumente o limite mensal (Spend limits). Detalhe técnico: ' + msg);
+    }
+    throw new Error(msg);
+  }
+  registrarUso(rotulo || 'Chamada à IA', data.usage, Date.now() - t0, modelo);
   return { texto: (data.content||[]).map(b=>b.text||'').join(''), stop: data.stop_reason };
 }
 
@@ -1953,9 +1991,9 @@ function formatarTempo(ms){
 function calcularMetricas(){
   const m = S.metricas;
   if(!m || !m.chamadas.length) return null;
-  const p = PRECOS_IA[MODELO_IA] || PRECOS_IA['claude-sonnet-4-6'];
   const t = { usd: 0, ent: 0, sai: 0, cl: 0, ce: 0, ia: 0 };
   m.chamadas.forEach(x=>{
+    const p = MODELOS_IA[x.modelo] || MODELOS_IA[MODELO_PADRAO];
     x.usd = (x.entrada * p.entrada + x.saida * p.saida + x.cacheLeitura * p.cacheLeitura + x.cacheEscrita * p.cacheEscrita) / 1e6;
     t.usd += x.usd; t.ent += x.entrada; t.sai += x.saida; t.cl += x.cacheLeitura; t.ce += x.cacheEscrita; t.ia += x.ms;
   });
@@ -1972,7 +2010,7 @@ function buildMetricasHTML(){
   S.metricas.chamadas.forEach(x=>{
     html += `<div class="ri"><i class="ti ti-point" style="color:var(--tx2)"></i><span style="font-size:12px;color:var(--tx2)">${esc(x.rotulo)}: ${formatarTempo(x.ms)} · entrada ${x.entrada.toLocaleString('pt-BR')} (cache lido ${x.cacheLeitura.toLocaleString('pt-BR')}) · saída ${x.saida.toLocaleString('pt-BR')} · ${usd(x.usd)}</span></div>`;
   });
-  html += `<p style="font-size:11px;color:var(--tx2);margin-top:8px">Preços do ${esc(MODELO_IA)} e câmbio de R$ ${String(CAMBIO_REAIS).replace('.', ',')}; o tempo inclui a leitura do PDF e do índice. Para comparar, rode o mesmo processo antes e depois de uma mudança.</p></div>`;
+  html += `<p style="font-size:11px;color:var(--tx2);margin-top:8px">Preços de ${esc([...new Set(S.metricas.chamadas.map(x=> (MODELOS_IA[x.modelo]||{}).nome || x.modelo))].join(' e '))} e câmbio de R$ ${String(CAMBIO_REAIS).replace('.', ',')}; o tempo inclui a leitura do PDF e do índice. Para comparar, rode o mesmo processo antes e depois de uma mudança.</p></div>`;
   return html;
 }
 function buildLeituraReduzidaHTML(){
