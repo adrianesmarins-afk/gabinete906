@@ -173,7 +173,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
     ondragover="event.preventDefault()" ondrop="onDrop(event)">
     <i class="ti ti-file-type-pdf"></i>
     <div class="ut">Clique para selecionar ou arraste o(s) PDF(s) aqui</div>
-    <div class="us">Apenas PDF · Máx. 50 MB cada · pode selecionar mais de um (ex: recurso + processo de origem)</div>
+    <div class="us">Apenas PDF · Máx. 50 MB cada · pode selecionar mais de um (ex: recurso + processo de origem, ou as PARTES do mesmo processo)</div>
   </div>
   <input type="file" id="fi" accept=".pdf" multiple style="display:none" onchange="handleFile(this.files)"/>
 
@@ -338,6 +338,8 @@ Os "VOTOS DE REFERÊNCIA" fornecidos abaixo foram BUSCADOS pelo sistema, na base
 REAPROVEITAMENTO LITERAL (regra principal): reproduza o texto e as palavras dos votos de referência — a mesma redação, a mesma ordem de argumentos, as mesmas expressões, as mesmas citações de súmulas, temas e precedentes que o voto já traz — e altere SOMENTE o que for específico do caso concreto: nomes das partes, datas, valores, números de contrato e de processo, documentos, fatos e alegações deste processo. Não reescreva com palavras próprias aquilo que o voto de referência já diz bem. Quando o processo trouxer um ponto que o voto de referência não cobre, acrescente apenas o parágrafo necessário, no mesmo estilo. Nunca deixe, no texto final, nome de parte, valor, data, número de contrato ou de processo pertencente ao voto de referência.
 EXTENSÃO: o voto deve ter extensão semelhante à dos votos de referência (em regra, de 4 a 10 páginas). Use de cada voto de referência apenas as passagens pertinentes às matérias efetivamente suscitadas neste recurso; NÃO reproduza partes que tratem de matéria não suscitada aqui, e não repita argumentos já expostos em outro ponto do voto. Nos temas secundários, seja sintético.
 LEITURA ADICIONAL: quando o texto do processo vier com o aviso "LEITURA A PARTIR DA DECISÃO RECORRIDA", as peças anteriores à decisão não foram incluídas (salvo as indicadas). Em regra isso basta: o relatório da decisão recorrida resume o que ocorreu antes. Só se, para decidir um ponto, você precisar conferir um documento ou uma prova anterior que o recurso contesta e que não está reproduzido no texto, preencha leitura_adicional (necessaria=true, motivo e termos_busca) e deixe os demais campos vazios. Fora desse caso, deixe necessaria=false.
+O ENTENDIMENTO DO DESEMBARGADOR PREVALECE: o que consta dos votos de referência e do material de estudo sobre uma matéria prevalece sobre o que você conhece da jurisprudência em geral (inclusive do STJ) e sobre o que a sentença decidiu. NUNCA substitua o entendimento do Desembargador pelo seu: se um voto de referência trata de um ponto específico (por exemplo, qual prova comprova um serviço cobrado, ou como se restituem valores indevidos), siga exatamente esse ponto, inclusive no resultado e nos consectários.
+MATÉRIAS SEM VOTO DE REFERÊNCIA: se o texto listar "MATÉRIAS SEM VOTO DE REFERÊNCIA NA BASE", para essas matérias o entendimento do Desembargador NÃO foi localizado: decida-as pela jurisprudência majoritária do TJSP e do STJ, NÃO diga que seguem o entendimento do Desembargador e liste-as em materias_sem_referencia, para a conferência do assistente.
 VOTOS QUE DIVERGEM ENTRE SI: é comum o Desembargador decidir a mesma matéria de modos diferentes conforme as circunstâncias — por exemplo, acolher o cerceamento de defesa para anular a sentença e devolver os autos ao primeiro grau para realização de perícia grafotécnica (sem julgar o mérito), ou entender a perícia desnecessária e julgar o mérito. Quando os votos fornecidos divergirem, NÃO escolha ao acaso nem misture as linhas: identifique em cada voto o CRITÉRIO que levou àquele resultado (a prova já existente nos autos, a existência ou não de impugnação específica, o tipo de assinatura ou de contratação, a documentação apresentada pelo banco etc.), compare esse critério com os FATOS DESTE PROCESSO e siga a linha cujo critério corresponde a eles. Registre em "criterio_divergencia" quais votos divergem e qual critério você aplicou. Se os fatos do processo não permitirem distinguir com segurança, escreva isso em "criterio_divergencia" e siga a linha mais cautelosa, deixando a questão sinalizada para a conferência do assistente.
 Se NENHUM voto fornecido tratar da matéria, aplique a regra "QUANDO NENHUM VOTO DE REFERÊNCIA SE APLICA AO TEMA" abaixo.
 NÍVEL DE CONCRETUDE EXIGIDO: o texto reaproveitado dos votos deve ser aplicado a ESTE caso — em CADA parágrafo, onde o voto de referência traz dados do caso dele, coloque os dados deste processo: o número e a data do contrato, os valores exatos em discussão (do débito, da indenização pedida/fixada, dos descontos, das parcelas), datas relevantes (contratação, averbação, ajuizamento, ciência do fato), documentos e provas dos autos (extratos, laudos, termos, protocolos de atendimento) e as alegações específicas de cada parte (o que o autor concretamente narrou e qual documento ou argumento o réu apresentou). Uma fundamentação em que nenhum dado deste processo aparece está errada: a tese e a redação vêm dos votos do Desembargador, os fatos vêm do processo.
@@ -371,6 +373,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
   "cabe_monocratica": true ou false,
   "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
   "leitura_adicional": { "necessaria": true ou false, "motivo": "string curta", "termos_busca": ["2 a 5 palavras cada, para localizar nas peças ANTERIORES à decisão recorrida"] } — use necessaria=true SOMENTE nas condições da regra LEITURA ADICIONAL; caso contrário, necessaria=false e os demais campos vazios,
+  "materias_sem_referencia": ["matérias que você decidiu SEM voto de referência do Desembargador (as listadas no texto como sem voto, mais outras em que você não encontrou voto aplicável); lista vazia se todas tiverem voto"],
   "votos_seguidos": ["nome exato do arquivo de cada voto de referência que você efetivamente seguiu na redação (copie o nome como aparece no cabeçalho \"arquivo:\" de cada voto fornecido)"],
   "criterio_divergencia": "string — vazio se os votos fornecidos não divergem; se divergirem, explique em 1 a 3 frases quais votos divergem, o critério de cada um e qual critério foi aplicado a este processo, e por quê",
   "referencia_insuficiente": true ou false,
@@ -771,7 +774,7 @@ async function handleFile(files){
   try{
     setProgress(8, lista.length>1 ? `Lendo os ${lista.length} PDFs do processo...` : 'Lendo o PDF do processo...');
     LEITURA_PDF = []; S.leitura = null;
-    const pdfText = await lerPDFs(lista, 350000, (pagina, total)=>{
+    const pdfText = await lerPDFs(lista, 5000000, (pagina, total)=>{
       setProgress(10, `Aplicando reconhecimento de texto (OCR) em página escaneada ${pagina} de ${total}...`);
     });
 
@@ -816,7 +819,15 @@ async function handleFile(files){
     // com o modelo menor, qualquer desvio da rota normal (que muda o tipo de documento) é confirmado pelo modelo da redação
     const usadoNaTriagem = modeloTriagemAtivo();
     const motivosConf = motivosDeConfirmacao(triagemPseudo);
-    if(!S.triagemInfo && motivosConf.length && usadoNaTriagem !== modeloAtivo()){
+    if(!S.triagemInfo && triagemIndicouDecisaoErrada(triagemPseudo)){
+      // aba Apelação, mas a "decisão recorrida" indicada não é sentença: refaz com o modelo maior, apontando o erro
+      const indicada = String(triagemPseudo.decisao_recorrida).slice(0, 220);
+      setProgress(44, 'A decisão indicada não é uma sentença; refazendo a triagem...');
+      triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (decisão corrigida)',
+        'CORREÇÃO: a decisão recorrida que você indicou ("' + indicada + '") NÃO é uma sentença. Na aba Apelação a decisão recorrida é SEMPRE a sentença impugnada pela apelação. Refaça a triagem procurando a sentença (use as razões da apelação para identificá-la).');
+      aplicarTravaDialeticidade(triagemPseudo, meta, S.leitura);
+      S.triagemInfo = { corrigida: true, indicada, maior: MODELOS_IA[modeloAtivo()].nome };
+    } else if(!S.triagemInfo && motivosConf.length && usadoNaTriagem !== modeloAtivo()){
       setProgress(46, 'A triagem apontou um desvio; confirmando com o modelo maior...');
       const conf = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (confirmação)');
       aplicarTravaDialeticidade(conf, meta, S.leitura);
@@ -833,7 +844,7 @@ async function handleFile(files){
     setProgress(65, etapaFinal);
 
     // busca, na base de votos, os votos de cada matéria apontada pela triagem
-    S.votosUsados = null;
+      S.votosUsados = null; S.materiasSemVoto = [];
     if(meta.folderKey !== 'em'){
       setProgress(55, 'Consultando a base de votos do gabinete...');
       let achados = null;
@@ -849,6 +860,7 @@ async function handleFile(files){
 
     // a redação lê da decisão recorrida em diante; peças anteriores só se necessárias (e o usuário pode refazer lendo tudo)
     const leit = decidirLeitura(triagemPseudo, S.leitura, pdfTextSeguro, meta);
+    const textoCompleto = aplicarOrcamentoTexto(pdfTextSeguro, 350000);     // processo inteiro, só quando for preciso, com o limite de envio
     S.leituraNaoLocalizada = !leit.reduzir && leit.motivo === 'decisao_nao_localizada';
     const gerarFinal = async (textoProcesso, reduzido)=>{
       S.leituraCompletaAutomatica = false;
@@ -865,7 +877,7 @@ async function handleFile(files){
         const excluir = new Set([...(rec.indicesFixos || []), ...(rec.indicesAnteriores || [])]);
         const extra = selecionarPaginasAnteriores(paginas, rec.inicioIdx, finalJson.leitura_adicional.termos_busca, excluir, 40000);
         if(extra.length){
-          const rotulos = extra.map(k=> rotuloLimpo(paginas[k].rotulo));
+          const rotulos = extra.map(k=> rotuloAmigavel(paginas[k].rotulo));
           S.leituraReduzida.pedido = { motivo: finalJson.leitura_adicional.motivo || '', paginas: rotulos };
           S.avisoLeitura = montarAvisoLeitura(leit, rotulos);
           setProgress(80, 'A IA pediu peças anteriores à decisão; lendo-as e redigindo de novo...');
@@ -875,7 +887,7 @@ async function handleFile(files){
           // nada encontrado, ou a IA ainda precisa de mais: lê o processo inteiro
           S.leituraReduzida = null; S.avisoLeitura = ''; S.leituraCompletaAutomatica = true;
           setProgress(88, 'A IA precisa de peças anteriores; lendo o processo inteiro...');
-          finalJson = await gerarDocumentoFinal(meta, triagemPseudo, pdfTextSeguro, textoRefs, textoSusp, textoMono, manualFinal);
+          finalJson = await gerarDocumentoFinal(meta, triagemPseudo, textoCompleto, textoRefs, textoSusp, textoMono, manualFinal);
         }
       }
       if(mapaNomes) finalJson = reverterPseudonimizacao(finalJson, mapaNomes);
@@ -889,10 +901,10 @@ async function handleFile(files){
         document.getElementById('pw').style.display = 'block';
         S.metricas.acumulado += (S.metricas.fim || Date.now()) - S.metricas.inicio;
         S.metricas.inicio = Date.now();
-        await gerarFinal(pdfTextSeguro, false);
+        await gerarFinal(textoCompleto, false);
       }catch(e){ document.getElementById('pw').style.display = 'none'; alert('Erro ao reprocessar: ' + e.message); }
     };
-    await gerarFinal(leit.reduzir ? leit.texto : pdfTextSeguro, leit.reduzir);
+    await gerarFinal(leit.reduzir ? leit.texto : textoCompleto, leit.reduzir);
   }catch(e){
     document.getElementById('pw').style.display='none';
     alert('Erro ao processar o documento: ' + e.message + '\n\nAbra o Console do navegador (F12) para mais detalhes.');
@@ -932,7 +944,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '07/10/2026 · triagem-haiku';
+const VERSAO_APP = '07/10/2026 · sentenca-e-partes';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -961,8 +973,9 @@ async function ocrPagina(page){
   return (data && data.text) ? data.text.trim() : '';
 }
 
-async function extrairTextoPDF(file, onProgresso, rotulo){
+async function extrairTextoPDF(file, onProgresso, rotulo, deslocamento){
   rotulo = rotulo || '';
+  deslocamento = deslocamento || 0;      // partes de um mesmo processo: a numeração das páginas continua da parte anterior
   await garantirPdfjs();
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({data: buf}).promise;
@@ -982,7 +995,7 @@ async function extrairTextoPDF(file, onProgresso, rotulo){
     }
     if(textoPagina.length < 10) paginasVazias++;   // página sem nenhum texto (imagem não lida por OCR)
     // marcador de página: permite localizar e citar as páginas da decisão, do recurso, das intimações etc.
-    texto += `[[${rotulo}PÁG. ${i}]]\n` + textoPagina + '\n\n';
+    texto += `[[${rotulo}PÁG. ${i + deslocamento}]]\n` + textoPagina + '\n\n';
   }
   LEITURA_PDF.push({ nome: file.name, paginas: pdf.numPages, ocr: paginasOcr, vazias: paginasVazias });
   return texto;
@@ -999,7 +1012,27 @@ function aplicarOrcamentoTexto(texto, maxChars){
   return texto.slice(corte);
 }
 
+function numeroDaParte(nome){ const m = String(nome || '').match(/PARTE[_\s-]*(\d+)/i); return m ? +m[1] : null; }
+
 async function lerPDFs(files, maxChars, onProgresso){
+  // Arquivos "..._PARTE_n" (o TJSP divide processos grandes assim) são UM processo só: ordena pela parte e
+  // continua a numeração das páginas, sem tratar nenhum deles como "recurso principal" ou "anexo".
+  const nums = files.map(f=> numeroDaParte(f.name));
+  const emPartes = files.length > 1 && nums.every(n=> n != null) && new Set(nums).size === nums.length;
+  if(emPartes){
+    const ordem = files.map((f, i)=> ({ f, n: nums[i] })).sort((x, y)=> x.n - y.n);
+    let deslocamento = 0, texto = '';
+    S.partes = [];
+    for(const { f, n } of ordem){
+      const t = await extrairTextoPDF(f, onProgresso, '', deslocamento);
+      const paginas = LEITURA_PDF.length ? LEITURA_PDF[LEITURA_PDF.length - 1].paginas : 0;
+      S.partes.push({ nome: f.name, parte: n, de: deslocamento + 1, ate: deslocamento + paginas });
+      deslocamento += paginas;
+      texto += t;
+    }
+    return aplicarOrcamentoTexto(texto, maxChars);
+  }
+  S.partes = null;
   const textos = [];
   for(let k=0; k<files.length; k++){
     const rot = files.length > 1 ? `DOC ${k+1} · ` : '';
@@ -1205,6 +1238,8 @@ const ROTULO_PAPEL = { tema_principal:'tema principal', preliminar:'preliminar',
 // Recupera, para cada matéria apontada pela triagem, os votos mais relevantes da base (Apelações; no agravo, Agravos + Apelações)
 function selecionarVotos(docsPasta, consultas, limite){
   const LIMITE_TOTAL = limite || 7;
+  const TETO_COBERTURA = 8;                                                   // máximo de matérias cobertas
+  const teto1 = Math.max(LIMITE_TOTAL, Math.min(consultas.length, TETO_COBERTURA));   // 1ª passada: um voto por matéria, mesmo acima do limite
   const porPapel = { tema_principal: 4, preliminar: 3, tema_secundario: 1 };
   const ordem = ['tema_principal', 'preliminar', 'tema_secundario'];
   const rankings = consultas.map(c=> ({ c, r: rankearBM25(docsPasta, c.consulta) }));
@@ -1225,7 +1260,7 @@ function selecionarVotos(docsPasta, consultas, limite){
       if(ja && ja.consulta !== c.consulta) ja.tambem.push({ papel: c.papel, consulta: c.consulta });
     }
     // e busca também o próximo voto relevante desta matéria (traz, por exemplo, a linha divergente)
-    if(escolhidos.length < LIMITE_TOTAL){ const x = proximo(r); if(x) tomar(c, x); }
+    if(escolhidos.length < teto1){ const x = proximo(r); if(x) tomar(c, x); }
   });
   // 2ª passada: completa com os seguintes, priorizando tema principal > preliminar > secundário
   const priorizados = rankings.slice().sort((x, y)=> ordem.indexOf(x.c.papel) - ordem.indexOf(y.c.papel));
@@ -1252,7 +1287,7 @@ function reduzirVotoReferencia(t){
   const re = /(?:^|[\s.;:])é\s+o\s+relat[óo]rio\b\.?/gi;   // (\b não funciona com letra acentuada)
   let m, achado = null;
   while((m = re.exec(texto)) !== null){ if(m.index >= 150){ achado = m; break; } }
-  if(!achado) return { texto, reduzido: false };
+  if(!achado) return { texto, reduzido: false, ementa: '', corpo: texto };
   const antes = texto.slice(0, achado.index);
   const depois = texto.slice(achado.index).trim();
   const linhas = antes.split(/\n+/).map(l=> l.trim()).filter(Boolean);
@@ -1268,17 +1303,47 @@ function reduzirVotoReferencia(t){
   }
   const saida = (ementa.length ? '[EMENTA DO VOTO DE REFERÊNCIA]\n' + ementa.join('\n') + '\n\n' : '')
     + '[TEXTO A PARTIR DE "É O RELATÓRIO." — o relatório do voto de referência foi omitido de propósito]\n' + depois;
-  return { texto: saida, reduzido: true };
+  return { texto: saida, reduzido: true, ementa: ementa.join('\n'), corpo: depois };
+}
+// Para matéria SÓ secundária, o voto de referência vai em trechos: os parágrafos que tratam da matéria (e o parágrafo seguinte)
+// mais os dois últimos (dispositivo). Voto curto, ou sem parágrafo pertinente, vai como está.
+function excertoDoVoto(corpo, consulta, maxChars){
+  const paras = String(corpo || '').split(/\n+/).map(p=> p.trim()).filter(Boolean);
+  if(paras.length <= 6) return null;
+  const rank = rankearBM25(paras.map((p, i)=> ({ nome: '', texto: p, _i: i })), consulta);
+  if(!rank.length) return null;
+  const escolhidas = new Set(); let usado = 0;
+  const tentar = (i)=>{ if(i < 0 || i >= paras.length || escolhidas.has(i)) return; const t = paras[i].length + 1; if(usado + t > maxChars) return; escolhidas.add(i); usado += t; };
+  rank.slice(0, 6).forEach((x, k)=>{ tentar(x.d._i); if(k < 3) tentar(x.d._i + 1); });
+  tentar(paras.length - 1); tentar(paras.length - 2);
+  let out = '', ant = -2;
+  [...escolhidas].sort((x, y)=> x - y).forEach(i=>{ if(ant >= 0 && i !== ant + 1) out += '[...]\n'; out += paras[i] + '\n'; ant = i; });
+  return out;
 }
 function montarTextoVotosRecuperados(escolhidos){
-  return escolhidos.map((e, i)=>
-    `\n\n=== VOTO DE REFERÊNCIA ${i+1} — arquivo: ${e.d.nome} (pasta: ${ROTULO_PASTA[e.d.pasta]||e.d.pasta}; encontrado pela busca como: ${[e].concat((e.tambem||[]).map(t=> ({papel:t.papel, consulta:t.consulta}))).map(m=> (ROTULO_PAPEL[m.papel]||m.papel) + ' — consulta: ' + m.consulta).join(' | ')}) ===\n${recortarVoto(reduzirVotoReferencia(e.d.texto).texto)}`
-  ).join('');
+  return escolhidos.map((e, i)=>{
+    const papeis = [e].concat(e.tambem || []);
+    const soSecundario = papeis.every(m=> m.papel === 'tema_secundario');
+    const rv = reduzirVotoReferencia(e.d.texto);
+    let corpo = recortarVoto(rv.texto), modo = '';
+    if(soSecundario && rv.reduzido){
+      const exc = excertoDoVoto(rv.corpo, papeis.map(m=> m.consulta).join(' '), 4000);
+      if(exc){
+        corpo = (rv.ementa ? '[EMENTA DO VOTO DE REFERÊNCIA]\n' + rv.ementa + '\n\n' : '') + '[TRECHOS DO VOTO SOBRE A MATÉRIA — o restante foi omitido de propósito, por ser de outras matérias]\n' + exc;
+        modo = '; trechos da matéria';
+      }
+    }
+    return `\n\n=== VOTO DE REFERÊNCIA ${i+1} — arquivo: ${e.d.nome} (pasta: ${ROTULO_PASTA[e.d.pasta]||e.d.pasta}${modo}; encontrado pela busca como: ${papeis.map(m=> (ROTULO_PAPEL[m.papel]||m.papel) + ' — consulta: ' + m.consulta).join(' | ')}) ===\n${corpo}`;
+  }).join('');
 }
 
 async function esperarIndice(pct){
   const aviso = setInterval(()=>{ if(!INDICE.pronto) setProgress(pct, `Lendo os votos da base: ${INDICE.progresso.feitos} de ${INDICE.progresso.total} (só na primeira vez ou quando há votos novos)...`); }, 600);
   try{ await indexarBase(); } finally { clearInterval(aviso); }
+}
+
+function materiasSemVoto(consultas, escolhidos){
+  return consultas.filter(q=> !escolhidos.some(e=> e.consulta === q.consulta || (e.tambem || []).some(t=> t.consulta === q.consulta)));
 }
 
 async function recuperarVotos(meta, triagem){
@@ -1291,8 +1356,9 @@ async function recuperarVotos(meta, triagem){
   if(!consultas.length){
     consultas = [{ papel: 'tema_principal', consulta: [triagem.tema_principal, triagem.preliminar_resumo].filter(Boolean).join(' ') }];
   }
-  consultas = consultas.slice(0, 6).map(c=> ({ papel: ROTULO_PAPEL[c.papel] ? c.papel : 'tema_secundario', consulta: c.consulta.trim() }));
+  consultas = consultas.slice(0, 8).map(c=> ({ papel: ROTULO_PAPEL[c.papel] ? c.papel : 'tema_secundario', consulta: c.consulta.trim() }));
   const escolhidos = selecionarVotos(docs, consultas, maxVotosAtivo());
+  S.materiasSemVoto = materiasSemVoto(consultas, escolhidos);
   return escolhidos.length ? escolhidos : null;
 }
 
@@ -1371,7 +1437,7 @@ function consultaManualTriagem(pdfText){
   const paginas = dividirEmPaginas(pdfText);
   if(!paginas || !paginas.length) return String(pdfText||'').slice(-6000);
   const pont = (t, pares)=> pares.reduce((s, [re, p])=> s + (re.test(t) ? p : 0), 0);
-  const top = (cat, n)=> paginas.map((p, i)=> ({ i, s: pont(p.texto, PADROES_TRIAGEM[cat]) })).filter(x=> x.s >= 1)
+  const top = (cat, n)=> paginas.map((p, i)=> ({ i, s: pont(p.texto, paresDaCategoria(cat)) })).filter(x=> x.s >= 1)
     .sort((x, y)=> (y.s - x.s) || (y.i - x.i)).slice(0, n).map(x=> x.i);
   const idx = [...new Set([...top('decisao', 2), ...top('recurso', 2)])].sort((x, y)=> x - y);
   const pedacos = idx.map(i=> paginas[i].texto.slice(0, 3000));
@@ -1443,6 +1509,14 @@ function infoRotulo(rotulo){
   const m = String(rotulo).match(/\[\[(?:DOC (\d+) · )?PÁG\. (\d+)\]\]/);
   return m ? { doc: m[1] ? +m[1] : null, pag: +m[2] } : { doc: null, pag: 0 };
 }
+function rotuloAmigavel(rotulo){
+  const base = String(rotulo).replace(/[\[\]]/g, '').replace('PÁG. ', 'pág. ');
+  if(S.partes){
+    const m = String(rotulo).match(/PÁG\. (\d+)/);
+    if(m){ const n = +m[1]; const p = S.partes.find(x=> n >= x.de && n <= x.ate); if(p) return base + ` (PARTE ${p.parte}, p. ${n - p.de + 1})`; }
+  }
+  return base;
+}
 function rotuloLimpo(rotulo){ return String(rotulo).replace(/[\[\]]/g, '').replace('PÁG. ', 'pág. '); }
 function localizarIndicePagina(paginas, ref){
   const achados = [];
@@ -1476,6 +1550,12 @@ function selecionarPaginasAnteriores(paginas, ini, termos, excluir, maxChars){
   return [...escolhidas].sort((x, y)=> x - y);
 }
 
+function blocoMateriasSemVoto(){
+  const m = S.materiasSemVoto || [];
+  if(!m.length) return '';
+  return 'MATÉRIAS SEM VOTO DE REFERÊNCIA NA BASE: ' + m.map(q=> q.consulta).join(' | ') + '. Para elas, aplique a regra "MATÉRIAS SEM VOTO DE REFERÊNCIA".\n\n';
+}
+
 function montarAvisoLeitura(leit, extras){
   const rec = leit.rec;
   let t = 'ATENÇÃO — LEITURA A PARTIR DA DECISÃO RECORRIDA: o texto do processo abaixo vai da decisão recorrida (' + (rec ? rec.inicioRotulo : 'início não indicado') + ') em diante';
@@ -1507,7 +1587,7 @@ const PRAZO_ESTRITO = [[/disponibiliza[çc][ãa]o/i, 2], [/intima[çc][ãa]o/i, 
   [/publica[çc][ãa]o/i, 1], [/certid[ãa]o/i, 1], [/prazo\s+(?:de|para)/i, 1]];
 function paginaSemInformacao(texto){
   const s = String(texto || '').trim();
-  const prazo = pontuarSinais(s, PRAZO_ESTRITO), decisao = pontuarSinais(s, PADROES_TRIAGEM.decisao), recurso = pontuarSinais(s, PADROES_TRIAGEM.recurso);
+  const prazo = pontuarSinais(s, PRAZO_ESTRITO), decisao = pontuarSinais(s, paresDaCategoria('decisao')), recurso = pontuarSinais(s, PADROES_TRIAGEM.recurso);
   if(s.length < 120) return (prazo + decisao + recurso + pontuarSinais(s, PRAZO_CURTO)) === 0;   // curta: só sai se não tiver NENHUM sinal (uma certidão curta de prazo fica)
   if(s.length > 1200) return false;                              // página com conteúdo
   if(prazo >= 3 || decisao >= 2 || recurso >= 2) return false;   // prazo, decisão ou recurso: sempre fica
@@ -1523,7 +1603,7 @@ function recorteDaDecisao(pdfText, triagem, opc){
   const ini = localizarIndicePagina(paginas, ref);
   if(ini < 0) return null;
   // confere: a página indicada, ou uma das duas seguintes, deve mostrar sinais de decisão (título, dispositivo...)
-  if(![0, 1, 2].some(k=> ini + k < paginas.length && pontuarSinais(paginas[ini + k].texto, PADROES_TRIAGEM.decisao) >= 2)) return null;
+  if(![0, 1, 2].some(k=> ini + k < paginas.length && pontuarSinais(paginas[ini + k].texto, paresDaCategoria('decisao')) >= 2)) return null;
 
   const varios = paginas.some(p=> infoRotulo(p.rotulo).doc === 2);
   const fixas = new Set();                                   // recurso principal (PDF 1), sempre inteiro
@@ -1545,8 +1625,8 @@ function recorteDaDecisao(pdfText, triagem, opc){
   }
   const anteriores = selecionarPaginasAnteriores(paginas, ini, triagem.pecas_anteriores_a_conferir, fixas, opc.maxCharsAnteriores || 40000);
   const todas = [...new Set([...fixas, ...anteriores, ...posteriores])].sort((x, y)=> x - y);
-  return { texto: textoDasPaginas(paginas, todas), inicioIdx: ini, inicioRotulo: rotuloLimpo(paginas[ini].rotulo),
-           indicesFixos: [...fixas], indicesAnteriores: anteriores, anteriores: anteriores.map(i=> rotuloLimpo(paginas[i].rotulo)),
+  return { texto: textoDasPaginas(paginas, todas), inicioIdx: ini, inicioRotulo: rotuloAmigavel(paginas[ini].rotulo),
+           indicesFixos: [...fixas], indicesAnteriores: anteriores, anteriores: anteriores.map(i=> rotuloAmigavel(paginas[i].rotulo)),
            totalPaginas: paginas.length, enviadas: todas.length, omitidas };
 }
 
@@ -1779,6 +1859,18 @@ const PADROES_TRIAGEM = {
   ],
 };
 
+// Na aba Apelação a decisão recorrida é a SENTENÇA: despachos, decisões de tutela e outras interlocutórias NÃO devem
+// pontuar como "decisão" (era isso que levava a triagem a escolher a decisão errada).
+const PADROES_DECISAO_SENTENCA = [
+  [/julgo\s+(?:procedentes?|improcedentes?|parcialmente)/i, 4], [/(?:julgo|declaro)\s+extint/i, 4],
+  [/publique-se.{0,40}registre-se.{0,40}intime-se/i, 4], [/\bSENTENÇA\b/, 3],
+  [/ante\s+o\s+exposto/i, 2], [/diante\s+do\s+exposto/i, 2], [/isto\s+posto/i, 2], [/\bhomologo\b/i, 2], [/\bdispositivo\b/i, 2],
+  [/\bsentença\b/i, 1],
+];
+function paresDaCategoria(cat){
+  return (cat === 'decisao' && S.tab === 'apelacao') ? PADROES_DECISAO_SENTENCA : PADROES_TRIAGEM[cat];
+}
+
 function dividirEmPaginas(texto){
   const re = /\[\[(?:DOC \d+ · )?PÁG\. \d+\]\]/g;
   const marcas = [];
@@ -1805,7 +1897,7 @@ function trechoParaTriagem(texto, orcamento){
 
   const pontuar = (t, pares)=> pares.reduce((s, [re, peso])=> s + (re.test(t) ? peso : 0), 0);   // soma dos pesos dos sinais DISTINTOS
   const topo = (cat, n)=> paginas
-    .map((p, i)=>({ i, s: pontuar(p.texto, PADROES_TRIAGEM[cat]) }))
+    .map((p, i)=>({ i, s: pontuar(p.texto, paresDaCategoria(cat)) }))
     .filter(x=> x.s >= 1)
     .sort((x, y)=> (y.s - x.s) || (y.i - x.i))        // maior pontuação; empate: página mais adiante
     .slice(0, n).map(x=> x.i);
@@ -1846,7 +1938,7 @@ function montarDiagnosticoLeitura(pdfText){
   const paginas = dividirEmPaginas(pdfText) || [];
   const pontuar = (t, pares)=> pares.reduce((s, [re, peso])=> s + (re.test(t) ? peso : 0), 0);
   const achar = (cat, minimo)=> paginas
-    .map(p=>({ r: p.rotulo.replace(/[\[\]]/g, '').replace('PÁG. ', 'pág. '), s: pontuar(p.texto, PADROES_TRIAGEM[cat]) }))
+    .map(p=>({ r: rotuloAmigavel(p.rotulo), s: pontuar(p.texto, paresDaCategoria(cat)) }))
     .filter(x=> x.s >= minimo)
     .sort((a, b)=> b.s - a.s).slice(0, 4).map(x=> x.r);
   return {
@@ -1880,19 +1972,32 @@ function buildAvisoLeituraHTML(){
   const totPag = L.arquivos.reduce((s,a)=> s + a.paginas, 0);
   const totVaz = L.arquivos.reduce((s,a)=> s + a.vazias, 0);
   const muitasVazias = totVaz >= Math.max(10, Math.round(totPag * 0.05));
-  const partes = L.arquivos.filter(a=> /PARTE[_\s-]*\d+/i.test(a.nome)).map(a=> (a.nome.match(/PARTE[_\s-]*(\d+)/i)||[])[1]);
-  const arquivoEmPartes = partes.length > 0;
+  const numPartes = L.arquivos.map(a=> numeroDaParte(a.nome)).filter(n=> n != null).sort((x, y)=> x - y);
+  const maxParte = numPartes.length ? numPartes[numPartes.length - 1] : 0;
+  const faltam = []; for(let n = 1; n <= maxParte; n++) if(!numPartes.includes(n)) faltam.push(n);
+  const arquivoEmPartes = faltam.length > 0;
+  const partes = faltam
   if(!problemas.length && !muitasVazias && !arquivoEmPartes) return '';
 
   let html = `<div class="banner orange" style="flex-direction:column;gap:6px"><div><i class="ti ti-alert-triangle"></i> <strong>Atenção à leitura do PDF — confira antes de usar o resultado.</strong></div>`;
   if(problemas.length) html += `<div>Não encontrei no texto lido ${problemas.join(' nem ')}. A triagem e o voto podem ter sido feitos sem essas peças.</div>`;
-  if(arquivoEmPartes) html += `<div>O nome do arquivo indica que ele é a <strong>PARTE ${esc(partes.join(', '))}</strong> de um processo exportado em partes (o TJSP divide processos grandes em PARTE_1, PARTE_2...). Se a sentença e o recurso estão em outra parte, <strong>selecione todas as partes de uma vez</strong> ao enviar (a ferramenta aceita vários PDFs).</div>`;
+  if(arquivoEmPartes) html += `<div>O processo foi exportado em partes (PARTE_1, PARTE_2...), e <strong>faltam a(s) parte(s) ${esc(faltam.join(', '))}</strong>. A leitura da sentença e do recurso não é afetada se eles estiverem nas partes enviadas, mas o sistema não consegue conferir provas das partes que faltam. Para incluí-las, selecione todas as partes de uma vez.</div>`;
   if(muitasVazias) html += `<div><strong>${totVaz} página(s) estão sem nenhum texto legível</strong> (imagens escaneadas que o OCR não leu — o OCR tem um teto de ${OCR_MAX_PAGINAS} páginas por arquivo). A sentença ou o recurso podem estar nessas páginas.</div>`;
   html += `</div>`;
   return html;
 }
 
-async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual, modeloForcado, rotulo){
+function orientacaoDecisaoPorAba(){
+  if(S.tab === 'apelacao') return 'ABA APELAÇÃO — O QUE PROCURAR: o recurso é a APELAÇÃO e a decisão recorrida é a SENTENÇA que ela impugna. Procure SOMENTE essas duas peças: ache a apelação (razões) e, por ela, a sentença impugnada (data, juízo e trechos transcritos nas razões). IGNORE decisões interlocutórias, despachos, decisões de tutela, decisões de admissibilidade e quaisquer outras decisões do processo: elas NÃO são a decisão recorrida. Se houver embargos de declaração contra a sentença, a decisão recorrida continua sendo a sentença (integrada pela decisão dos embargos). Se não localizar a sentença, diga que não foi localizada e NÃO conclua pela inadequação da via recursal nem pelo cabimento de decisão monocrática com base em outra decisão.\n\n';
+  if(S.tab === 'agravo') return 'ABA AGRAVO DE INSTRUMENTO — O QUE PROCURAR: o recurso é o AGRAVO DE INSTRUMENTO e a decisão recorrida é a DECISÃO INTERLOCUTÓRIA agravada. Procure SOMENTE essas duas peças e ignore as demais decisões e despachos do processo.\n\n';
+  return '';
+}
+// Na aba Apelação, uma "decisão recorrida" que não seja sentença indica que a triagem pegou a peça errada
+function triagemIndicouDecisaoErrada(t){
+  return S.tab === 'apelacao' && !!t.decisao_recorrida && !/senten[çc]a/i.test(t.decisao_recorrida) && !/n[ãa]o localizada/i.test(t.decisao_recorrida);
+}
+
+async function realizarTriagem(pdfText, meta, textoSusp, textoMono, textoManual, modeloForcado, rotulo, dica){
   // Parte FIXA (regras, listas, modelos e formato de resposta): vai primeiro e é marcada para cache.
   const estatico = `Você é o assistente jurídico do Gabinete 906 (Desembargador Décio Rodrigues, 21ª Câmara de Direito Privado do TJSP). Faça a TRIAGEM do processo abaixo antes de qualquer redação.
 
@@ -1933,7 +2038,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "via_recursal_adequada": true ou false — confronte o recurso efetivamente interposto com o tipo da decisão recorrida (apelação cabe de sentença; agravo de instrumento de decisão interlocutória nas hipóteses do art. 1.015 do CPC; embargos de declaração de qualquer decisão judicial; agravo interno de decisão monocrática) e responda false se a via for inadequada; se tempestivo=false ou via_recursal_adequada=false, avalie se cabe decisão monocrática de não conhecimento (art. 932, III, CPC; subtipo 'outro'),
   "situacao_preparo_gratuidade": "string curta e objetiva: 'preparo recolhido' OU 'beneficiário da gratuidade de justiça (já concedida)' OU 'pedido de gratuidade indeferido na origem — será analisado com o mérito do recurso' OU 'dispensado o preparo' — conforme o que constar no processo",
   "cabimento_recursal": "string curta: se o tipo de recurso for Apelação, confirme objetivamente que é cabível da sentença/decisão terminativa de mérito (art. 1.009, CPC); se for Agravo de Instrumento, analise e resuma o enquadramento nos incisos do art. 1.015 do CPC (ou no parágrafo único, se natureza_processo_origem for execução/cumprimento/liquidação/inventário) e, se não se enquadrar, se há taxatividade mitigada aplicável (urgência; ponto que não poderia ser suscitado depois em preliminar de apelação); para os demais tipos de recurso, confirme objetivamente o cabimento",
-  "consultas_busca": [ { "papel": "tema_principal" ou "preliminar" ou "tema_secundario", "consulta": "string" } ] — consultas que o site usará para BUSCAR, na base de votos do gabinete, os votos sobre cada matéria deste processo. Faça de 2 a 6 consultas, UMA POR MATÉRIA: (a) exatamente uma de papel "tema_principal", a mais específica possível; (b) uma de papel "preliminar" para CADA preliminar de mérito arguida (ex.: cerceamento de defesa, ilegitimidade, prescrição, decadência, falta de interesse); (c) uma de papel "tema_secundario" para cada tema relevante adicional (ex.: dano moral, repetição do indébito, juros e correção, honorários, gratuidade). Cada consulta deve ter de 6 a 14 palavras, com os TERMOS JURÍDICOS E FÁTICOS que um voto sobre aquela matéria conteria (produto/contrato, causa de pedir, tese, prova discutida), sem nomes de partes e sem números. Exemplos: "golpe da falsa central de atendimento banco transferência Pix estelionatário falha na prestação do serviço"; "empréstimo consignado fraude contratação não reconhecida aposentada descontos benefício INSS"; "cerceamento de defesa perícia grafotécnica anulação da sentença retorno ao primeiro grau".
+  "consultas_busca": [ { "papel": "tema_principal" ou "preliminar" ou "tema_secundario", "consulta": "string" } ] — consultas que o site usará para BUSCAR, na base de votos do gabinete, os votos sobre cada matéria deste processo. Faça de 2 a 8 consultas, UMA POR MATÉRIA: (a) exatamente uma de papel "tema_principal", a mais específica possível; (b) uma de papel "preliminar" para CADA preliminar de mérito arguida (ex.: cerceamento de defesa, ilegitimidade, prescrição, decadência, falta de interesse); (c) uma de papel "tema_secundario" para cada tema relevante adicional (ex.: dano moral, repetição do indébito, juros e correção, honorários, gratuidade), e uma para CADA pedido do recurso e para CADA cobrança, tarifa, encargo ou cláusula impugnada (ex.: tarifa de avaliação do bem, tarifa de cadastro, registro do contrato, seguro, comissão, juros remuneratórios, capitalização, comissão de permanência), usando o nome exato do encargo como o recurso o chama. Cada consulta deve ter de 6 a 14 palavras, com os TERMOS JURÍDICOS E FÁTICOS que um voto sobre aquela matéria conteria (produto/contrato, causa de pedir, tese, prova discutida), sem nomes de partes e sem números. Exemplos: "golpe da falsa central de atendimento banco transferência Pix estelionatário falha na prestação do serviço"; "empréstimo consignado fraude contratação não reconhecida aposentada descontos benefício INSS"; "cerceamento de defesa perícia grafotécnica anulação da sentença retorno ao primeiro grau".
   "tem_preliminar": true ou false,
   "preliminar_resumo": "string curta ou vazio se não houver — preliminares de MÉRITO (ex: falta de interesse de agir, inépcia da inicial, ilegitimidade), não confundir com admissibilidade recursal (campos acima)",
   "inicio_decisao_recorrida": "string — o marcador EXATO da página em que COMEÇA a decisão recorrida (sentença, decisão interlocutória ou acórdão), copiado dos marcadores do texto, por exemplo 'PÁG. 689' ou 'DOC 2 · PÁG. 150'. A decisão recorrida costuma começar na página do título 'SENTENÇA' ou 'DECISÃO'; se o texto fornecido não permitir localizar o início, deixe vazio",
@@ -1955,7 +2060,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   // Parte que MUDA a cada processo.
   const dinamico = `TIPO DE RECURSO INFORMADO PELO USUÁRIO: ${meta.numProcessoLabel}
 
-${textoSusp ? '\nOutros despachos de sobrestamento já proferidos pelo Gabinete (referência adicional):\n'+textoSusp : ''}
+${orientacaoDecisaoPorAba()}${dica ? dica + '\n\n' : ''}${textoSusp ? '\nOutros despachos de sobrestamento já proferidos pelo Gabinete (referência adicional):\n'+textoSusp : ''}
 ${textoMono ? '\nOutras decisões monocráticas já proferidas pelo Gabinete (referência adicional):\n'+textoMono : ''}
 ${textoManual ? '\nMATERIAL DE ESTUDO DO GABINETE (listas de consulta inteiras e trechos relevantes selecionados por relevância; ver explicação detalhada nas regras gerais — manuais de entendimento do Des. Décio, repositórios da nova competência, planilhas de decisões vinculantes do STJ/STF e de temas suspensos):\n'+textoManual : ''}
 
@@ -1976,6 +2081,7 @@ function exibirTriagem(triagem, meta){
 function buildTriagemHTML(triagem, meta){
   const itens = [...buildLeituraItensHTML()];
   if(S.triagemInfo && S.triagemInfo.confirmada) itens.push(['ti-shield-check', `Triagem feita pelo ${esc(S.triagemInfo.menor)} e <strong>confirmada pelo ${esc(S.triagemInfo.maior)}</strong>, porque apontou: ${esc(S.triagemInfo.motivos.join('; '))}.`]);
+  if(S.triagemInfo && S.triagemInfo.corrigida) itens.push(['ti-shield-check', `Triagem refeita pelo ${esc(S.triagemInfo.maior)}: a primeira indicou como decisão recorrida “${esc(S.triagemInfo.indicada)}”, que não é sentença; na aba Apelação a decisão recorrida é a sentença.`]);
   if(S.triagemInfo && S.triagemInfo.refeita) itens.push(['ti-shield-check', `A triagem do ${esc(S.triagemInfo.menor)} não deu uma resposta utilizável e foi refeita pelo ${esc(S.triagemInfo.maior)}.`]);
   itens.push(['ti-file-check', `Processo identificado: <strong>${esc(meta.numProcessoLabel)} nº ${esc(triagem.numero_processo)}</strong> — Comarca de ${esc(triagem.comarca)}`]);
   itens.push(['ti-users', `${esc(meta.recorrenteLabel)}: ${esc(triagem.recorrente_nome)} &nbsp;×&nbsp; ${esc(meta.recorridoLabel)}: ${esc(triagem.recorrido_nome)}`]);
@@ -2079,7 +2185,7 @@ TIPO DE RECURSO: ${meta.numProcessoLabel} (rótulo do recorrente: "${meta.recorr
 ${tipoBloco}
 
 PROCESSO EM ANÁLISE (texto extraído do(s) PDF(s) — se houver mais de um documento, eles vêm separados por marcadores "===== DOCUMENTO N DE M ====="; o Documento 1 costuma ser o recurso/petição principal, e os demais o processo de origem ou outros anexos — use os documentos adicionais para conferir se as alegações do recurso são verdadeiras, cruzando com o que de fato consta no processo de origem):
-${S.avisoLeitura || ''}${pdfText}
+${blocoMateriasSemVoto()}${S.avisoLeitura || ''}${pdfText}
 
 VOTOS/DOCUMENTOS DE REFERÊNCIA DO GABINETE — ${meta.label} (buscados por matéria; ver as regras de uso acima):
 ${textoRefs}
@@ -2289,17 +2395,25 @@ function buildLeituraReduzidaHTML(){
 }
 
 // Painel dos votos da base que a busca forneceu à IA (por matéria) e dos que ela declarou ter seguido
+function buildAvisoMateriasSemVotoHTML(d){
+  const doCodigo = (S.materiasSemVoto || []).map(q=> q.consulta);
+  const daIA = (d && Array.isArray(d.materias_sem_referencia)) ? d.materias_sem_referencia.filter(Boolean) : [];
+  const todas = [...new Set([...doCodigo, ...daIA])];
+  if(!todas.length) return '';
+  return `<div class="banner orange" style="margin-top:10px"><i class="ti ti-alert-triangle"></i><span><strong>Sem voto de referência na base para:</strong> ${esc(todas.join(' · '))}. O entendimento do Desembargador sobre esses pontos não foi localizado: a IA decidiu pela jurisprudência majoritária. <strong>Confira esses pontos</strong> (ou inclua um voto sobre a matéria na base).</span></div>`;
+}
 function buildVotosUsadosHTML(d){
   const norm = (s)=> normalizarTexto(String(s||'')).replace(/\.docx?$/i, '').replace(/\s+/g, ' ').trim();
   const seguidos = (Array.isArray(d.votos_seguidos) ? d.votos_seguidos : []).map(norm).filter(Boolean);
   const foiSeguido = (nome)=> seguidos.some(s=> s === norm(nome) || norm(nome).includes(s) || s.includes(norm(nome)));
   let html = `<div class="rc"><div class="rt" style="margin-bottom:12px"><i class="ti ti-books"></i> Votos da base usados como referência <small style="color:var(--tx2);font-weight:400">(buscados por matéria, em texto integral)</small></div>`;
-  S.votosUsados.forEach(v=>{
+  (S.votosUsados || []).forEach(v=>{
     const seg = foiSeguido(v.nome);
     html += `<div class="ri"><i class="ti ${seg ? 'ti-circle-check' : 'ti-file-description'}" style="color:${seg ? 'var(--green,#1B7F4B)' : 'var(--tx2)'}"></i>`
           + `<span style="flex:1">${esc(v.nome)}<br><span style="font-size:11px;color:var(--tx2)">${[v].concat(v.tambem||[]).map(m=> esc(ROTULO_PAPEL[m.papel]||m.papel) + ' — ' + esc(m.consulta)).join('<br>')}</span></span>`
           + `<span style="font-size:11px;color:var(--tx2)">${esc(ROTULO_PASTA[v.pasta]||v.pasta)}${seg ? ' · seguido' : ''}</span></div>`;
   });
+  html += buildAvisoMateriasSemVotoHTML(d);
   if(d.criterio_divergencia && String(d.criterio_divergencia).trim()){
     html += `<div class="banner orange" style="margin-top:10px"><i class="ti ti-arrows-diff"></i><span><strong>Votos que divergem — critério aplicado:</strong> ${esc(d.criterio_divergencia)}</span></div>`;
   }
@@ -2405,7 +2519,7 @@ function renderResultado(meta, comIA, triagem){
     // mostra-se a fonte real da identificação do sobrestamento
     html += buildFonteSobrestamentoHTML(d);
   }
-  if(comIA && !d.materia_sobrestada && S.votosUsados && S.votosUsados.length){
+  if(comIA && !d.materia_sobrestada && ((S.votosUsados && S.votosUsados.length) || (S.materiasSemVoto && S.materiasSemVoto.length))){
     html += buildVotosUsadosHTML(d);
   }
   if(comIA) html += buildMetricasHTML();
