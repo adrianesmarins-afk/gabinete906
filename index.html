@@ -237,7 +237,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--tx
         <option value="claude-haiku-4-5-20251001">Claude Haiku 4.5 — mais barato (US$ 1 e US$ 5 por milhão de tokens)</option>
         <option value="mesmo">O mesmo modelo da redação</option>
       </select>
-      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Com o Haiku, se a triagem apontar sobrestamento, decisão monocrática, intempestividade, via inadequada, falta de dialeticidade ou incompetência, ela é refeita e confirmada pelo modelo da redação.</div>
+      <div style="font-size:10.5px;color:var(--tx2);margin-top:2px">Com o Haiku, se a triagem apontar sobrestamento, decisão monocrática, intempestividade ou via inadequada, ela é refeita e confirmada pelo modelo da redação.</div>
 
       <label>Votos de referência por minuta</label>
       <select id="i-maxvotos" style="width:100%;padding:9px 10px;border:1px solid #D5DAE0;border-radius:8px;background:#fff;font-size:13px">
@@ -371,7 +371,7 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem \`\`\`json, sem t
 {
   "materia_sobrestada": true ou false,
   "cabe_monocratica": true ou false,
-  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
+  "subtipo_monocratica": "inadmissibilidade_art1015" ou "outro" ou null,
   "leitura_adicional": { "necessaria": true ou false, "motivo": "string curta", "termos_busca": ["2 a 5 palavras cada, para localizar nas peças ANTERIORES à decisão recorrida"] } — use necessaria=true SOMENTE nas condições da regra LEITURA ADICIONAL; caso contrário, necessaria=false e os demais campos vazios,
   "materias_sem_referencia": ["matérias que você decidiu SEM voto de referência do Desembargador (as listadas no texto como sem voto, mais outras em que você não encontrou voto aplicável); lista vazia se todas tiverem voto"],
   "votos_seguidos": ["nome exato do arquivo de cada voto de referência que você efetivamente seguiu na redação (copie o nome como aparece no cabeçalho \"arquivo:\" de cada voto fornecido)"],
@@ -395,11 +395,9 @@ O campo "despacho_bullets" tem DOIS usos possíveis (nunca os dois ao mesmo temp
 Em qualquer outra combinação (materia_sobrestada=false, cabe_monocratica=false e não é Agravo de Instrumento; OU cabe_monocratica=true, sempre), retorne "despacho_bullets": null.
 
 --- QUANDO A SAÍDA FOR DECISÃO MONOCRÁTICA (art. 932 do CPC) ---
-Mantenha a mesma estrutura de relatório e a mesma lógica de fundamentação (preliminares → tema principal → temas secundários) descritas acima, buscando também nos MODELOS DE DECISÃO MONOCRÁTICA fornecidos (nesta mensagem e/ou na pasta de referência) o padrão de fundamentação e linguagem que o Desembargador usa nessas hipóteses. Há dois subtipos com padrão próprio, e um terceiro genérico:
+Mantenha a mesma estrutura de relatório e a mesma lógica de fundamentação (preliminares → tema principal → temas secundários) descritas acima, buscando também nos MODELOS DE DECISÃO MONOCRÁTICA fornecidos (nesta mensagem e/ou na pasta de referência) o padrão de fundamentação e linguagem que o Desembargador usa nessas hipóteses. Há um subtipo com padrão próprio, e um segundo genérico:
 • "inadmissibilidade_art1015" — Agravo de Instrumento contra decisão que não se enquadra nas hipóteses taxativas do art. 1.015 do CPC, sem justificar a mitigação da taxatividade (Tema 988/STJ). Dispositivo: "Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente agravo de instrumento."
   REGRA ESSENCIAL, OBRIGATÓRIA, ANTES DE APLICAR ESTE SUBTIPO: o art. 1.015 do CPC tem um CAPUT com rol taxativo (incisos I a XIII, mitigado pelo Tema 988/STJ) e também um PARÁGRAFO ÚNICO que afasta completamente essa taxatividade. Nos termos do art. 1.015, parágrafo único, do CPC, cabe agravo de instrumento contra TODAS as decisões interlocutórias proferidas na fase de LIQUIDAÇÃO DE SENTENÇA, no CUMPRIMENTO DE SENTENÇA, no PROCESSO DE EXECUÇÃO (inclusive execução de título extrajudicial) e no INVENTÁRIO — independentemente do conteúdo da decisão e SEM QUALQUER análise de taxatividade ou de urgência. Portanto: SEMPRE que o processo de origem for uma execução (de título judicial ou extrajudicial), cumprimento de sentença, liquidação de sentença ou inventário, o agravo de instrumento É CABÍVEL por definição, e o subtipo "inadmissibilidade_art1015" NUNCA se aplica — não importa qual matéria específica a decisão agravada trate. Verifique isso ANTES de qualquer outra análise sobre o art. 1.015: primeiro identifique a natureza do processo de origem (conhecimento, execução, cumprimento de sentença, liquidação, inventário); só analise os incisos do caput e a mitigação do Tema 988/STJ se o processo de origem for processo de CONHECIMENTO (não for nenhuma das quatro hipóteses do parágrafo único).
-• "incompetencia" — recurso versa sobre matéria estranha à competência das Câmaras de Direito Privado (incompetência absoluta em razão da matéria, cognoscível de ofício, art. 64, §1º, CPC). Dispositivo: "Ante o exposto, com fundamento no art. 64, §1º, c.c. o art. 932, III, ambos do CPC, **NÃO CONHEÇO** do presente recurso por incompetência absoluta deste órgão julgador em razão da matéria, e determino a redistribuição dos autos à [Câmara/Seção competente]." Neste subtipo, ACRESCENTE como ÚLTIMO parágrafo de "fundamentacao" a determinação processual: "Comunique-se ao Juízo de origem. Após as anotações e baixas necessárias, remetam-se os autos à Presidência/Distribuidor para redistribuição."
-• "ausencia_dialeticidade" — o recurso não ataca nenhuma das razões da decisão recorrida (princípio da dialeticidade; arts. 932, III, e 1.010, II e III, do CPC; no agravo interno, art. 1.021, §1º). Dispositivo: "Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente recurso, por ausência de dialeticidade." Na fundamentação: (a) resuma as razões de decidir da decisão recorrida (até 3), indicando a página ou o evento quando possível; (b) mostre, razão por razão, que as razões recursais não as enfrentam, resumindo o que o recurso alega e explicando a falta de relação com o que foi decidido; (c) cite o princípio da dialeticidade e o dever de impugnação específica. NÃO analise o mérito.
 • "outro" — qualquer outra hipótese do art. 932 do CPC (improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, provimento monocrático por contrariedade a entendimento vinculante etc.). Dispositivo no formato: "Ante o exposto, com fundamento no art. 932, [inciso], do CPC, **DECIDO** monocraticamente por [negar seguimento ao / negar provimento ao / dar provimento ao] recurso. Publique-se. Intimem-se." — ajuste o inciso e a fundamentação ao motivo identificado.
 
 --- QUANDO O TIPO DE RECURSO FOR EMBARGOS DE DECLARAÇÃO (estrutura totalmente diferente — leia com atenção) ---
@@ -466,20 +464,7 @@ O recurso não comporta conhecimento. Nos termos do art. 1.015 do CPC, o agravo 
 Ante o exposto, com fundamento no art. 932, III, do CPC, **NÃO CONHEÇO** do presente agravo de instrumento.
 DÉCIO RODRIGUES / Relator`;
 
-const MODELO_MONOCRATICA_INCOMPETENCIA = `[AGRAVO DE INSTRUMENTO / APELAÇÃO] Nº [•]
-COMARCA DE [•]
-AGRAVANTE/APELANTE: [•]
-AGRAVADO/APELADO: [•]
-DECISÃO MONOCRÁTICA
-Recurso que versa sobre matéria estranha à competência das Câmaras de Direito Privado — incompetência absoluta em razão da matéria, cognoscível de ofício a qualquer tempo (art. 64, §1º, CPC) — determinada a redistribuição dos autos à Câmara competente, prejudicado o exame de admissibilidade e de mérito.
-Vistos.
-Trata-se de [agravo de instrumento/apelação] interposto por [AGRAVANTE/APELANTE] contra a decisão/sentença proferida pelo Juízo da [vara], da Comarca de [comarca], que tem por objeto [síntese objetiva da matéria, indicando o elemento que revela a incompetência].
-Em suas razões recursais, o recorrente sustenta, em síntese, [síntese dos argumentos], pugnando pela reforma.
-É o relatório.
-Ocorre que a matéria efetivamente discutida nos autos não se insere na competência das Câmaras de Direito Privado, mas sim na das [Câmaras de Direito Público / Câmara Reservada competente], nos termos do art. 3º da Resolução TJSP nº 623/2013. A incompetência em razão da matéria é absoluta e, como tal, cognoscível de ofício e a qualquer tempo e grau de jurisdição, nos termos do art. 64, §1º, do CPC.
-Ante o exposto, com fundamento no art. 64, §1º, c.c. o art. 932, III, ambos do CPC, **NÃO CONHEÇO** do presente recurso por incompetência absoluta deste órgão julgador em razão da matéria, e determino a redistribuição dos autos à [Câmara/Seção competente], prejudicado o exame de admissibilidade e de mérito recursal.
-Comunique-se ao Juízo de origem. Após as anotações e baixas necessárias, remetam-se os autos à Presidência/Distribuidor para redistribuição.
-DÉCIO RODRIGUES / Relator`;
+
 
 const MODELO_DESPACHO_SOBRESTAMENTO = `[CABEÇALHO DO DOCUMENTO — NÃO reproduza no array despacho_bullets: o site monta número do processo, comarca, partes e a palavra DESPACHO sozinho. O primeiro item do array é "Vistos."]
 1. Vistos.
@@ -537,13 +522,7 @@ DÉCIO RODRIGUES / Relator`;
    ⚠️ Resolução muito recente; se surgirem alterações, peça à usuária
    confirmação e atualize este bloco.
    ============================================================ */
-const TJSP_COMPETENCIA_TEXTO = `A Resolução TJSP nº 1.027/2026 (Órgão Especial, aprovada em 26/08/2026, publicada no Dejesp em 27/08/2026) reestruturou a Seção de Direito Privado do TJSP:
-• EXTINGUIU a antiga divisão em 3 Subseções de Direito Privado (I, II e III, que antes tinham competência preferencial por matéria conforme a Resolução TJSP nº 623/2013) — a partir dela, a distribuição dos feitos comuns entre as Câmaras de Direito Privado (preservada a numeração das câmaras) passou a ser INDISTINTA/comum, sem mais divisão temática entre elas.
-• CRIOU 4 Câmaras Especializadas de Direito de Família e Sucessões — matérias de família e sucessões (divórcio, guarda, alimentos, união estável, inventário, partilha, curatela, tutela, adoção, etc.) NÃO são mais julgadas pelas Câmaras de Direito Privado comuns (como a 21ª), e sim por essas câmaras especializadas.
-• MANTEVE inalteradas as Câmaras Reservadas de Direito Empresarial — matérias de direito empresarial especializado (falência, recuperação judicial/extrajudicial, direito societário complexo entre sócios/administradores, propriedade industrial empresarial) continuam fora da competência das Câmaras de Direito Privado comuns.
-• Matérias estranhas ao Direito Privado (tributário, administrativo, previdenciário, ambiental — competência da Seção de Direito Público; ou matéria criminal — Seção Criminal) seguem fora da competência das Câmaras de Direito Privado.
-Ou seja: hoje, a 21ª Câmara de Direito Privado (e as demais câmaras comuns) tem competência comum/geral sobre matéria cível, consumerista e contratual em geral — SALVO família/sucessões, empresarial especializado, e matérias de outras Seções/Justiças.
-PREVENÇÃO: além da competência por matéria, verifique se os autos (ou o texto do recurso) mencionam uma decisão anterior já proferida por OUTRO Relator ou OUTRA Câmara no mesmo processo de origem (ex.: um agravo de instrumento anterior do mesmo processo já julgado por outro Desembargador) — isso gera prevenção daquele Relator/Câmara, e não deste Gabinete, revelando incompetência por prevenção mesmo quando a matéria em si seria de competência comum.`;
+
 
 /* ============================================================
    ADC 80/STF — CRITÉRIO OBJETIVO DE GRATUIDADE DE JUSTIÇA
@@ -815,7 +794,6 @@ async function handleFile(files){
       triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (refeita)');
       S.triagemInfo = { refeita: true, menor, maior: MODELOS_IA[modeloAtivo()].nome };
     }
-    aplicarTravaDialeticidade(triagemPseudo, meta, S.leitura);
     // com o modelo menor, qualquer desvio da rota normal (que muda o tipo de documento) é confirmado pelo modelo da redação
     const usadoNaTriagem = modeloTriagemAtivo();
     const motivosConf = motivosDeConfirmacao(triagemPseudo);
@@ -825,12 +803,10 @@ async function handleFile(files){
       setProgress(44, 'A decisão indicada não é uma sentença; refazendo a triagem...');
       triagemPseudo = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (decisão corrigida)',
         'CORREÇÃO: a decisão recorrida que você indicou ("' + indicada + '") NÃO é uma sentença. Na aba Apelação a decisão recorrida é SEMPRE a sentença impugnada pela apelação. Refaça a triagem procurando a sentença (use as razões da apelação para identificá-la).');
-      aplicarTravaDialeticidade(triagemPseudo, meta, S.leitura);
       S.triagemInfo = { corrigida: true, indicada, maior: MODELOS_IA[modeloAtivo()].nome };
     } else if(!S.triagemInfo && motivosConf.length && usadoNaTriagem !== modeloAtivo()){
       setProgress(46, 'A triagem apontou um desvio; confirmando com o modelo maior...');
       const conf = await realizarTriagem(pdfTextSeguro, meta, textoSusp, textoMono, manualTriagem, modeloAtivo(), 'Triagem (confirmação)');
-      aplicarTravaDialeticidade(conf, meta, S.leitura);
       S.triagemInfo = { confirmada: true, motivos: motivosConf, menor: MODELOS_IA[usadoNaTriagem].nome, maior: MODELOS_IA[modeloAtivo()].nome };
       triagemPseudo = conf;
     }
@@ -944,7 +920,7 @@ async function garantirPdfjs(){
 
 /* ---- OCR de reforço (Tesseract.js) para páginas escaneadas/sem texto digital ---- */
 const OCR_LIMIAR_CHARS = 40;   // abaixo disso, a página é tratada como "sem texto digital"
-const VERSAO_APP = '07/10/2026 · sentenca-e-partes';
+const VERSAO_APP = '21/10/2026 · triagem-enxuta';
 let LEITURA_PDF = [];          // estatísticas de leitura de cada PDF da análise atual
 const OCR_MAX_PAGINAS = 80;    // teto de páginas OCR por arquivo, para não travar o navegador
 let _tesseractWorker = null;
@@ -1456,39 +1432,7 @@ function motivosDeConfirmacao(t){
   if(t.cabe_monocratica) m.push('cabimento de decisão monocrática' + (t.subtipo_monocratica ? ' (' + t.subtipo_monocratica + ')' : ''));
   if(t.tempestivo === false) m.push('intempestividade');
   if(t.via_recursal_adequada === false) m.push('via recursal inadequada');
-  if(t.dialeticidade_ok === false) m.push('falta de dialeticidade');
-  if(t.competencia_confirmada === false) m.push('incompetência da Câmara');
   return m;
-}
-
-// Trava da dialeticidade: só se conclui pela falta quando a decisão recorrida e o recurso foram localizados no texto lido;
-// embargos de declaração não se submetem a esta regra; incompetência e art. 1.015 têm precedência.
-function aplicarTravaDialeticidade(t, meta, leitura){
-  const limpar = ()=>{ t.cabe_monocratica = false; t.subtipo_monocratica = null; t.motivo_monocratica = ''; };
-  if(meta.semRelatorio){
-    t.dialeticidade_ok = true;
-    if(t.subtipo_monocratica === 'ausencia_dialeticidade') limpar();
-    return t;
-  }
-  const temPecas = !!(leitura && leitura.decisao && leitura.decisao.length && leitura.recurso && leitura.recurso.length);
-  if(t.dialeticidade_ok === false && !temPecas){
-    t.dialeticidade_ok = true;
-    t.analise_dialeticidade = '(não aferida: a decisão recorrida ou o recurso não foram localizados no texto lido) ' + (t.analise_dialeticidade || '');
-    if(t.subtipo_monocratica === 'ausencia_dialeticidade') limpar();
-    return t;
-  }
-  if(t.dialeticidade_ok === false){
-    const precede = t.cabe_monocratica && (t.subtipo_monocratica === 'incompetencia' || t.subtipo_monocratica === 'inadmissibilidade_art1015');
-    if(!precede){
-      t.cabe_monocratica = true;
-      t.subtipo_monocratica = 'ausencia_dialeticidade';
-      t.motivo_monocratica = t.analise_dialeticidade || 'o recurso não ataca nenhuma das razões da decisão recorrida';
-      t.materia_sobrestada = false;     // recurso que não será conhecido não se sobresta
-    }
-  } else if(t.subtipo_monocratica === 'ausencia_dialeticidade'){
-    limpar();                            // subtipo marcado sem a falha correspondente: desfaz
-  }
-  return t;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1633,7 +1577,6 @@ function recorteDaDecisao(pdfText, triagem, opc){
 // Decide se a redação recebe o processo inteiro ou só da decisão recorrida em diante
 function decidirLeitura(triagem, leitura, pdfText, meta){
   if(meta && meta.folderKey === 'em') return { reduzir: false };               // embargos e agravo interno: leem tudo
-  if(triagem.subtipo_monocratica === 'incompetencia') return { reduzir: false };  // incompetência/prevenção pode depender de qualquer peça
   const rec = recorteDaDecisao(pdfText, triagem, {});
   if(!rec) return { reduzir: false, motivo: 'decisao_nao_localizada' };
   let texto = rec.texto;
@@ -2007,9 +1950,6 @@ REGRA CRÍTICA — IDENTIFICAÇÃO DAS PARTES: identifique o apelante/agravante/
 
 REGRA CRÍTICA — IDENTIFICAÇÃO DO TEMA E DO PRODUTO FINANCEIRO: identifique o produto financeiro e a causa de pedir efetivamente discutidos no processo a partir do que a PARTE AUTORA/RECORRENTE NARRA expressamente na petição inicial ou nas razões recursais (o que ela alega ter contratado, valor, data, banco, e o que pede). NÃO determine o tema, nem decida sobrestamento, com base numa busca isolada por palavras-chave (ex: "RMC", "cartão de crédito consignado") dentro de documentos de prova anexados (extratos, comprovantes) — esses documentos podem conter menções a produtos financeiros completamente distintos e irrelevantes ao pedido, inclusive de contratos que a própria parte autora desconhece ou impugna. Só considere RMC/cartão de crédito consignado como produto efetivamente discutido se a NARRATIVA da petição inicial (ou das razões recursais) descrever esse produto como objeto do litígio — não porque a palavra apareça em algum lugar do PDF.
 
-REGRAS ATUAIS DE COMPETÊNCIA DAS CÂMARAS DE DIREITO PRIVADO DO TJSP (verifique SEMPRE, antes de qualquer outra coisa, se a 21ª Câmara é competente):
-${TJSP_COMPETENCIA_TEXTO}
-
 LISTA OFICIAL DE TEMAS ATUALMENTE SUSPENSOS POR REPETITIVO/IRDR (compare a matéria do processo com esta lista para checar sobrestamento — preste atenção especial às notas "⚠️ NÃO CONFUNDIR" de cada item; se o produto/matéria não corresponder EXATAMENTE ao tema, NÃO marque como sobrestada, mesmo que pareça semelhante). ATENÇÃO: esta lista pode estar desatualizada — se o MATERIAL DE ESTUDO DO GABINETE (mais abaixo) trouxer uma planilha de temas suspensos, ela é mais atual e prevalece sobre esta lista em caso de conflito:
 ${TEMAS_SUSPENSOS_TEXTO}
 
@@ -2017,12 +1957,8 @@ MODELOS DE DECISÃO MONOCRÁTICA CONHECIDOS PELO GABINETE (compare o caso com es
 --- Subtipo "inadmissibilidade_art1015" (só se aplica a Agravo de Instrumento) ---
 ⚠️ REGRA ESSENCIAL, VERIFIQUE ANTES DE QUALQUER OUTRA COISA: o art. 1.015 do CPC tem um rol taxativo no CAPUT (incisos I a XIII, mitigado pelo Tema 988/STJ), mas o PARÁGRAFO ÚNICO afasta INTEIRAMENTE essa taxatividade nos seguintes processos de origem: liquidação de sentença, cumprimento de sentença, processo de EXECUÇÃO (inclusive execução de título extrajudicial) e inventário. Nesses quatro casos, TODA decisão interlocutória é agravável, sem exceção e sem análise de urgência — o agravo é sempre cabível. Portanto, primeiro identifique se o processo de origem é execução/cumprimento de sentença/liquidação/inventário; se for, NUNCA marque "inadmissibilidade_art1015" como subtipo, seja qual for o conteúdo da decisão agravada. Só analise os incisos do caput e a mitigação do Tema 988/STJ quando o processo de origem for processo de CONHECIMENTO.
 ${MODELO_MONOCRATICA_ART1015}
---- Subtipo "incompetencia" (inclui incompetência por matéria E por prevenção de outro Relator/Câmara — ver regras de competência acima) ---
-${MODELO_MONOCRATICA_INCOMPETENCIA}
---- Subtipo "ausencia_dialeticidade" (vale para apelação, agravo de instrumento e agravo interno; NÃO vale para embargos de declaração) ---
-PRINCÍPIO DA DIALETICIDADE (arts. 932, III, e 1.010, II e III, do CPC; no agravo interno, art. 1.021, §1º): o recurso deve atacar, de forma específica, ao menos UMA das razões (fundamentos) da decisão recorrida. Procedimento obrigatório: (1) identifique, na decisão recorrida, as suas razões de decidir (até 3, cada uma em frase curta); (2) leia as razões recursais e verifique, para cada uma daquelas razões, se o recurso a enfrenta; (3) só marque dialeticidade_ok=false se o recurso NÃO enfrentar NENHUMA das razões — por exemplo, razões genéricas, mera repetição da petição inicial ou da contestação sem enfrentar a decisão, ou tese alheia ao que foi decidido. Se o recurso ataca ao menos uma razão, ainda que de forma deficiente ou apenas em parte, a dialeticidade está atendida (dialeticidade_ok=true). Se dialeticidade_ok=false: cabe_monocratica=true e subtipo_monocratica="ausencia_dialeticidade" (salvo se já couber "incompetencia" ou "inadmissibilidade_art1015", que têm precedência). Se NÃO conseguir localizar a decisão recorrida ou o recurso no texto fornecido, NÃO conclua pela falta de dialeticidade: responda dialeticidade_ok=true e registre em analise_dialeticidade qual peça não foi localizada.
 --- Também cabe decisão monocrática (subtipo "outro") em qualquer outra hipótese do art. 932 do CPC: improcedência manifesta por confronto com súmula/jurisprudência dominante, prejudicialidade, ou provimento monocrático por contrariedade a entendimento vinculante. ---
-REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array. SEJA CONCISO: cada campo de texto deve ter no máximo 1 ou 2 frases curtas (analise_tempestividade e analise_dialeticidade podem ter até 3); a triagem é um resumo, não uma minuta.
+REGRA DE SINTAXE DO JSON (crítica, o site não consegue ler a resposta se isto for violado): dentro dos TEXTOS, NUNCA use aspas duplas (") — para citar um termo, uma expressão ou um trecho (ex.: nome de plataforma, trecho do processo), use aspas simples ('...') ou aspas curvas (“...”). Não coloque quebras de linha dentro de um texto; cada parágrafo/item é um elemento separado do array. SEJA CONCISO: cada campo de texto deve ter no máximo 1 ou 2 frases curtas (analise_tempestividade pode ter até 3); a triagem é um resumo, não uma minuta.
 Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSON), no formato exato:
 {
   "numero_processo": "string",
@@ -2043,19 +1979,15 @@ Responda SOMENTE com um objeto JSON válido (sem markdown, sem texto fora do JSO
   "preliminar_resumo": "string curta ou vazio se não houver — preliminares de MÉRITO (ex: falta de interesse de agir, inépcia da inicial, ilegitimidade), não confundir com admissibilidade recursal (campos acima)",
   "inicio_decisao_recorrida": "string — o marcador EXATO da página em que COMEÇA a decisão recorrida (sentença, decisão interlocutória ou acórdão), copiado dos marcadores do texto, por exemplo 'PÁG. 689' ou 'DOC 2 · PÁG. 150'. A decisão recorrida costuma começar na página do título 'SENTENÇA' ou 'DECISÃO'; se o texto fornecido não permitir localizar o início, deixe vazio",
   "pecas_anteriores_a_conferir": ["termos de busca (2 a 5 palavras cada) para localizar, ANTES da decisão recorrida, documentos ou provas que o recurso contesta e que a redação precisa conferir (ex.: 'contrato assinatura', 'extrato bancário', 'laudo pericial')"] — lista VAZIA se a controvérsia for só de direito ou se o relato da própria decisão bastar para decidir,
-  "dialeticidade_ok": true ou false — o recurso ataca ao menos uma das razões da decisão recorrida? (ver a regra do subtipo "ausencia_dialeticidade" acima; em embargos de declaração, responda sempre true),
-  "analise_dialeticidade": "string curta: as razões da decisão recorrida (até 3, resumidas) e, para cada uma, se o recurso a enfrenta ('enfrenta' ou 'não enfrenta'); se não for possível aferir, diga qual peça não foi localizada",
   "natureza_controversia": "juridica" ou "fatica" ou "mista" — "juridica" SOMENTE se NÃO houver divergência sobre os fatos entre o relato da decisão recorrida e as alegações do recurso, e o recurso discutir apenas a tese de direito (interpretação de lei, aplicação de precedente, cabimento, prazo prescricional sobre datas incontroversas, juros, correção, honorários etc.) sem depender de reexame de provas; "fatica" se o recurso depender de provas ou contestar a descrição dos fatos (contratação não reconhecida, pagamento, dano, perícia, documentos); "mista" se houver os dois. EM DÚVIDA, responda "mista" (o sistema, nesse caso, lê o processo inteiro),
   "justificativa_controversia": "string curta (1 frase) que justifica a classificação acima",
   "materia_sobrestada": true ou false,
   "tema_sobrestado": "string (qual Tema/IRDR, exatamente como na lista oficial) ou vazio",
   "elemento_correspondencia": "string curta citando TEXTUALMENTE do processo o elemento que confirma a correspondência exata com o tema sobrestado (ex: 'contrato de cartão de crédito consignado RMC nº X') — obrigatório preencher se materia_sobrestada=true; deixe vazio se materia_sobrestada=false",
   "fonte_sobrestamento": "string curta — de qual fonte FORNECIDA a você veio a identificação do sobrestamento: 'lista oficial embutida', ou o NOME do arquivo de planilha/documento da pasta de material de estudo, ou 'despacho anterior do gabinete' — obrigatório se materia_sobrestada=true; vazio se materia_sobrestada=false",
-  "competencia_confirmada": true ou false — a 21ª Câmara de Direito Privado é competente? Verifique: (a) se a matéria é de Família/Sucessões, Direito Empresarial especializado, ou estranha ao Direito Privado (ver regras de competência acima); (b) se há sinal, no texto do processo, de decisão anterior do MESMO processo já julgada por OUTRO Relator/Câmara (gera prevenção daquele, não deste gabinete). Se qualquer uma dessas ocorrer, responda false,
-  "motivo_incompetencia": "string curta explicando para onde deveria ir (Câmara de Família e Sucessões / Câmara Reservada de Direito Empresarial / Seção de Direito Público / outro Relator ou Câmara por prevenção) ou vazio se competencia_confirmada=true",
   "cabe_monocratica": true ou false,
-  "subtipo_monocratica": "inadmissibilidade_art1015" ou "incompetencia" ou "outro" ou "ausencia_dialeticidade" ou null,
-  "motivo_monocratica": "string curta com o motivo específico (se for incompetencia, reaproveite o motivo_incompetencia acima) ou vazio se não cabível"
+  "subtipo_monocratica": "inadmissibilidade_art1015" ou "outro" ou null,
+  "motivo_monocratica": "string curta com o motivo específico ou vazio se não cabível"
 }`;
   // Parte que MUDA a cada processo.
   const dinamico = `TIPO DE RECURSO INFORMADO PELO USUÁRIO: ${meta.numProcessoLabel}
@@ -2100,23 +2032,14 @@ function buildTriagemHTML(triagem, meta){
     admisTxt += ` ${esc(triagem.cabimento_recursal||'')}`;
   }
   itens.push(['ti-stamp', admisTxt]);
-  if(!meta.semRelatorio){
-    const dial = triagem.dialeticidade_ok === false ? '<strong>NÃO ATENDIDA (!)</strong>' : 'atendida';
-    itens.push(['ti-link', `Dialeticidade (o recurso ataca ao menos uma razão da decisão): ${dial}${triagem.analise_dialeticidade ? ' — ' + esc(triagem.analise_dialeticidade) : ''}`]);
-  }
 
   itens.push(['ti-alert-triangle', triagem.tem_preliminar ? `Preliminar de mérito arguida (será analisada no voto): ${esc(triagem.preliminar_resumo)}` : 'Nenhuma preliminar de mérito arguida']);
-
-  // Competência da 21ª Câmara
-  itens.push(['ti-building-bank', triagem.competencia_confirmada===false
-    ? `Competência da 21ª Câmara <strong>NÃO confirmada</strong> — ${esc(triagem.motivo_incompetencia||'')}`
-    : 'Dentro da competência da 21ª Câmara de Direito Privado']);
 
   itens.push(['ti-ban', triagem.materia_sobrestada
     ? `Matéria <strong>SOBRESTADA</strong> — ${esc(triagem.tema_sobrestado)}${triagem.elemento_correspondencia ? ' (baseado em: "'+esc(triagem.elemento_correspondencia)+'")' : ''}. Será gerado apenas o despacho de sobrestamento.`
     : 'Matéria não sobrestada — segue para julgamento']);
   if(!triagem.materia_sobrestada){
-    const rotuloSubtipo = {inadmissibilidade_art1015:'inadmissibilidade — art. 1.015 do CPC', ausencia_dialeticidade:'ausência de dialeticidade — art. 932, III, e art. 1.010, II e III, do CPC', incompetencia:'incompetência absoluta em razão da matéria', outro:'art. 932 do CPC'}[triagem.subtipo_monocratica] || '';
+    const rotuloSubtipo = {inadmissibilidade_art1015:'inadmissibilidade — art. 1.015 do CPC', outro:'art. 932 do CPC'}[triagem.subtipo_monocratica] || '';
     itens.push(['ti-gavel', triagem.cabe_monocratica
       ? `Cabe <strong>DECISÃO MONOCRÁTICA</strong> (${esc(rotuloSubtipo)}) — ${esc(triagem.motivo_monocratica)}`
       : 'Recurso segue para julgamento <strong>COLEGIADO</strong> (voto)']);
@@ -2147,9 +2070,7 @@ MODELO DE DESPACHO DE SOBRESTAMENTO (referência estrutural — adapte ao caso c
 ${MODELO_DESPACHO_SOBRESTAMENTO}`;
   } else if(triagem.cabe_monocratica){
     const modeloRef = triagem.subtipo_monocratica==='inadmissibilidade_art1015' ? MODELO_MONOCRATICA_ART1015
-      : triagem.subtipo_monocratica==='incompetencia' ? MODELO_MONOCRATICA_INCOMPETENCIA
-      : triagem.subtipo_monocratica==='ausencia_dialeticidade' ? ('(Use deste modelo apenas a ESTRUTURA e o formato do dispositivo de não conhecimento; a fundamentação aqui é a da ausência de dialeticidade, e não a do art. 1.015.)\n' + MODELO_MONOCRATICA_ART1015)
-      : (MODELO_MONOCRATICA_ART1015 + '\n\n' + MODELO_MONOCRATICA_INCOMPETENCIA);
+      : MODELO_MONOCRATICA_ART1015;
     tipoBloco = `TIPO DE SAÍDA EXIGIDA: DECISÃO MONOCRÁTICA (art. 932 do CPC), subtipo "${triagem.subtipo_monocratica}".
 A triagem identificou cabimento de decisão monocrática pelo motivo: "${triagem.motivo_monocratica}". Redija relatório e fundamentação normalmente, e o dispositivo no formato monocrático do subtipo indicado (ver regras acima e o modelo de referência abaixo — lembre-se de marcar a expressão-verbo decisória entre **dois asteriscos**).
 IMPORTANTE: a decisão monocrática substitui INTEIRAMENTE o despacho e o voto colegiado — retorne SEMPRE "despacho_bullets": null neste caso, mesmo que o recurso seja Agravo de Instrumento com pedido de efeito suspensivo/ativo (o exame desse pedido fica prejudicado pela própria decisão monocrática).
@@ -2172,11 +2093,9 @@ Decisão recorrida: ${triagem.decisao_recorrida||'—'}
 Recurso interposto: ${triagem.recurso_interposto||'—'}
 Tempestividade: ${triagem.tempestivo===false ? 'INTEMPESTIVO — atenção especial' : 'tempestivo'}${triagem.analise_tempestividade ? ' — ' + triagem.analise_tempestividade : ''}
 Via recursal adequada: ${triagem.via_recursal_adequada===false ? 'NÃO — atenção especial' : 'sim'}
-Dialeticidade: ${triagem.dialeticidade_ok===false ? 'NÃO ATENDIDA' : 'atendida'}${triagem.analise_dialeticidade ? ' — ' + triagem.analise_dialeticidade : ''}
 Natureza da controvérsia: ${triagem.natureza_controversia||'—'}${triagem.justificativa_controversia ? ' — ' + triagem.justificativa_controversia : ''}
 Situação de preparo/gratuidade: ${triagem.situacao_preparo_gratuidade||'—'}
 Cabimento recursal: ${triagem.cabimento_recursal||'—'}
-Competência da 21ª Câmara confirmada: ${triagem.competencia_confirmada}${triagem.competencia_confirmada===false ? ' — '+triagem.motivo_incompetencia : ''}
 Preliminar arguida: ${triagem.tem_preliminar ? triagem.preliminar_resumo : 'não há'}
 materia_sobrestada (já decidido): ${triagem.materia_sobrestada}
 (Se algum dos dados acima vier como "NÃO IDENTIFICADO", "dados insuficientes" ou semelhante, a triagem leu só um trecho do processo — identifique você mesmo esse dado no texto completo abaixo, em vez de repetir a lacuna.)
